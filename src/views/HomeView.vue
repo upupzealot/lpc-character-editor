@@ -1,16 +1,16 @@
 <template class="wrapper">
   <div class="side-bar">Left</div>
   <div class="center">
-    <AnimationPreview></AnimationPreview>
+    <CharacterPreview></CharacterPreview>
   </div>
   <div class="side-bar">Right</div>
 </template>
 
 <script lang="ts">
-import AnimationPreview from '@/components/AnimationPreview.vue'
+import CharacterPreview from '@/components/CharacterPreview.vue'
 
 export default {
-  components: { AnimationPreview },
+  components: { CharacterPreview },
 }
 </script>
 

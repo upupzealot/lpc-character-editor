@@ -1,40 +1,46 @@
-<template class="wrapper">
+<template>
   <div ref="animationPreview"></div>
 </template>
 
 <script lang="ts">
-import { AnimatedSprite, Application, Assets } from 'pixi.js'
+import { AnimatedSprite, Application, Assets, TextureSource } from 'pixi.js'
 import CharactorActionSheet from './CharactorActionSheet'
 
 export default {
-  data() {
-    return {
-      aaa: 'Hello world!',
-    }
-  },
   async mounted() {
-    const $el = this.$refs.animationPreview as HTMLDivElement
+    // https://github.com/loksland/pixel-art-game-test
+    TextureSource.defaultOptions.scaleMode = 'nearest'
 
+    const $el = this.$refs.animationPreview as HTMLDivElement
     await this.initPixi($el)
   },
   methods: {
     async initPixi($root: HTMLElement) {
       const app = new Application()
-      await app.init({ background: 'lightgrey', width: 200, height: 200 })
+      await app.init({
+        background: 'lightgrey',
+        width: 64 * 4,
+        height: 64,
+      })
       $root.appendChild(app.canvas)
 
-      const texture = await Assets.load('images/body.png')
+      const texture = await Assets.load('images/body-16.png')
+      app.canvas.style.imageRendering = 'pixelated'
 
       const character = new CharactorActionSheet(texture)
       await character.parse()
-      const walk = new AnimatedSprite(character.animations['spellcast[up]'])
-      walk.animationSpeed = (1 / 60) * 10
-      walk.play()
+      const directions = ['down', 'left', 'right', 'up']
+      directions.forEach((dirction, i) => {
+        const sprite = new AnimatedSprite(character.animations[`walk(${dirction})`])
+        sprite.roundPixels = true
+        sprite.animationSpeed = (1 / 60) * 8
+        sprite.play()
 
-      walk.anchor.set(0.5)
-      walk.x = app.screen.width / 2
-      walk.y = app.screen.height / 2
-      app.stage.addChild(walk)
+        sprite.x = i * 64
+        sprite.y = 0
+        sprite.scale = 2
+        app.stage.addChild(sprite)
+      })
     },
   },
 }
