@@ -13,7 +13,12 @@
 
 <script lang="ts">
 import AnimationPreview from '@/components/AnimationPreview.vue'
-import actions from '../components/CharacterActions.json5'
+import actions from '../components/CharacterActions.json'
+
+type Action = {
+  name: string
+  direction: string
+}
 
 export default {
   data() {
@@ -23,7 +28,7 @@ export default {
   },
   components: { AnimationPreview },
   methods: {
-    previewAction(action) {
+    previewAction(action: Action) {
       console.log(action.name)
     },
   },

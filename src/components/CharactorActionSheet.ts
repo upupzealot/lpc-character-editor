@@ -1,9 +1,5 @@
-import {
-  Spritesheet,
-  Texture,
-  type SpritesheetData,
-} from 'pixi.js'
-import CharactorActions from './CharacterActionsData.json5'
+import { Spritesheet, Texture, type SpritesheetData } from 'pixi.js'
+import CharactorActions from './CharacterActionsData.json'
 
 interface AtlasData extends SpritesheetData {
   animations: { [key: string]: string[] }
