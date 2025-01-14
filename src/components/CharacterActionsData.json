@@ -1,6 +1,6 @@
 [
   {
-    "name": "walk(up)",
+    "name": "walk(down)",
     "x": 0,
     "y": 0,
     "frameCount": 4
@@ -12,13 +12,13 @@
     "frameCount": 4
   },
   {
-    "name": "walk(down)",
+    "name": "walk(right)",
     "x": 0,
     "y": 2,
     "frameCount": 4
   },
   {
-    "name": "walk(right)",
+    "name": "walk(up)",
     "x": 0,
     "y": 3,
     "frameCount": 4
