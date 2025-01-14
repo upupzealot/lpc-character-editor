@@ -33,8 +33,8 @@ export default {
     async update() {
       const app = this.ctx.app!() as Application
       app.stage.removeChildren()
-      const characterSheet = this.ctx.characterSheet!() as Spritesheet
 
+      const characterSheet = this.ctx.characterSheet!() as Spritesheet
       const directions = ['down', 'left', 'right', 'up']
       directions.forEach((dirction, i) => {
         const sprite = new AnimatedSprite(characterSheet.animations[`${this.action}(${dirction})`])

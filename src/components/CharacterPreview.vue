@@ -7,18 +7,19 @@
     v-for="action in actions"
     :key="action.name"
     class="action-btn"
-    @click="previewAction(action)"
+    @click="selectAction(action)"
   >
     {{ action.name }}
   </div>
 </template>
 
 <script lang="ts">
-import { mapState, mapWritableState } from 'pinia'
+import { mapWritableState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
 import AnimationPreview from '@/components/ActionPreview.vue'
 import ActionSelector from '@/components/ActionSelector.vue'
 import actions from '@/components/CharacterActions.json'
+import ImageComposite from './ImageComposite.vue'
 
 // idle: 4
 // walk: 4
@@ -36,6 +37,7 @@ type Action = {
 }
 
 export default {
+  extends: ImageComposite,
   data() {
     return {
       actions,
@@ -43,21 +45,13 @@ export default {
   },
   components: { AnimationPreview, ActionSelector },
   async created() {
-    const bodyImg = await this.loadImage('images/body/body-1.png')
-    const hairImg = await this.loadImage('images/hair/hair-1.png')
-
-    this.canvas.width = bodyImg.naturalWidth
-    this.canvas.height = bodyImg.naturalHeight
-    this.g2d.drawImage(bodyImg, 0, 0)
-    this.g2d.drawImage(hairImg, 0, 0)
-    this.updatedAt = Date.now()
+    await this.draw()
   },
   computed: {
-    ...mapState(useEditerStore, ['canvas', 'g2d', 'updatedAt']),
     ...mapWritableState(useEditerStore, ['action']),
   },
   methods: {
-    previewAction(action: Action) {
+    selectAction(action: Action) {
       this.action = action.name
     },
     async loadImage(src: string): Promise<HTMLImageElement> {
