@@ -5,13 +5,12 @@ export const useEditerStore = defineStore('editor', {
     return {
       direction: 'left',
       size: 32,
-      scale: 2
+      scale: 2,
     }
   },
   actions: {
     selectDirection(direction: string) {
-      this.direction = direction;
+      this.direction = direction
     },
   },
 })
-

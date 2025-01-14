@@ -5,8 +5,8 @@
 <script lang="ts">
 import { AnimatedSprite, Application, Assets, Spritesheet, TextureSource } from 'pixi.js'
 import CharactorActionSheet from './CharactorActionSheet'
-import { useEditerStore } from '@/stores/editor';
-import { mapWritableState } from 'pinia';
+import { useEditerStore } from '@/stores/editor'
+import { mapWritableState } from 'pinia'
 
 export default {
   props: {
@@ -22,7 +22,7 @@ export default {
   },
   data() {
     return {
-      ctx: {}
+      ctx: {},
     } as {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ctx: any
@@ -46,8 +46,8 @@ export default {
   },
   watch: {
     async direction() {
-      await this.update();
-    }
+      await this.update()
+    },
   },
   methods: {
     async initPixi($root: HTMLElement) {
@@ -58,22 +58,26 @@ export default {
         height: this.gridSize,
       })
       $root.appendChild(app.canvas)
-      this.ctx.app = ()=>{ return app }
+      this.ctx.app = () => {
+        return app
+      }
 
       const texture = await Assets.load('images/body-16.png')
       app.canvas.style.imageRendering = 'pixelated'
       const character = new CharactorActionSheet(texture)
       await character.parse()
-      this.ctx.character = ()=>{ return character }
+      this.ctx.character = () => {
+        return character
+      }
 
       await this.update()
     },
     async update() {
-      const app = this.ctx.app!() as Application;
-      app.stage.removeChildren();
-      const character = this.ctx.character!() as Spritesheet;
+      const app = this.ctx.app!() as Application
+      app.stage.removeChildren()
+      const character = this.ctx.character!() as Spritesheet
 
-      const directions = this.mode === 'Single' ? [this.direction] : ['down', 'left', 'right', 'up'];
+      const directions = this.mode === 'Single' ? [this.direction] : ['down', 'left', 'right', 'up']
       directions.forEach((dirction, i) => {
         const sprite = new AnimatedSprite(character.animations[`walk(${dirction})`])
         sprite.roundPixels = true
@@ -85,14 +89,14 @@ export default {
         sprite.scale = this.scale
         app.stage.addChild(sprite)
 
-        if(this.mode === 'Direction') {
+        if (this.mode === 'Direction') {
           sprite.eventMode = 'static'
           sprite.on('pointerdown', () => {
             this.direction = dirction
           })
         }
       })
-    }
+    },
   },
 }
 </script>

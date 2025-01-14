@@ -1,15 +1,7 @@
 <template>
-  <AnimationPreview
-    :mode="'Single'"
-    :size="32"
-    :scale="4"
-  ></AnimationPreview>
+  <AnimationPreview :mode="'Single'" :size="32" :scale="4"></AnimationPreview>
 
-  <AnimationPreview
-    :mode="'Direction'"
-    :size="32"
-    :scale="2"
-  ></AnimationPreview>
+  <AnimationPreview :mode="'Direction'" :size="32" :scale="2"></AnimationPreview>
 
   <div
     v-for="action in actions"
