@@ -11,8 +11,8 @@ import PixiPixelComponent from './PixiPixelComponent.vue'
 export default {
   extends: PixiPixelComponent,
   computed: {
-    gridSize() {
-      return this.size * this.scale
+    canvasWidth() {
+      return this.gridSize * 4
     },
     ...mapWritableState(useEditerStore, ['direction']),
   },
@@ -31,15 +31,23 @@ export default {
       app.stage.removeChildren()
       const characterSheet = this.ctx.characterSheet!() as Spritesheet
 
-      const sprite = new AnimatedSprite(characterSheet.animations[`walk(${this.direction})`])
-      sprite.roundPixels = true
-      sprite.animationSpeed = (1 / 60) * 8
-      sprite.play()
+      const directions = ['down', 'left', 'right', 'up']
+      directions.forEach((dirction, i) => {
+        const sprite = new AnimatedSprite(characterSheet.animations[`walk(${dirction})`])
+        sprite.roundPixels = true
+        sprite.animationSpeed = (1 / 60) * 8
+        sprite.play()
 
-      sprite.x = 0
-      sprite.y = 0
-      sprite.scale = this.scale
-      app.stage.addChild(sprite)
+        sprite.x = i * this.gridSize
+        sprite.y = 0
+        sprite.scale = this.scale
+        app.stage.addChild(sprite)
+
+        sprite.eventMode = 'static'
+        sprite.on('pointerdown', () => {
+          this.direction = dirction
+        })
+      })
     },
   },
 }

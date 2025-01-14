@@ -1,7 +1,7 @@
 <template>
-  <AnimationPreview :mode="'Single'" :size="32" :scale="4"></AnimationPreview>
+  <AnimationPreview :size="32" :scale="4"></AnimationPreview>
 
-  <AnimationPreview :mode="'Direction'" :size="32" :scale="2"></AnimationPreview>
+  <ActionSelector :size="32" :scale="2"></ActionSelector>
 
   <div
     v-for="action in actions"
@@ -15,6 +15,7 @@
 
 <script lang="ts">
 import AnimationPreview from '@/components/AnimationPreview.vue'
+import ActionSelector from './ActionSelector.vue'
 import actions from '../components/CharacterActions.json'
 // idle: 4
 // walk: 4
@@ -37,7 +38,7 @@ export default {
       actions,
     }
   },
-  components: { AnimationPreview },
+  components: { AnimationPreview, ActionSelector },
   methods: {
     previewAction(action: Action) {
       console.log(action.name)
