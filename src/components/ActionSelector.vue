@@ -11,10 +11,10 @@ import PixiPixelComponent from '@/components/PixiPixelComponent.vue'
 export default {
   extends: PixiPixelComponent,
   computed: {
+    ...mapWritableState(useEditerStore, ['direction']),
     canvasWidth() {
       return this.gridSize * 4
     },
-    ...mapWritableState(useEditerStore, ['direction']),
   },
   watch: {
     async direction() {

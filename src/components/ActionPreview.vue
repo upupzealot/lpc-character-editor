@@ -4,17 +4,17 @@
 
 <script lang="ts">
 import { AnimatedSprite, Application, Spritesheet } from 'pixi.js'
-import { mapWritableState } from 'pinia'
+import { mapState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
 import PixiPixelComponent from '@/components/PixiPixelComponent.vue'
 
 export default {
   extends: PixiPixelComponent,
   computed: {
+    ...mapState(useEditerStore, ['direction']),
     gridSize() {
       return this.size * this.scale
     },
-    ...mapWritableState(useEditerStore, ['direction']),
   },
   watch: {
     async direction() {

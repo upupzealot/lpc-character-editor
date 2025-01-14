@@ -1,5 +1,7 @@
 <script lang="ts">
-import { Application, Assets, TextureSource } from 'pixi.js'
+import { mapWritableState } from 'pinia'
+import { useEditerStore } from '@/stores/editor'
+import { Application, Texture, TextureSource } from 'pixi.js'
 import CharactorActionSheet from '@/components/CharactorActionSheet'
 
 // https://github.com/loksland/pixel-art-game-test
@@ -27,6 +29,7 @@ export default {
     }
   },
   computed: {
+    ...mapWritableState(useEditerStore, ['canvas', 'updatedAt']),
     gridSize() {
       return this.size * this.scale
     },
@@ -51,8 +54,12 @@ export default {
         return app
       }
 
-      const texture = await Assets.load('images/body-16.png')
+      const texture = Texture.from(this.canvas)
       app.canvas.style.imageRendering = 'pixelated'
+      this.ctx.texture = () => {
+        return texture
+      }
+
       const characterSheet = new CharactorActionSheet(texture)
       await characterSheet.parse()
       this.ctx.characterSheet = () => {

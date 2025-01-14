@@ -14,9 +14,12 @@
 </template>
 
 <script lang="ts">
+import { mapState } from 'pinia'
+import { useEditerStore } from '@/stores/editor'
 import AnimationPreview from '@/components/ActionPreview.vue'
 import ActionSelector from '@/components/ActionSelector.vue'
 import actions from '@/components/CharacterActions.json'
+
 // idle: 4
 // walk: 4
 // idle-combat: 4
@@ -39,9 +42,35 @@ export default {
     }
   },
   components: { AnimationPreview, ActionSelector },
+  async created() {
+    const bodyImg = await this.loadImage('images/body-16.png')
+    const headImg = await this.loadImage('images/head-16.png')
+
+    this.canvas.width = bodyImg.naturalWidth
+    this.canvas.height = bodyImg.naturalHeight
+    this.g2d.drawImage(bodyImg, 0, 0)
+    this.g2d.drawImage(headImg, 0, 0)
+    this.updatedAt = Date.now()
+  },
+  computed: {
+    ...mapState(useEditerStore, ['canvas', 'g2d', 'updatedAt']),
+  },
   methods: {
     previewAction(action: Action) {
       console.log(action.name)
+    },
+    async loadImage(src: string): Promise<HTMLImageElement> {
+      return new Promise((resolve, reject) => {
+        const image = new Image()
+        image.onload = () => {
+          resolve(image)
+        }
+        image.onerror = (error) => {
+          console.log('image load error', src, error)
+          reject(error)
+        }
+        image.src = src
+      })
     },
   },
 }
