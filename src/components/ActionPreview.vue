@@ -4,9 +4,9 @@
 
 <script lang="ts">
 import { AnimatedSprite, Application, Spritesheet } from 'pixi.js'
-import { useEditerStore } from '@/stores/editor'
 import { mapWritableState } from 'pinia'
-import PixiPixelComponent from './PixiPixelComponent.vue'
+import { useEditerStore } from '@/stores/editor'
+import PixiPixelComponent from '@/components/PixiPixelComponent.vue'
 
 export default {
   extends: PixiPixelComponent,

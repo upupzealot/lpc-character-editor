@@ -14,9 +14,9 @@
 </template>
 
 <script lang="ts">
-import AnimationPreview from '@/components/AnimationPreview.vue'
-import ActionSelector from './ActionSelector.vue'
-import actions from '../components/CharacterActions.json'
+import AnimationPreview from '@/components/ActionPreview.vue'
+import ActionSelector from '@/components/ActionSelector.vue'
+import actions from '@/components/CharacterActions.json'
 // idle: 4
 // walk: 4
 // idle-combat: 4

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Application, Assets, TextureSource } from 'pixi.js'
-import CharactorActionSheet from './CharactorActionSheet'
+import CharactorActionSheet from '@/components/CharactorActionSheet'
 
 // https://github.com/loksland/pixel-art-game-test
 TextureSource.defaultOptions.scaleMode = 'nearest'
