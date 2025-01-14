@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { mapState } from 'pinia'
+import { mapState, mapWritableState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
 import AnimationPreview from '@/components/ActionPreview.vue'
 import ActionSelector from '@/components/ActionSelector.vue'
@@ -43,21 +43,22 @@ export default {
   },
   components: { AnimationPreview, ActionSelector },
   async created() {
-    const bodyImg = await this.loadImage('images/body-16.png')
-    const headImg = await this.loadImage('images/head-16.png')
+    const bodyImg = await this.loadImage('images/body/body-1.png')
+    const hairImg = await this.loadImage('images/hair/hair-1.png')
 
     this.canvas.width = bodyImg.naturalWidth
     this.canvas.height = bodyImg.naturalHeight
     this.g2d.drawImage(bodyImg, 0, 0)
-    this.g2d.drawImage(headImg, 0, 0)
+    this.g2d.drawImage(hairImg, 0, 0)
     this.updatedAt = Date.now()
   },
   computed: {
     ...mapState(useEditerStore, ['canvas', 'g2d', 'updatedAt']),
+    ...mapWritableState(useEditerStore, ['action']),
   },
   methods: {
     previewAction(action: Action) {
-      console.log(action.name)
+      this.action = action.name
     },
     async loadImage(src: string): Promise<HTMLImageElement> {
       return new Promise((resolve, reject) => {

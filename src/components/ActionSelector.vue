@@ -4,13 +4,14 @@
 
 <script lang="ts">
 import { AnimatedSprite, Application, Spritesheet } from 'pixi.js'
-import { mapWritableState } from 'pinia'
+import { mapState, mapWritableState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
 import PixiPixelComponent from '@/components/PixiPixelComponent.vue'
 
 export default {
   extends: PixiPixelComponent,
   computed: {
+    ...mapState(useEditerStore, ['action']),
     ...mapWritableState(useEditerStore, ['direction']),
     canvasWidth() {
       return this.gridSize * 4
@@ -18,6 +19,9 @@ export default {
   },
   watch: {
     async direction() {
+      await this.update()
+    },
+    async action() {
       await this.update()
     },
   },
@@ -33,7 +37,7 @@ export default {
 
       const directions = ['down', 'left', 'right', 'up']
       directions.forEach((dirction, i) => {
-        const sprite = new AnimatedSprite(characterSheet.animations[`walk(${dirction})`])
+        const sprite = new AnimatedSprite(characterSheet.animations[`${this.action}(${dirction})`])
         sprite.roundPixels = true
         sprite.animationSpeed = (1 / 60) * 8
         sprite.play()

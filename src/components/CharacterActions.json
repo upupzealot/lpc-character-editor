@@ -1,5 +1,9 @@
 [
   {
+    "name": "idle",
+    "direction": "4"
+  },
+  {
     "name": "walk",
     "direction": "4"
   }

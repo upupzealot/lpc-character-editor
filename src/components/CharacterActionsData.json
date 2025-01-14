@@ -1,25 +1,49 @@
 [
   {
-    "name": "walk(down)",
+    "name": "idle(down)",
     "x": 0,
     "y": 0,
     "frameCount": 4
   },
   {
-    "name": "walk(left)",
+    "name": "idle(left)",
     "x": 0,
     "y": 1,
     "frameCount": 4
   },
   {
-    "name": "walk(right)",
+    "name": "idle(right)",
     "x": 0,
     "y": 2,
     "frameCount": 4
   },
   {
-    "name": "walk(up)",
+    "name": "idle(up)",
     "x": 0,
+    "y": 3,
+    "frameCount": 4
+  },
+  {
+    "name": "walk(down)",
+    "x": 4,
+    "y": 0,
+    "frameCount": 4
+  },
+  {
+    "name": "walk(left)",
+    "x": 4,
+    "y": 1,
+    "frameCount": 4
+  },
+  {
+    "name": "walk(right)",
+    "x": 4,
+    "y": 2,
+    "frameCount": 4
+  },
+  {
+    "name": "walk(up)",
+    "x": 4,
     "y": 3,
     "frameCount": 4
   }
