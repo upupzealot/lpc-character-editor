@@ -4,31 +4,50 @@ import { useEditerStore } from '@/stores/editor'
 
 export default {
   computed: {
-    ...mapState(useEditerStore, ['composite', 'selectedKeys']),
+    ...mapState(useEditerStore, ['composite', 'selectedKeys', 'selectedItems']),
     ...mapWritableState(useEditerStore, ['updatedAt']),
   },
   watch: {
     selectedKeys: {
       async handler() {
         await this.draw()
-        this.updatedAt = Date.now()
       },
       deep: true,
     },
   },
   methods: {
     async draw() {
-      const bodyImg = await this.loadImage(
-        `images/body/${this.selectedKeys.body}.png`,
-      )
-      const hairImg = await this.loadImage(
-        `images/hair/${this.selectedKeys.hair}.png`,
-      )
+      const canvas = this.composite.canvas()
+      this.composite.g2d().clearRect(0, 0, canvas.width, canvas.height)
 
-      this.composite.canvas().width = bodyImg.naturalWidth
-      this.composite.canvas().height = bodyImg.naturalHeight
-      this.composite.g2d().drawImage(bodyImg, 0, 0)
-      this.composite.g2d().drawImage(hairImg, 0, 0)
+      let bodyImg = null
+      let hairImg = null
+      const bodySrc = this.selectedItems.body.image
+      const hairSrc = this.selectedItems.hair.image
+
+      if (bodySrc) {
+        bodyImg = await this.loadImage(
+          `images/body/${this.selectedItems.body.image}`,
+        )
+      }
+      if (hairSrc) {
+        hairImg = await this.loadImage(
+          `images/hair/${this.selectedItems.hair.image}`,
+        )
+      }
+
+      const lastImg = bodyImg || hairImg
+      if (lastImg) {
+        this.composite.canvas().width = lastImg.naturalWidth
+        this.composite.canvas().height = lastImg.naturalHeight
+      }
+
+      if (bodyImg) {
+        this.composite.g2d().drawImage(bodyImg, 0, 0)
+      }
+      if (hairImg) {
+        this.composite.g2d().drawImage(hairImg, 0, 0)
+      }
 
       this.composite.texture().source.update()
       this.updatedAt = Date.now()
