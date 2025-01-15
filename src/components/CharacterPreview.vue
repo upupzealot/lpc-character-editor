@@ -1,4 +1,6 @@
 <template>
+  <PartSelectorPanel :size="32" :scale="2"></PartSelectorPanel>
+
   <AnimationPreview :size="32" :scale="4"></AnimationPreview>
 
   <ActionSelector :size="32" :scale="2"></ActionSelector>
@@ -19,7 +21,8 @@ import { useEditerStore } from '@/stores/editor'
 import AnimationPreview from '@/components/ActionPreview.vue'
 import ActionSelector from '@/components/ActionSelector.vue'
 import actions from '@/components/CharacterActions.json'
-import ImageComposite from './ImageComposite.vue'
+import ImageComposite from '@/components/ImageComposite.vue'
+import PartSelectorPanel from '@/components/PartSelectorPanel.vue'
 
 // idle: 4
 // walk: 4
@@ -43,7 +46,7 @@ export default {
       actions,
     }
   },
-  components: { AnimationPreview, ActionSelector },
+  components: { PartSelectorPanel, AnimationPreview, ActionSelector },
   async created() {
     await this.draw()
   },
@@ -53,19 +56,6 @@ export default {
   methods: {
     selectAction(action: Action) {
       this.action = action.name
-    },
-    async loadImage(src: string): Promise<HTMLImageElement> {
-      return new Promise((resolve, reject) => {
-        const image = new Image()
-        image.onload = () => {
-          resolve(image)
-        }
-        image.onerror = (error) => {
-          console.log('image load error', src, error)
-          reject(error)
-        }
-        image.src = src
-      })
     },
   },
 }

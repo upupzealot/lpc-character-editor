@@ -1,13 +1,45 @@
 import { defineStore } from 'pinia'
-import { Texture } from 'pixi.js'
+import { Texture, TextureSource } from 'pixi.js'
+
+const canvas = document.createElement('canvas')
+canvas.style.imageRendering = 'pixelated'
+// document.body.prepend(canvas)
+const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
+
+// https://github.com/loksland/pixel-art-game-test
+TextureSource.defaultOptions.scaleMode = 'nearest'
+const texture = Texture.from(canvas)
+
+import bodyItems from '@/assets/components/body.json'
+import hairItems from '@/assets/components/hair.json'
+
+type Item = {
+  key: string
+  name: string
+  image: string
+}
+const itemListGroup = {
+  body: bodyItems,
+  hair: hairItems,
+} as unknown as {
+  [k: string]: [Item]
+}
+const itemMapGroup = {} as {
+  [k: string]: {
+    [k: string]: Item
+  }
+}
+for (const part in itemListGroup) {
+  itemListGroup[part].forEach((item) => {
+    if (!itemMapGroup[part]) {
+      itemMapGroup[part] = {}
+    }
+    itemMapGroup[part][item.key] = item
+  })
+}
 
 export const useEditerStore = defineStore('editor', {
   state: () => {
-    const canvas = document.createElement('canvas')
-    canvas.style.imageRendering = 'pixelated'
-    document.body.prepend(canvas)
-    const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
-    const texture = Texture.from(canvas)
     return {
       composite: {
         canvas: () => {
@@ -29,10 +61,29 @@ export const useEditerStore = defineStore('editor', {
       direction: 'left',
       action: 'walk',
 
-      selection: {
+      itemListGroup,
+      itemMapGroup,
+
+      editPart: '',
+      selectedKeys: {
         body: 'body-1',
         hair: 'hair-1',
+      } as {
+        [k: string]: string
       },
     }
+  },
+  getters: {
+    selectedItems() {
+      const itemsMap = {} as {
+        [k: string]: Item
+      }
+      for (const part in this.selectedKeys) {
+        const key = this.selectedKeys[part]
+        const item = this.itemMapGroup[part][key]
+        itemsMap[part] = item
+      }
+      return itemsMap
+    },
   },
 })

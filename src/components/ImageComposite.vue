@@ -4,11 +4,11 @@ import { useEditerStore } from '@/stores/editor'
 
 export default {
   computed: {
-    ...mapState(useEditerStore, ['composite', 'selection']),
+    ...mapState(useEditerStore, ['composite', 'selectedKeys']),
     ...mapWritableState(useEditerStore, ['updatedAt']),
   },
   watch: {
-    selection: {
+    selectedKeys: {
       async handler() {
         await this.draw()
         this.updatedAt = Date.now()
@@ -18,8 +18,12 @@ export default {
   },
   methods: {
     async draw() {
-      const bodyImg = await this.loadImage(`images/body/${this.selection.body}.png`)
-      const hairImg = await this.loadImage(`images/hair/${this.selection.hair}.png`)
+      const bodyImg = await this.loadImage(
+        `images/body/${this.selectedKeys.body}.png`,
+      )
+      const hairImg = await this.loadImage(
+        `images/hair/${this.selectedKeys.hair}.png`,
+      )
 
       this.composite.canvas().width = bodyImg.naturalWidth
       this.composite.canvas().height = bodyImg.naturalHeight

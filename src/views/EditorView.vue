@@ -1,5 +1,8 @@
 <template class="wrapper">
-  <div class="side-bar">Left</div>
+  <div class="side-bar">
+    <PartSelectorBtn :keyName="'body'" :size="32" :scale="2"></PartSelectorBtn>
+    <PartSelectorBtn :keyName="'hair'" :size="32" :scale="2"></PartSelectorBtn>
+  </div>
   <div class="center">
     <CharacterPreview></CharacterPreview>
   </div>
@@ -8,9 +11,10 @@
 
 <script lang="ts">
 import CharacterPreview from '@/components/CharacterPreview.vue'
+import PartSelectorBtn from '@/components/PartSelectorBtn.vue'
 
 export default {
-  components: { CharacterPreview },
+  components: { CharacterPreview, PartSelectorBtn },
 }
 </script>
 
@@ -19,6 +23,8 @@ export default {
   width: 200px;
   flex-grow: 0;
   background-color: aliceblue;
+
+  padding: 15px;
 }
 .center {
   flex-grow: 1;

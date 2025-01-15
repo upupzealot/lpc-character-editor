@@ -1,11 +1,8 @@
 <script lang="ts">
 import { mapWritableState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
-import { Application, TextureSource } from 'pixi.js'
+import { Application } from 'pixi.js'
 import CharactorActionSheet from '@/components/CharactorActionSheet'
-
-// https://github.com/loksland/pixel-art-game-test
-TextureSource.defaultOptions.scaleMode = 'nearest'
 
 export default {
   props: {
