@@ -10,8 +10,8 @@ const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
 TextureSource.defaultOptions.scaleMode = 'nearest'
 const texture = Texture.from(canvas)
 
-import bodyItems from '@/assets/components/body.json'
-import hairItems from '@/assets/components/hair.json'
+import bodyItems from '@/assets/item-data/body.ts'
+import hairItems from '@/assets/item-data/hair.ts'
 
 type Item = {
   key: string
