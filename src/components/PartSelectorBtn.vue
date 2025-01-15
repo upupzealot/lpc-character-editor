@@ -8,6 +8,7 @@
           width: `${iconsize}px`,
           height: `${iconsize}px`,
           backgroundImage: iconUrl,
+          backgroundSize: backgroundSize,
         }"
       ></div>
       <div class="setting">
@@ -54,10 +55,18 @@ export default {
     },
     iconUrl() {
       const item = this.selectedItems[this.partKey]
-      if (item) {
-        return `url(\'/images/${this.partKey}/${item.image}\'`
+      if (item.image) {
+        return `url(\'/images/${this.partKey}/${item.image}\')`
       } else {
-        return 'none'
+        return "url('/images/none.png')"
+      }
+    },
+    backgroundSize() {
+      const item = this.selectedItems[this.partKey]
+      if (item.image) {
+        return 'initial'
+      } else {
+        return `${this.iconsize}px`
       }
     },
   },

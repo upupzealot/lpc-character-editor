@@ -22,7 +22,7 @@ const itemListGroup = {
   body: bodyItems,
   hair: hairItems,
 } as unknown as {
-  [k: string]: [Item]
+  [k: string]: Item[]
 }
 const itemMapGroup = {} as {
   [k: string]: {

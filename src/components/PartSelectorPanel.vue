@@ -3,13 +3,16 @@
     <div class="title">{{ currentPartKey }}: {{ currentItem.name }}</div>
     <div class="item-list">
       <div
-        v-for="item in partItems"
+        v-for="(item, i) in partItems"
         :key="item.key"
         :class="item.key === currentItemKey ? ['item', 'selected'] : ['item']"
-        :style="{ width: `${iconsize}px`, height: `${iconsize}px` }"
+        :style="{
+          ...styleObj,
+          backgroundPositionX: `-${iconsize * i}px`,
+        }"
         @click="selectItem(item.key)"
       >
-        {{ item.name }}
+        <!-- {{ item.name }} -->
       </div>
     </div>
   </div>
@@ -18,6 +21,7 @@
 <script lang="ts">
 import { mapState, mapWritableState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
+import loadImage from '@/util/LoadImage'
 
 export default {
   props: {
@@ -30,8 +34,16 @@ export default {
       required: true,
     },
   },
+  data() {
+    const canvasUrlMap = {} as { [k: string]: string }
+    return {
+      canvasUrlMap,
+      canvasUrl: 'none',
+    }
+  },
   computed: {
     ...mapState(useEditerStore, [
+      'itemListGroup',
       'itemMapGroup',
       'selectedKeys',
       'selectedItems',
@@ -45,7 +57,7 @@ export default {
       }
     },
     partItems() {
-      return this.itemMapGroup[this.editPart]
+      return this.itemListGroup[this.editPart]
     },
     currentPartKey() {
       return this.editPart
@@ -56,11 +68,58 @@ export default {
     currentItem() {
       return this.selectedItems[this.currentPartKey]
     },
+    styleObj() {
+      return {
+        width: `${this.iconsize}px`,
+        height: `${this.iconsize}px`,
+        backgroundImage: this.canvasUrl,
+      }
+    },
+  },
+  watch: {
+    async currentPartKey(partKey) {
+      let url = this.canvasUrlMap[partKey]
+      if (!url) {
+        url = await this.getItemCanvasUrl(this.currentPartKey)
+        this.canvasUrlMap[partKey] = url
+      }
+      this.canvasUrl = url
+    },
   },
   methods: {
     selectItem(key: string) {
       this.selectedKeys[this.editPart] = key
       console.log(this.selectedKeys)
+    },
+    async getItemCanvasUrl(partKey: string) {
+      const items = this.itemListGroup[partKey]
+      const canvas = document.createElement('canvas')
+      canvas.width = this.iconsize * items.length
+      canvas.height = this.iconsize
+      const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i]
+        let imageUrl = '/images/none.png'
+        if (item.image) {
+          imageUrl = `/images/${partKey}/${item.image}`
+        }
+        const image = await loadImage(imageUrl)
+        g2d.imageSmoothingEnabled = false
+        g2d.drawImage(
+          image,
+          0, // TODO 使用 _part_config_ 里面的信息
+          0, // TODO 使用 _part_config_ 里面的信息
+          this.size, // TODO 使用 _part_config_ 里面的信息
+          this.size, // TODO 使用 _part_config_ 里面的信息
+          i * this.iconsize,
+          0,
+          this.iconsize,
+          this.iconsize,
+        )
+      }
+
+      return `url(${canvas.toDataURL('image/png')})`
     },
   },
 }
@@ -69,8 +128,6 @@ export default {
 <style scoped>
 .wrapper {
   background-color: lightblue;
-
-  /* height: 200px; */
 }
 .title {
   height: 16px;
@@ -83,10 +140,13 @@ export default {
   margin: 0 -5px;
 }
 .item {
-  background-color: aliceblue;
   margin: 5px;
   padding: -5px;
   border: transparent 2px solid;
+
+  background-color: aliceblue;
+  image-rendering: pixelated;
+
   cursor: pointer;
 }
 .item.selected {

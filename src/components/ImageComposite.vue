@@ -1,6 +1,7 @@
 <script lang="ts">
 import { mapState, mapWritableState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
+import loadImage from '@/util/LoadImage'
 
 export default {
   computed: {
@@ -26,12 +27,12 @@ export default {
       const hairSrc = this.selectedItems.hair.image
 
       if (bodySrc) {
-        bodyImg = await this.loadImage(
+        bodyImg = await loadImage(
           `images/body/${this.selectedItems.body.image}`,
         )
       }
       if (hairSrc) {
-        hairImg = await this.loadImage(
+        hairImg = await loadImage(
           `images/hair/${this.selectedItems.hair.image}`,
         )
       }
@@ -51,19 +52,6 @@ export default {
 
       this.composite.texture().source.update()
       this.updatedAt = Date.now()
-    },
-    async loadImage(src: string): Promise<HTMLImageElement> {
-      return new Promise((resolve, reject) => {
-        const image = new Image()
-        image.onload = () => {
-          resolve(image)
-        }
-        image.onerror = (error) => {
-          console.log('image load error', src, error)
-          reject(error)
-        }
-        image.src = src
-      })
     },
   },
 }
