@@ -1,18 +1,22 @@
 <template>
   <div class="button" @click="focusPart">
-    <div class="title">{{ keyName }}</div>
+    <div class="title">{{ partKey }}</div>
     <div class="content">
       <div
         class="icon"
-        :style="{ width: `${iconsize}px`, height: `${iconsize}px` }"
+        :style="{
+          width: `${iconsize}px`,
+          height: `${iconsize}px`,
+          backgroundImage: iconUrl,
+        }"
       ></div>
       <div class="setting">
-        <div class="select">{{ selectedItems[keyName].name }}</div>
+        <div class="select">{{ selectedItems[partKey].name }}</div>
         <div class="palette">
           <div class="color-box" style="background-color: coral"></div>
-          <div class="color-box" style="background-color: coral"></div>
-          <div class="color-box" style="background-color: coral"></div>
-          <div class="color-box" style="background-color: coral"></div>
+          <div class="color-box" style="background-color: lightcoral"></div>
+          <div class="color-box" style="background-color: pink"></div>
+          <div class="color-box" style="background-color: lightpink"></div>
         </div>
       </div>
     </div>
@@ -25,7 +29,7 @@ import { useEditerStore } from '@/stores/editor'
 
 export default {
   props: {
-    keyName: {
+    partKey: {
       type: String,
       required: true,
     },
@@ -48,10 +52,18 @@ export default {
         return this.size
       }
     },
+    iconUrl() {
+      const item = this.selectedItems[this.partKey]
+      if (item) {
+        return `url(\'/images/${this.partKey}/${item.image}\'`
+      } else {
+        return 'none'
+      }
+    },
   },
   methods: {
     focusPart() {
-      this.editPart = this.keyName
+      this.editPart = this.partKey
     },
   },
 }
@@ -83,6 +95,7 @@ export default {
 }
 .icon {
   background-color: lightblue;
+  image-rendering: pixelated;
 }
 .palette {
   display: flex;

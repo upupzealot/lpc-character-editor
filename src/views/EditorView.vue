@@ -1,7 +1,7 @@
 <template class="wrapper">
   <div class="side-bar">
-    <PartSelectorBtn :keyName="'body'" :size="32" :scale="2"></PartSelectorBtn>
-    <PartSelectorBtn :keyName="'hair'" :size="32" :scale="2"></PartSelectorBtn>
+    <PartSelectorBtn :part-key="'body'" :size="32" :scale="2"></PartSelectorBtn>
+    <PartSelectorBtn :part-key="'hair'" :size="32" :scale="2"></PartSelectorBtn>
   </div>
   <div class="center">
     <CharacterPreview></CharacterPreview>
