@@ -12,12 +12,16 @@
         }"
       ></div>
       <div class="setting">
-        <div class="select">{{ selectedItems[partKey].name }}</div>
+        <div class="select">{{ partItem.name }}</div>
         <div class="palette">
-          <div class="color-box" style="background-color: coral"></div>
-          <div class="color-box" style="background-color: lightcoral"></div>
-          <div class="color-box" style="background-color: pink"></div>
-          <div class="color-box" style="background-color: lightpink"></div>
+          <div
+            v-for="(color, i) in partPalette.palette"
+            :key="i"
+            class="color-box"
+            :style="{
+              backgroundColor: `rgba(${color[0]},${color[1]},${color[2]},${color[3] / 255})`,
+            }"
+          ></div>
         </div>
       </div>
     </div>
@@ -44,7 +48,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(useEditerStore, ['selectedItems']),
+    ...mapState(useEditerStore, ['selectedItems', 'selections', 'paletteMap']),
     ...mapWritableState(useEditerStore, ['editPart']),
     iconsize() {
       if (this.size <= 32) {
@@ -54,20 +58,24 @@ export default {
       }
     },
     iconUrl() {
-      const item = this.selectedItems[this.partKey]
-      if (item.image) {
-        return `url(\'/images/${this.partKey}/${item.image}\')`
+      if (this.partItem.image) {
+        return `url(\'/images/${this.partKey}/${this.partItem.image}\')`
       } else {
         return "url('/images/none.png')"
       }
     },
     backgroundSize() {
-      const item = this.selectedItems[this.partKey]
-      if (item.image) {
+      if (this.partItem.image) {
         return 'initial'
       } else {
         return `${this.iconsize}px`
       }
+    },
+    partItem() {
+      return this.selectedItems[this.partKey]
+    },
+    partPalette() {
+      return this.paletteMap[this.selections[this.partKey].palette]
     },
   },
   methods: {

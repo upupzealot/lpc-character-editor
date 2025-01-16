@@ -53,7 +53,7 @@ export default {
     ...mapState(useEditerStore, [
       'itemListGroup',
       'itemMapGroup',
-      'selectedKeys',
+      'selections',
       'selectedItems',
     ]),
     ...mapWritableState(useEditerStore, ['editPart']),
@@ -71,7 +71,7 @@ export default {
       return this.editPart
     },
     currentItemKey() {
-      return this.selectedKeys[this.currentPartKey]
+      return this.selections[this.currentPartKey].key
     },
     currentItem() {
       return this.selectedItems[this.currentPartKey]
@@ -103,7 +103,7 @@ export default {
   },
   methods: {
     selectItem(key: string) {
-      this.selectedKeys[this.editPart] = key
+      this.selections[this.editPart].key = key
     },
     async getCanvasUrl(partKey: string) {
       const items = this.itemListGroup[partKey]

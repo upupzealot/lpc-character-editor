@@ -5,13 +5,18 @@
       <div
         v-for="(palette, i) in palettes"
         :key="palette.name"
-        class="palette-item"
+        :class="
+          palette.key === selections[currentPartKey].palette
+            ? ['palette-item', 'selected']
+            : ['palette-item']
+        "
         :style="{
           width: `${iconsize}px`,
           height: `${iconsize}px`,
           backgroundImage: canvasUrl,
           backgroundPositionX: `-${iconsize * i}px`,
         }"
+        @click="selectPalette(palette)"
       >
         {{ palette.name }}
       </div>
@@ -22,10 +27,8 @@
 <script lang="ts">
 import { mapState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
+import type { Palette } from '@/components/types'
 import loadImage from '@/util/LoadImage'
-// PaletteData comes from:
-// https://github.com/vitruvianstudio/vitruvian-web/blob/main/src/data/colors.json
-import PaletteData from '@/components/PaletteData.json'
 
 export default {
   props: {
@@ -43,11 +46,11 @@ export default {
     },
   },
   data() {
-    const palettes = PaletteData.filter((p, i) => {
-      return i % 1 === 0
-    })
+    // const palettes = this.paletteList.filter((p, i) => {
+    //   return i % 20 === 0
+    // })
     return {
-      palettes,
+      // palettes,
       canvasUrl: 'none',
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ctx: {} as any,
@@ -66,16 +69,17 @@ export default {
     this.ctx.g2d = () => {
       return g2d
     }
-    console.log('created PaletteSelector')
-    document.body.prepend(canvas)
+    // document.body.prepend(canvas)
 
     await this.getCanvasUrl()
   },
   computed: {
     ...mapState(useEditerStore, [
       'itemMapGroup',
+      'paletteList',
+      'paletteMap',
       'editPart',
-      'selectedKeys',
+      'selections',
       'selectedItems',
     ]),
     iconsize() {
@@ -89,20 +93,30 @@ export default {
       return this.editPart
     },
     currentItemKey() {
-      return this.selectedKeys[this.currentPartKey]
+      return this.selections[this.currentPartKey].key
     },
     currentItem() {
       return this.selectedItems[this.currentPartKey]
+    },
+    palettes() {
+      return this.paletteList.filter((p, i) => {
+        return i % 20 === 0
+      })
     },
   },
   watch: {
     async itemImageUrl() {
       if (this.itemImageUrl) {
+        this.canvasUrl = 'none'
         await this.getCanvasUrl()
       }
     },
   },
   methods: {
+    selectPalette(palette: Palette) {
+      this.selections[this.currentPartKey].palette = palette.key
+      console.log(this.selections)
+    },
     async getCanvasUrl() {
       const t0 = Date.now()
 
@@ -183,5 +197,8 @@ export default {
   border: aliceblue 2px solid;
   image-rendering: pixelated;
   cursor: pointer;
+}
+.palette-item.selected {
+  border-color: black;
 }
 </style>

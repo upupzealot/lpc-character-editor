@@ -5,11 +5,11 @@ import loadImage from '@/util/LoadImage'
 
 export default {
   computed: {
-    ...mapState(useEditerStore, ['composite', 'selectedKeys', 'selectedItems']),
+    ...mapState(useEditerStore, ['composite', 'selections', 'selectedItems']),
     ...mapWritableState(useEditerStore, ['updatedAt']),
   },
   watch: {
-    selectedKeys: {
+    selections: {
       async handler() {
         await this.draw()
       },
