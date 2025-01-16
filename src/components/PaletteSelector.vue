@@ -115,7 +115,6 @@ export default {
   methods: {
     selectPalette(palette: Palette) {
       this.selections[this.currentPartKey].palette = palette.key
-      console.log(this.selections)
     },
     async getCanvasUrl() {
       const t0 = Date.now()

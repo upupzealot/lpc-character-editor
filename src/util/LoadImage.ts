@@ -7,7 +7,7 @@ export default async function loadImage(
       resolve(image)
     }
     image.onerror = (error) => {
-      console.log('image load error', src, error)
+      console.error('image load error', src, error)
       reject(error)
     }
     image.src = src
