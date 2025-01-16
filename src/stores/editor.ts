@@ -17,6 +17,7 @@ type Item = {
   key: string
   name: string
   image: string
+  palette: [number, number, number, number][]
 }
 const itemListGroup = {
   body: bodyItems,

@@ -15,6 +15,12 @@
         <!-- {{ item.name }} -->
       </div>
     </div>
+    <PaletteSelector
+      :v-show="currentItemKey !== 'none'"
+      :size="size"
+      :scale="scale"
+      :itemImageUrl="itemImageUrl"
+    ></PaletteSelector>
   </div>
 </template>
 
@@ -22,8 +28,10 @@
 import { mapState, mapWritableState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
 import loadImage from '@/util/LoadImage'
+import PaletteSelector from '@/components/PaletteSelector.vue'
 
 export default {
+  components: { PaletteSelector },
   props: {
     size: {
       type: Number,
@@ -75,12 +83,19 @@ export default {
         backgroundImage: this.canvasUrl,
       }
     },
+    itemImageUrl() {
+      let imageUrl = ''
+      if (this.currentItem.image) {
+        imageUrl = `/images/${this.currentPartKey}/${this.currentItem.image}`
+      }
+      return imageUrl
+    },
   },
   watch: {
     async currentPartKey(partKey) {
       let url = this.canvasUrlMap[partKey]
       if (!url) {
-        url = await this.getItemCanvasUrl(this.currentPartKey)
+        url = await this.getCanvasUrl(this.currentPartKey)
         this.canvasUrlMap[partKey] = url
       }
       this.canvasUrl = url
@@ -89,9 +104,8 @@ export default {
   methods: {
     selectItem(key: string) {
       this.selectedKeys[this.editPart] = key
-      console.log(this.selectedKeys)
     },
-    async getItemCanvasUrl(partKey: string) {
+    async getCanvasUrl(partKey: string) {
       const items = this.itemListGroup[partKey]
       const canvas = document.createElement('canvas')
       canvas.width = this.iconsize * items.length
