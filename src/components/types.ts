@@ -1,13 +1,15 @@
+export type Color = [number, number, number, number]
+
 export type Item = {
   key: string
   name: string
   image: string
-  palette: [number, number, number, number][]
+  palette: Color[]
 }
 
 export type Palette = {
   key: string
   name: string
-  palette: [number, number, number, number][]
+  palette: Color[]
   materials: string[]
 }

@@ -1,11 +1,16 @@
 <script lang="ts">
 import { mapState, mapWritableState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
-import loadImage from '@/util/LoadImage'
+import { loadImage, replaceColor } from '@/util/ImageUtil'
 
 export default {
   computed: {
-    ...mapState(useEditerStore, ['composite', 'selections', 'selectedItems']),
+    ...mapState(useEditerStore, [
+      'composite',
+      'selections',
+      'selectedItems',
+      'paletteMap',
+    ]),
     ...mapWritableState(useEditerStore, ['updatedAt']),
   },
   watch: {
@@ -44,10 +49,18 @@ export default {
       }
 
       if (bodyImg) {
-        this.composite.g2d().drawImage(bodyImg, 0, 0)
+        const srcPalette = this.selectedItems.body.palette
+        const dstPalatte =
+          this.paletteMap[this.selections['body'].palette].palette
+        const bodyCanvas = await replaceColor(bodyImg, srcPalette, dstPalatte)
+        this.composite.g2d().drawImage(bodyCanvas, 0, 0)
       }
       if (hairImg) {
-        this.composite.g2d().drawImage(hairImg, 0, 0)
+        const srcPalette = this.selectedItems.hair.palette
+        const dstPalatte =
+          this.paletteMap[this.selections['hair'].palette].palette
+        const hairCanvas = await replaceColor(hairImg, srcPalette, dstPalatte)
+        this.composite.g2d().drawImage(hairCanvas, 0, 0)
       }
 
       this.composite.texture().source.update()

@@ -28,7 +28,7 @@
 import { mapState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
 import type { Palette } from '@/components/types'
-import loadImage from '@/util/LoadImage'
+import { loadImage, replaceColor } from '@/util/ImageUtil'
 
 export default {
   props: {
@@ -46,11 +46,7 @@ export default {
     },
   },
   data() {
-    // const palettes = this.paletteList.filter((p, i) => {
-    //   return i % 20 === 0
-    // })
     return {
-      // palettes,
       canvasUrl: 'none',
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ctx: {} as any,
@@ -69,7 +65,7 @@ export default {
     this.ctx.g2d = () => {
       return g2d
     }
-    // document.body.prepend(canvas)
+    document.body.prepend(canvas)
 
     await this.getCanvasUrl()
   },
@@ -130,30 +126,7 @@ export default {
         const palette = palettes[i].palette
         const image = await loadImage(this.itemImageUrl)
 
-        const imageCanvas = new OffscreenCanvas(this.size, this.size)
-        const imgG2d = imageCanvas.getContext(
-          '2d',
-        ) as OffscreenCanvasRenderingContext2D
-        imgG2d.drawImage(image, 0, 0)
-        const imageData = imgG2d.getImageData(0, 0, this.size, this.size)
-        const { data } = imageData
-        for (let x = 0; x < data.length; x += 4) {
-          for (let n = 0; n < palette.length; n++) {
-            const srcColor = srcPalette[n]
-            const dstColor = palette[n]
-            if (
-              data[x] === srcColor[0] &&
-              data[x + 1] === srcColor[1] &&
-              data[x + 2] === srcColor[2]
-            ) {
-              data[x] = dstColor[0]
-              data[x + 1] = dstColor[1]
-              data[x + 2] = dstColor[2]
-              break
-            }
-          }
-        }
-        imgG2d.putImageData(imageData, 0, 0)
+        const imageCanvas = await replaceColor(image, srcPalette, palette)
         g2d.drawImage(
           imageCanvas,
           0,
