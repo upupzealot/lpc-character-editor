@@ -1,12 +1,8 @@
 <template class="wrapper">
   <div class="side-bar">
-    <PartSelectorBtn :part-key="'body'" :size="32" :scale="2"></PartSelectorBtn>
-    <PartSelectorBtn :part-key="'hair'" :size="32" :scale="2"></PartSelectorBtn>
-    <PartSelectorBtn
-      :part-key="'shirt'"
-      :size="32"
-      :scale="2"
-    ></PartSelectorBtn>
+    <PartSelectBtn :part-key="'body'" :size="32" :scale="2"></PartSelectBtn>
+    <PartSelectBtn :part-key="'hair'" :size="32" :scale="2"></PartSelectBtn>
+    <PartSelectBtn :part-key="'shirt'" :size="32" :scale="2"></PartSelectBtn>
   </div>
   <div class="center">
     <CharacterPreview></CharacterPreview>
@@ -16,10 +12,10 @@
 
 <script lang="ts">
 import CharacterPreview from '@/components/CharacterPreview.vue'
-import PartSelectorBtn from '@/components/PartSelectorBtn.vue'
+import PartSelectBtn from '@/components/PartSelectBtn.vue'
 
 export default {
-  components: { CharacterPreview, PartSelectorBtn },
+  components: { CharacterPreview, PartSelectBtn },
 }
 </script>
 

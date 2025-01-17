@@ -1,5 +1,5 @@
 <template>
-  <PartSelectorPanel :size="32" :scale="2"></PartSelectorPanel>
+  <ItemSelector :size="32" :scale="2"></ItemSelector>
 
   <AnimationPreview :size="32" :scale="4"></AnimationPreview>
 
@@ -22,7 +22,7 @@ import AnimationPreview from '@/components/ActionPreview.vue'
 import ActionSelector from '@/components/ActionSelector.vue'
 import actions from '@/components/CharacterActions.json'
 import ImageComposite from '@/components/ImageComposite.vue'
-import PartSelectorPanel from '@/components/PartSelectorPanel.vue'
+import ItemSelector from '@/components/ItemSelector.vue'
 
 // idle: 4
 // walk: 4
@@ -46,7 +46,7 @@ export default {
       actions,
     }
   },
-  components: { PartSelectorPanel, AnimationPreview, ActionSelector },
+  components: { ItemSelector, AnimationPreview, ActionSelector },
   async created() {
     await this.draw()
   },
