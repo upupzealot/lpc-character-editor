@@ -123,7 +123,7 @@ export default {
       const srcPalette = this.currentItem.palette
 
       for (let i = 0; i < palettes.length; i++) {
-        const palette = palettes[i].palette
+        const palette = palettes[i].colors
         const image = await loadImage(this.itemImageUrl)
 
         const imageCanvas = await replaceColor(image, srcPalette, palette)

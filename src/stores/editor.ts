@@ -40,7 +40,7 @@ for (const part in itemListGroup) {
 import PaletteData from '@/components/PaletteData.json'
 import { encodeColor } from '@/util/GraphicUtil'
 const paletteList = (PaletteData as Palette[]).map((palette) => {
-  const key = palette.palette.map((color) => encodeColor(color)).join(';')
+  const key = palette.colors.map((color) => encodeColor(color)).join(';')
   return {
     ...palette,
     key,

@@ -15,7 +15,7 @@
         <div class="select">{{ partItem.name }}</div>
         <div class="palette">
           <div
-            v-for="(color, i) in partPalette.palette"
+            v-for="(color, i) in partPalette.colors"
             :key="i"
             class="color-box"
             :style="{

@@ -52,7 +52,7 @@ export default {
         if (img) {
           const srcPalette = this.selectedItems[partKey].palette
           const dstPalatte =
-            this.paletteMap[this.selections[partKey].palette].palette
+            this.paletteMap[this.selections[partKey].palette].colors
           const bodyCanvas = await replaceColor(img, srcPalette, dstPalatte)
           this.composite.g2d().drawImage(bodyCanvas, 0, 0)
         }

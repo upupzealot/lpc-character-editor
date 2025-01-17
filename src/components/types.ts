@@ -10,6 +10,6 @@ export type Item = {
 export type Palette = {
   key: string
   name: string
-  palette: Color[]
+  colors: Color[]
   materials: string[]
 }
