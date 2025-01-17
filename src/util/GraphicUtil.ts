@@ -49,3 +49,19 @@ export async function replaceColor(
   g2d.putImageData(imageData, 0, 0)
   return canvas
 }
+
+function hexdec(value: number) {
+  const code = '0123456789abcdef'.split('')
+  return `${code[Math.floor(value / 16)]}${code[value % 16]}`
+}
+export function encodeColor(color: Color) {
+  return color
+    .map((val, i) => {
+      if (i === 3 && val === 255) {
+        return ''
+      } else {
+        return hexdec(val)
+      }
+    })
+    .join('')
+}

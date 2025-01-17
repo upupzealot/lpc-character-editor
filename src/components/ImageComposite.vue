@@ -1,7 +1,7 @@
 <script lang="ts">
 import { mapState, mapWritableState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
-import { loadImage, replaceColor } from '@/util/ImageUtil'
+import { loadImage, replaceColor } from '@/util/GraphicUtil'
 
 export default {
   computed: {

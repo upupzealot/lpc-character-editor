@@ -27,7 +27,7 @@
 <script lang="ts">
 import { mapState, mapWritableState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
-import { loadImage } from '@/util/ImageUtil'
+import { loadImage } from '@/util/GraphicUtil'
 import PaletteSelector from '@/components/PaletteSelector.vue'
 
 export default {

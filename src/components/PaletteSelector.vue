@@ -28,7 +28,7 @@
 import { mapState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
 import type { Palette } from '@/components/types'
-import { loadImage, replaceColor } from '@/util/ImageUtil'
+import { loadImage, replaceColor } from '@/util/GraphicUtil'
 
 export default {
   props: {

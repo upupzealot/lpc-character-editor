@@ -38,8 +38,9 @@ for (const part in itemListGroup) {
 // PaletteData comes from:
 // https://github.com/vitruvianstudio/vitruvian-web/blob/main/src/data/colors.json
 import PaletteData from '@/components/PaletteData.json'
-const paletteList = PaletteData.map((palette) => {
-  const key = palette.palette.map((color) => color.join(',')).join(';')
+import { encodeColor } from '@/util/GraphicUtil'
+const paletteList = (PaletteData as Palette[]).map((palette) => {
+  const key = palette.palette.map((color) => encodeColor(color)).join(';')
   return {
     ...palette,
     key,
@@ -83,18 +84,15 @@ export const useEditerStore = defineStore('editor', {
       selections: {
         body: {
           key: 'body-1',
-          palette:
-            '250,236,231,255;249,213,186,255;228,164,124,255;204,134,101,255;153,66,60,255;42,23,34,255',
+          palette: 'faece7;f9d5ba;e4a47c;cc8665;99423c;2a1722',
         },
         hair: {
           key: 'hair-1',
-          palette:
-            '173,132,79,255;148,107,68,255;117,80,45,255;97,72,44,255;64,54,29,255;43,37,17,255',
+          palette: 'ad844f;946b44;75502d;61482c;40361d;2b2511',
         },
         shirt: {
           key: 'shirt-1',
-          palette:
-            '207,111,48,255;181,73,54,255;149,56,28,255;123,32,8,255;106,29,22,255;62,17,26,255',
+          palette: 'cf6f30;b54936;95381c;7b2008;6a1d16;3e111a',
         },
       } as {
         [k: string]: {
