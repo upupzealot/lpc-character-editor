@@ -20,6 +20,7 @@
       :size="size"
       :scale="scale"
       :itemImageUrl="itemImageUrl"
+      ref="paletteSelector"
     ></PaletteSelector>
   </div>
 </template>
@@ -27,7 +28,7 @@
 <script lang="ts">
 import { mapState, mapWritableState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
-import { loadImage } from '@/util/GraphicUtil'
+import { encodeColor, loadImage } from '@/util/GraphicUtil'
 import PaletteSelector from '@/components/PaletteSelector.vue'
 
 export default {
@@ -76,6 +77,9 @@ export default {
     currentItem() {
       return this.selectedItems[this.currentPartKey]
     },
+    currentItemPalettes() {
+      return this.currentItem.palettes
+    },
     styleObj() {
       return {
         width: `${this.iconsize}px`,
@@ -102,8 +106,27 @@ export default {
     },
   },
   methods: {
-    selectItem(key: string) {
-      this.selections[this.editPart].key = key
+    selectItem(Itemkey: string) {
+      ;(this.$refs['paletteSelector'] as typeof PaletteSelector).editIndex = 0
+      const newItem = this.itemMapGroup[this.currentPartKey][Itemkey]
+      if (newItem.key !== 'none') {
+        const selectedPalettes = this.selections[this.currentPartKey].palettes
+        const newItemPalettes = newItem.palettes
+        const palettes = [...newItemPalettes].map((palette) =>
+          palette.map(encodeColor).join(';'),
+        )
+        for (
+          let i = 0;
+          i < newItemPalettes.length && i < selectedPalettes.length;
+          i++
+        ) {
+          palettes[i] = selectedPalettes[i]
+        }
+
+        this.selections[this.editPart].palettes = palettes
+      }
+
+      this.selections[this.editPart].key = Itemkey
     },
     async getCanvasUrl(partKey: string) {
       const items = this.itemListGroup[partKey]

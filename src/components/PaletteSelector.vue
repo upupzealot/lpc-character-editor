@@ -1,14 +1,21 @@
 <template>
   <div class="wrapper">
-    <div v-for="(palette, i) in currentItem.palettes" :key="i" class="title">
-      Palette {{ i + 1 }}:
-    </div>
     <div class="palette-list">
+      <div
+        v-for="(palette, i) in currentItem.palettes"
+        :key="i"
+        :class="i === editIndex ? ['palette-tab', 'selected'] : ['palette-tab']"
+        @click="selectPaletteIndex(i)"
+      >
+        Palette {{ i + 1 }}:
+      </div>
+    </div>
+    <div class="palette-preview">
       <div
         v-for="(palette, i) in palettes"
         :key="palette.name"
         :class="
-          palette.key === selections[currentPartKey].palettes[0]
+          palette.key === selections[currentPartKey].palettes[editIndex]
             ? ['palette-item', 'selected']
             : ['palette-item']
         "
@@ -18,7 +25,7 @@
           backgroundImage: canvasUrl,
           backgroundPositionX: `-${iconsize * i}px`,
         }"
-        @click="selectPalette(palette)"
+        @click="selectPalette(editIndex, palette)"
       >
         {{ palette.name }}
       </div>
@@ -50,6 +57,7 @@ export default {
   data() {
     return {
       canvasUrl: 'none',
+      editIndex: 0,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ctx: {} as any,
     }
@@ -105,14 +113,21 @@ export default {
   watch: {
     async itemImageUrl() {
       if (this.itemImageUrl) {
-        this.canvasUrl = 'none'
+        await this.getCanvasUrl()
+      }
+    },
+    async editIndex() {
+      if (this.itemImageUrl) {
         await this.getCanvasUrl()
       }
     },
   },
   methods: {
-    selectPalette(palette: Palette) {
-      this.selections[this.currentPartKey].palettes = [palette.key]
+    selectPaletteIndex(index: number) {
+      this.editIndex = index
+    },
+    selectPalette(paletteIndex: number, palette: Palette) {
+      this.selections[this.currentPartKey].palettes[paletteIndex] = palette.key
     },
     async getCanvasUrl() {
       const t0 = Date.now()
@@ -122,13 +137,13 @@ export default {
       g2d.clearRect(0, 0, canvas.width, canvas.height)
 
       const palettes = this.palettes.map((palette) => palette.colors)
-      const srcPalettes = this.currentItem.palettes
+      const srcPalettes = this.currentItem.palettes[this.editIndex]
 
       for (let i = 0; i < palettes.length; i++) {
         const palette = palettes[i]
         const image = await loadImage(this.itemImageUrl)
 
-        const imageCanvas = await replaceColor(image, srcPalettes, [palette])
+        const imageCanvas = await replaceColor(image, [srcPalettes], [palette])
         g2d.drawImage(
           imageCanvas,
           0,
@@ -153,11 +168,24 @@ export default {
 .wrapper {
   background-color: lightgoldenrodyellow;
 }
-.title {
-  height: 16px;
-  padding: 5px 10px 0px 10px;
-}
 .palette-list {
+  display: flex;
+  flex-direction: row;
+}
+.palette-tab {
+  height: 16px;
+  line-height: 16px;
+  padding: 5px 10px;
+  margin-right: 10px;
+  cursor: pointer;
+  border: transparent 2px solid;
+
+  background-color: lightgoldenrodyellow;
+}
+.palette-tab.selected {
+  border: black 2px solid;
+}
+.palette-preview {
   padding: 5px 10px;
   display: flex;
   flex-direction: row;
