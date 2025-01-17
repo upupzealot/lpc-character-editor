@@ -13,10 +13,10 @@
       ></div>
       <div class="setting">
         <div class="select">{{ partItem.name }}</div>
-        <div class="palette">
+        <div v-for="(palette, i) in partPalettes" :key="i" class="palette">
           <div
-            v-for="(color, i) in partPalette.colors"
-            :key="i"
+            v-for="(color, j) in palette.colors"
+            :key="j"
             class="color-box"
             :style="{
               backgroundColor: `rgba(${color[0]},${color[1]},${color[2]},${color[3] / 255})`,
@@ -74,8 +74,9 @@ export default {
     partItem() {
       return this.selectedItems[this.partKey]
     },
-    partPalette() {
-      return this.paletteMap[this.selections[this.partKey].palette]
+    partPalettes() {
+      const paletteKeys = this.selections[this.partKey].palettes
+      return paletteKeys.map((paletteKey) => this.paletteMap[paletteKey])
     },
   },
   methods: {

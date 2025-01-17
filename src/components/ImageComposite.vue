@@ -50,10 +50,11 @@ export default {
         const partKey = partKeys[i]
         const img = imgMap[partKey]
         if (img) {
-          const srcPalette = this.selectedItems[partKey].palette
-          const dstPalatte =
-            this.paletteMap[this.selections[partKey].palette].colors
-          const bodyCanvas = await replaceColor(img, srcPalette, dstPalatte)
+          const srcPalettes = this.selectedItems[partKey].palettes
+          const dstPalattes = this.selections[partKey].palettes.map(
+            (paletteKey) => this.paletteMap[paletteKey].colors,
+          )
+          const bodyCanvas = await replaceColor(img, srcPalettes, dstPalattes)
           this.composite.g2d().drawImage(bodyCanvas, 0, 0)
         }
       }

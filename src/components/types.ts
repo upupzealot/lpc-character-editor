@@ -4,7 +4,7 @@ export type Item = {
   key: string
   name: string
   image: string
-  palette: Color[]
+  palettes: Color[][]
 }
 
 export type Palette = {

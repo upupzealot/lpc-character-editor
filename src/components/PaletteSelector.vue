@@ -1,12 +1,14 @@
 <template>
   <div class="wrapper">
-    <div class="title">Palette</div>
+    <div v-for="(palette, i) in currentItem.palettes" :key="i" class="title">
+      Palette {{ i + 1 }}:
+    </div>
     <div class="palette-list">
       <div
         v-for="(palette, i) in palettes"
         :key="palette.name"
         :class="
-          palette.key === selections[currentPartKey].palette
+          palette.key === selections[currentPartKey].palettes[0]
             ? ['palette-item', 'selected']
             : ['palette-item']
         "
@@ -110,7 +112,7 @@ export default {
   },
   methods: {
     selectPalette(palette: Palette) {
-      this.selections[this.currentPartKey].palette = palette.key
+      this.selections[this.currentPartKey].palettes = [palette.key]
     },
     async getCanvasUrl() {
       const t0 = Date.now()
@@ -119,14 +121,14 @@ export default {
       const g2d = this.ctx.g2d() as CanvasRenderingContext2D
       g2d.clearRect(0, 0, canvas.width, canvas.height)
 
-      const palettes = this.palettes
-      const srcPalette = this.currentItem.palette
+      const palettes = this.palettes.map((palette) => palette.colors)
+      const srcPalettes = this.currentItem.palettes
 
       for (let i = 0; i < palettes.length; i++) {
-        const palette = palettes[i].colors
+        const palette = palettes[i]
         const image = await loadImage(this.itemImageUrl)
 
-        const imageCanvas = await replaceColor(image, srcPalette, palette)
+        const imageCanvas = await replaceColor(image, srcPalettes, [palette])
         g2d.drawImage(
           imageCanvas,
           0,

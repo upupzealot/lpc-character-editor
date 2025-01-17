@@ -84,20 +84,20 @@ export const useEditerStore = defineStore('editor', {
       selections: {
         body: {
           key: 'body-1',
-          palette: 'faece7;f9d5ba;e4a47c;cc8665;99423c;2a1722',
+          palettes: ['faece7;f9d5ba;e4a47c;cc8665;99423c;2a1722'],
         },
         hair: {
           key: 'hair-1',
-          palette: 'ad844f;946b44;75502d;61482c;40361d;2b2511',
+          palettes: ['ad844f;946b44;75502d;61482c;40361d;2b2511'],
         },
         shirt: {
           key: 'shirt-1',
-          palette: 'cf6f30;b54936;95381c;7b2008;6a1d16;3e111a',
+          palettes: ['cf6f30;b54936;95381c;7b2008;6a1d16;3e111a'],
         },
       } as {
         [k: string]: {
           key: string
-          palette: string
+          palettes: string[]
         }
       },
     }

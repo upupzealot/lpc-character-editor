@@ -16,8 +16,8 @@ export async function loadImage(src: string): Promise<HTMLImageElement> {
 
 export async function replaceColor(
   image: HTMLImageElement,
-  srcPalette: Color[],
-  dstPalette: Color[],
+  srcPalettes: Color[][],
+  dstPalettes: Color[][],
 ) {
   const width = image.naturalWidth
   const height = image.naturalHeight
@@ -28,11 +28,14 @@ export async function replaceColor(
   const imageData = g2d.getImageData(0, 0, width, height)
   const { data } = imageData
 
+  const srcColors = srcPalettes.flat()
+  const dstColors = dstPalettes.flat()
   for (let x = 0; x < data.length; x += 4) {
     if (!data[x + 3]) continue
-    for (let n = 0; n < srcPalette.length; n++) {
-      const srcColor = srcPalette[n]
-      const dstColor = dstPalette[n]
+    for (let n = 0; n < srcColors.length; n++) {
+      if (n >= dstColors.length) continue
+      const srcColor = srcColors[n]
+      const dstColor = dstColors[n]
       if (
         data[x] === srcColor[0] &&
         data[x + 1] === srcColor[1] &&
@@ -41,6 +44,7 @@ export async function replaceColor(
         data[x] = dstColor[0]
         data[x + 1] = dstColor[1]
         data[x + 2] = dstColor[2]
+        data[x + 3] = dstColor[3]
         break
       }
     }
