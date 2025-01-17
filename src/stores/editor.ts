@@ -13,9 +13,11 @@ const texture = Texture.from(canvas)
 import type { Item, Palette } from '@/components/types'
 import bodyItems from '@/assets/item-data/body.ts'
 import hairItems from '@/assets/item-data/hair.ts'
+import shirtItems from '@/assets/item-data/shirt'
 const itemListGroup = {
   body: bodyItems,
   hair: hairItems,
+  shirt: shirtItems,
 } as unknown as {
   [k: string]: Item[]
 }
@@ -88,6 +90,11 @@ export const useEditerStore = defineStore('editor', {
           key: 'hair-1',
           palette:
             '173,132,79,255;148,107,68,255;117,80,45,255;97,72,44,255;64,54,29,255;43,37,17,255',
+        },
+        shirt: {
+          key: 'shirt-1',
+          palette:
+            '207,111,48,255;181,73,54,255;149,56,28,255;123,32,8,255;106,29,22,255;62,17,26,255',
         },
       } as {
         [k: string]: {

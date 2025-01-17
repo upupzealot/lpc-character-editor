@@ -65,7 +65,7 @@ export default {
     this.ctx.g2d = () => {
       return g2d
     }
-    document.body.prepend(canvas)
+    // document.body.prepend(canvas)
 
     await this.getCanvasUrl()
   },

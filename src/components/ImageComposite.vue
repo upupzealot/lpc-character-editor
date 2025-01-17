@@ -26,41 +26,36 @@ export default {
       const canvas = this.composite.canvas()
       this.composite.g2d().clearRect(0, 0, canvas.width, canvas.height)
 
-      let bodyImg = null
-      let hairImg = null
-      const bodySrc = this.selectedItems.body.image
-      const hairSrc = this.selectedItems.hair.image
-
-      if (bodySrc) {
-        bodyImg = await loadImage(
-          `images/body/${this.selectedItems.body.image}`,
-        )
-      }
-      if (hairSrc) {
-        hairImg = await loadImage(
-          `images/hair/${this.selectedItems.hair.image}`,
-        )
-      }
-
-      const lastImg = bodyImg || hairImg
+      const partKeys = ['body', 'hair', 'shirt']
+      const imgMap = {} as { [k: string]: null | HTMLImageElement }
+      let lastImg = null as null | HTMLImageElement
+      await Promise.all(
+        partKeys.map(async (partKey) => {
+          let img = null as null | HTMLImageElement
+          const imgSrc = this.selectedItems[partKey].image
+          if (imgSrc) {
+            img = await loadImage(
+              `images/${partKey}/${this.selectedItems[partKey].image}`,
+            )
+          }
+          imgMap[partKey] = img
+          lastImg = lastImg || img
+        }),
+      )
       if (lastImg) {
         this.composite.canvas().width = lastImg.naturalWidth
         this.composite.canvas().height = lastImg.naturalHeight
       }
-
-      if (bodyImg) {
-        const srcPalette = this.selectedItems.body.palette
-        const dstPalatte =
-          this.paletteMap[this.selections['body'].palette].palette
-        const bodyCanvas = await replaceColor(bodyImg, srcPalette, dstPalatte)
-        this.composite.g2d().drawImage(bodyCanvas, 0, 0)
-      }
-      if (hairImg) {
-        const srcPalette = this.selectedItems.hair.palette
-        const dstPalatte =
-          this.paletteMap[this.selections['hair'].palette].palette
-        const hairCanvas = await replaceColor(hairImg, srcPalette, dstPalatte)
-        this.composite.g2d().drawImage(hairCanvas, 0, 0)
+      for (let i = 0; i < partKeys.length; i++) {
+        const partKey = partKeys[i]
+        const img = imgMap[partKey]
+        if (img) {
+          const srcPalette = this.selectedItems[partKey].palette
+          const dstPalatte =
+            this.paletteMap[this.selections[partKey].palette].palette
+          const bodyCanvas = await replaceColor(img, srcPalette, dstPalatte)
+          this.composite.g2d().drawImage(bodyCanvas, 0, 0)
+        }
       }
 
       this.composite.texture().source.update()
