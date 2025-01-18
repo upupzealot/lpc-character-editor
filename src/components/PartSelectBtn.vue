@@ -1,5 +1,5 @@
 <template>
-  <div class="button" @click="focusPart">
+  <div class="button" @click="openPart">
     <div class="title">{{ partKey }}</div>
     <div class="content">
       <div
@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { mapState, mapWritableState } from 'pinia'
+import { mapState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
 
 export default {
@@ -48,8 +48,14 @@ export default {
     },
   },
   computed: {
-    ...mapState(useEditerStore, ['selectedItems', 'selections', 'paletteMap']),
-    ...mapWritableState(useEditerStore, ['editPart']),
+    ...mapState(useEditerStore, [
+      'state',
+      'opPartItems',
+      'opItemKey',
+      'selectedItems',
+      'selections',
+      'paletteMap',
+    ]),
     iconsize() {
       if (this.size <= 32) {
         return 32
@@ -80,8 +86,9 @@ export default {
     },
   },
   methods: {
-    focusPart() {
-      this.editPart = this.partKey
+    openPart() {
+      this.state.opPart = this.partKey
+      this.state.opItem = this.selectedItems[this.partKey].key
     },
   },
 }

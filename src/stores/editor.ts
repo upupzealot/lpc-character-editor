@@ -1,73 +1,12 @@
 import { defineStore } from 'pinia'
-import { Texture, TextureSource } from 'pixi.js'
 
-const canvas = document.createElement('canvas')
-canvas.style.imageRendering = 'pixelated'
-// document.body.prepend(canvas)
-const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
-
-// https://github.com/loksland/pixel-art-game-test
-TextureSource.defaultOptions.scaleMode = 'nearest'
-const texture = Texture.from(canvas)
-
-import type { Item, Palette } from '@/components/types'
-import bodyItems from '@/assets/item-data/body.ts'
-import hairItems from '@/assets/item-data/hair.ts'
-import shirtItems from '@/assets/item-data/shirt'
-const itemListGroup = {
-  body: bodyItems,
-  hair: hairItems,
-  shirt: shirtItems,
-} as unknown as {
-  [k: string]: Item[]
-}
-const itemMapGroup = {} as {
-  [k: string]: {
-    [k: string]: Item
-  }
-}
-for (const part in itemListGroup) {
-  itemListGroup[part].forEach((item) => {
-    if (!itemMapGroup[part]) {
-      itemMapGroup[part] = {}
-    }
-    itemMapGroup[part][item.key] = item
-  })
-}
-
-// PaletteData comes from:
-// https://github.com/vitruvianstudio/vitruvian-web/blob/main/src/data/colors.json
-import PaletteData from '@/components/PaletteData.json'
-import { encodeColor } from '@/util/GraphicUtil'
-const paletteList = (PaletteData as Palette[]).map((palette) => {
-  const key = palette.colors.map((color) => encodeColor(color)).join(';')
-  return {
-    ...palette,
-    key,
-  }
-}) as Palette[]
-const paletteMap = {} as { [k: string]: Palette }
-paletteList.forEach((palette) => {
-  paletteMap[palette.key] = palette
-})
+import type { Color, Item } from '@/components/types'
+import { itemListGroup, itemMapGroup } from '@/stores/itemData'
+import { paletteList, paletteMap } from '@/stores/paletteData'
 
 export const useEditerStore = defineStore('editor', {
   state: () => {
     return {
-      composite: {
-        canvas: () => {
-          return canvas
-        },
-        g2d: () => {
-          return g2d
-        },
-        texture: () => {
-          return texture
-        },
-      },
-
-      updatedAt: Date.now(),
-
       size: 32,
       scale: 2,
 
@@ -80,7 +19,14 @@ export const useEditerStore = defineStore('editor', {
       paletteList,
       paletteMap,
 
-      editPart: '',
+      /** 编辑器浏览状态 */
+      state: {
+        opPart: '',
+        opItem: '',
+        opPaletteIndex: 0,
+        // palettes: [] as string[],
+      },
+      /** 编辑器选择状态 */
       selections: {
         body: {
           key: 'body-1',
@@ -103,6 +49,26 @@ export const useEditerStore = defineStore('editor', {
     }
   },
   getters: {
+    /** 打开的部位 Key */
+    opPartKey(): string {
+      return this.state.opPart
+    },
+    /** 打开部位的项目列表 */
+    opPartItems(): Item[] {
+      return this.itemListGroup[this.opPartKey]
+    },
+    /** 打开的项目Key */
+    opItemKey(): string {
+      return this.state.opItem
+    },
+    /** 打开的项目 */
+    opItem(): Item {
+      return this.itemMapGroup[this.opPartKey][this.opItemKey]
+    },
+    /** 打开的项目的色板 */
+    opItemPalettes(): Color[][] {
+      return this.opItem.palettes
+    },
     /** 每个部位当前选中的项目 */
     selectedItems() {
       const itemsMap = {} as {
@@ -114,6 +80,14 @@ export const useEditerStore = defineStore('editor', {
         itemsMap[part] = item
       }
       return itemsMap
+    },
+    /** 打开的项目当前选中的色板索引 */
+    selectedPaletteIndex(): number {
+      return this.state.opPaletteIndex
+    },
+    /** 打开的项目当前选中的色板 */
+    selectedPalette(): Color[] {
+      return this.opItemPalettes[this.selectedPaletteIndex]
     },
   },
 })

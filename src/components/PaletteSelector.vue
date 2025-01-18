@@ -2,9 +2,13 @@
   <div class="wrapper">
     <div class="palette-list">
       <div
-        v-for="(palette, i) in currentItem.palettes"
+        v-for="(palette, i) in opItem.palettes"
         :key="i"
-        :class="i === editIndex ? ['palette-tab', 'selected'] : ['palette-tab']"
+        :class="
+          i === selectedPaletteIndex
+            ? ['palette-tab', 'selected']
+            : ['palette-tab']
+        "
         @click="selectPaletteIndex(i)"
       >
         Palette {{ i + 1 }}:
@@ -15,7 +19,7 @@
         v-for="(palette, i) in palettes"
         :key="palette.name"
         :class="
-          palette.key === selections[currentPartKey].palettes[editIndex]
+          palette.key === selections[opPartKey].palettes[selectedPaletteIndex]
             ? ['palette-item', 'selected']
             : ['palette-item']
         "
@@ -25,7 +29,7 @@
           backgroundImage: canvasUrl,
           backgroundPositionX: `-${iconsize * i}px`,
         }"
-        @click="selectPalette(editIndex, palette)"
+        @click="selectPalette(selectedPaletteIndex, palette)"
       >
         {{ palette.name }}
       </div>
@@ -57,7 +61,6 @@ export default {
   data() {
     return {
       canvasUrl: 'none',
-      editIndex: 0,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ctx: {} as any,
     }
@@ -84,9 +87,13 @@ export default {
       'itemMapGroup',
       'paletteList',
       'paletteMap',
-      'editPart',
+      'state',
+      'opPartKey',
+      'opItem',
+      'opItemPalettes',
+      'selectedPaletteIndex',
+      'selectedPalette',
       'selections',
-      'selectedItems',
     ]),
     iconsize() {
       if (this.size <= 64) {
@@ -95,15 +102,9 @@ export default {
         return this.size
       }
     },
-    currentPartKey() {
-      return this.editPart
-    },
-    currentItemKey() {
-      return this.selections[this.currentPartKey].key
-    },
-    currentItem() {
-      return this.selectedItems[this.currentPartKey]
-    },
+    // paletteIndex() {
+    //   return this.selectedPaletteIndex
+    // },
     palettes() {
       return this.paletteList.filter((p, i) => {
         return i % 20 === 0
@@ -116,7 +117,7 @@ export default {
         await this.getCanvasUrl()
       }
     },
-    async editIndex() {
+    async selectedPaletteIndex() {
       if (this.itemImageUrl) {
         await this.getCanvasUrl()
       }
@@ -124,10 +125,10 @@ export default {
   },
   methods: {
     selectPaletteIndex(index: number) {
-      this.editIndex = index
+      this.state.opPaletteIndex = index
     },
     selectPalette(paletteIndex: number, palette: Palette) {
-      this.selections[this.currentPartKey].palettes[paletteIndex] = palette.key
+      this.selections[this.opPartKey].palettes[paletteIndex] = palette.key
     },
     async getCanvasUrl() {
       const t0 = Date.now()
@@ -137,7 +138,7 @@ export default {
       g2d.clearRect(0, 0, canvas.width, canvas.height)
 
       const palettes = this.palettes.map((palette) => palette.colors)
-      const srcPalettes = this.currentItem.palettes[this.editIndex]
+      const srcPalettes = this.selectedPalette
 
       for (let i = 0; i < palettes.length; i++) {
         const palette = palettes[i]

@@ -1,11 +1,11 @@
 <template>
-  <div class="wrapper" v-if="currentPartKey">
-    <div class="title">{{ currentPartKey }}: {{ currentItem.name }}</div>
+  <div class="wrapper" v-if="opPartKey">
+    <div class="title">{{ opPartKey }}: {{ opItem.name }}</div>
     <div class="item-list">
       <div
-        v-for="(item, i) in partItems"
+        v-for="(item, i) in opPartItems"
         :key="item.key"
-        :class="item.key === currentItemKey ? ['item', 'selected'] : ['item']"
+        :class="item.key === opItemKey ? ['item', 'selected'] : ['item']"
         :style="{
           ...styleObj,
           backgroundPositionX: `-${iconsize * i}px`,
@@ -16,7 +16,7 @@
       </div>
     </div>
     <PaletteSelector
-      :v-show="currentItemKey !== 'none'"
+      :v-show="opItemKey !== 'none'"
       :size="size"
       :scale="scale"
       :itemImageUrl="itemImageUrl"
@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { mapState, mapWritableState } from 'pinia'
+import { mapState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
 import { encodeColor, loadImage } from '@/util/GraphicUtil'
 import PaletteSelector from '@/components/PaletteSelector.vue'
@@ -54,31 +54,20 @@ export default {
     ...mapState(useEditerStore, [
       'itemListGroup',
       'itemMapGroup',
+      'state',
+      'opPartKey',
+      'opPartItems',
+      'opItemKey',
+      'opItem',
       'selections',
       'selectedItems',
     ]),
-    ...mapWritableState(useEditerStore, ['editPart']),
     iconsize() {
       if (this.size <= 64) {
         return 64
       } else {
         return this.size
       }
-    },
-    partItems() {
-      return this.itemListGroup[this.editPart]
-    },
-    currentPartKey() {
-      return this.editPart
-    },
-    currentItemKey() {
-      return this.selections[this.currentPartKey].key
-    },
-    currentItem() {
-      return this.selectedItems[this.currentPartKey]
-    },
-    currentItemPalettes() {
-      return this.currentItem.palettes
     },
     styleObj() {
       return {
@@ -89,17 +78,17 @@ export default {
     },
     itemImageUrl() {
       let imageUrl = ''
-      if (this.currentItem.image) {
-        imageUrl = `/images/${this.currentPartKey}/${this.currentItem.image}`
+      if (this.opItem.image) {
+        imageUrl = `/images/${this.opPartKey}/${this.opItem.image}`
       }
       return imageUrl
     },
   },
   watch: {
-    async currentPartKey(partKey) {
+    async opPartKey(partKey) {
       let url = this.canvasUrlMap[partKey]
       if (!url) {
-        url = await this.getCanvasUrl(this.currentPartKey)
+        url = await this.getCanvasUrl(this.opPartKey)
         this.canvasUrlMap[partKey] = url
       }
       this.canvasUrl = url
@@ -107,10 +96,10 @@ export default {
   },
   methods: {
     selectItem(Itemkey: string) {
-      ;(this.$refs['paletteSelector'] as typeof PaletteSelector).editIndex = 0
-      const newItem = this.itemMapGroup[this.currentPartKey][Itemkey]
+      this.state.opItem = Itemkey
+      const newItem = this.itemMapGroup[this.opPartKey][Itemkey]
       if (newItem.key !== 'none') {
-        const selectedPalettes = this.selections[this.currentPartKey].palettes
+        const selectedPalettes = this.selections[this.opPartKey].palettes
         const newItemPalettes = newItem.palettes
         const palettes = [...newItemPalettes].map((palette) =>
           palette.map(encodeColor).join(';'),
@@ -123,10 +112,10 @@ export default {
           palettes[i] = selectedPalettes[i]
         }
 
-        this.selections[this.editPart].palettes = palettes
+        this.selections[this.opPartKey].palettes = palettes
       }
 
-      this.selections[this.editPart].key = Itemkey
+      this.selections[this.opPartKey].key = Itemkey
     },
     async getCanvasUrl(partKey: string) {
       const items = this.itemListGroup[partKey]

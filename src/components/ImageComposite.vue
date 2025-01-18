@@ -1,17 +1,14 @@
 <script lang="ts">
 import { mapState, mapWritableState } from 'pinia'
+import { useGraphicsStore } from '@/stores/graphics'
 import { useEditerStore } from '@/stores/editor'
 import { loadImage, replaceColor } from '@/util/GraphicUtil'
 
 export default {
   computed: {
-    ...mapState(useEditerStore, [
-      'composite',
-      'selections',
-      'selectedItems',
-      'paletteMap',
-    ]),
-    ...mapWritableState(useEditerStore, ['updatedAt']),
+    ...mapState(useGraphicsStore, ['composite']),
+    ...mapWritableState(useGraphicsStore, ['updatedAt']),
+    ...mapState(useEditerStore, ['selections', 'selectedItems', 'paletteMap']),
   },
   watch: {
     selections: {

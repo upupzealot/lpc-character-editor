@@ -1,6 +1,6 @@
 <script lang="ts">
 import { mapWritableState } from 'pinia'
-import { useEditerStore } from '@/stores/editor'
+import { useGraphicsStore } from '@/stores/graphics'
 import { Application } from 'pixi.js'
 import CharactorActionSheet from '@/components/CharactorActionSheet'
 
@@ -26,7 +26,7 @@ export default {
     }
   },
   computed: {
-    ...mapWritableState(useEditerStore, ['composite', 'updatedAt']),
+    ...mapWritableState(useGraphicsStore, ['composite']),
     gridSize() {
       return this.size * this.scale
     },
