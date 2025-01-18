@@ -34,7 +34,7 @@ export const useEditerStore = defineStore('editor', {
         },
         hair: {
           key: 'hair-1',
-          palettes: ['ad844f;946b44;75502d;61482c;40361d;2b2511'],
+          palettes: ['946b44;75502d;61482c;40361d;2b2511;1a1213'],
         },
         shirt: {
           key: 'shirt-1',
