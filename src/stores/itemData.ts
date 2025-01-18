@@ -1,11 +1,11 @@
 import type { Item } from '@/components/types'
 import bodyItems from '@/assets/item-data/body'
 import hairItems from '@/assets/item-data/hair'
-import shirtItems from '@/assets/item-data/shirt'
+import upperItems from '@/assets/item-data/upper'
 export const itemListGroup = {
   body: bodyItems,
   hair: hairItems,
-  shirt: shirtItems,
+  upper: upperItems,
 } as unknown as {
   [k: string]: Item[]
 }
