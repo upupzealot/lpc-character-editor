@@ -40,6 +40,10 @@ export const useEditerStore = defineStore('editor', {
           key: 'upper-1',
           palettes: ['cf6f30;b54936;95381c;7b2008;6a1d16;3e111a'],
         },
+        lower: {
+          key: 'lower-1',
+          palettes: ['4273c9;324f9a;293982;1d2560;181842;101025'],
+        },
       } as {
         [k: string]: {
           key: string

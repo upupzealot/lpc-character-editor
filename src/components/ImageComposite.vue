@@ -22,7 +22,7 @@ export default {
       const canvas = this.composite.canvas()
       this.composite.g2d().clearRect(0, 0, canvas.width, canvas.height)
 
-      const partKeys = ['body', 'hair', 'upper']
+      const partKeys = ['body', 'lower', 'upper', 'hair']
       const imgMap = {} as { [k: string]: null | HTMLImageElement }
       let lastImg = null as null | HTMLImageElement
       await Promise.all(

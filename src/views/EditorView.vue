@@ -3,6 +3,7 @@
     <PartSelectBtn :part-key="'body'" :size="32" :scale="2"></PartSelectBtn>
     <PartSelectBtn :part-key="'hair'" :size="32" :scale="2"></PartSelectBtn>
     <PartSelectBtn :part-key="'upper'" :size="32" :scale="2"></PartSelectBtn>
+    <PartSelectBtn :part-key="'lower'" :size="32" :scale="2"></PartSelectBtn>
   </div>
   <div class="center">
     <CharacterPreview></CharacterPreview>
