@@ -1,5 +1,5 @@
 <template>
-  <div class="button" @click="openPart">
+  <div class="button" @click="selectPart(partKey)">
     <div class="title">{{ partKey }}</div>
     <div class="content">
       <div
@@ -86,9 +86,10 @@ export default {
     },
   },
   methods: {
-    openPart() {
-      this.state.opPart = this.partKey
-      this.state.opItem = this.selectedItems[this.partKey].key
+    selectPart(partKey: string) {
+      this.state.opPart = partKey
+      this.state.opItem = this.selectedItems[partKey].key
+      this.state.opPaletteIndex = 0
     },
   },
 }

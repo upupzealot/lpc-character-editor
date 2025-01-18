@@ -1,5 +1,5 @@
 <script lang="ts">
-import { mapState, mapWritableState } from 'pinia'
+import { mapState } from 'pinia'
 import { useGraphicsStore } from '@/stores/graphics'
 import { useEditerStore } from '@/stores/editor'
 import { loadImage, replaceColor } from '@/util/GraphicUtil'
@@ -7,7 +7,6 @@ import { loadImage, replaceColor } from '@/util/GraphicUtil'
 export default {
   computed: {
     ...mapState(useGraphicsStore, ['composite']),
-    ...mapWritableState(useGraphicsStore, ['updatedAt']),
     ...mapState(useEditerStore, ['selections', 'selectedItems', 'paletteMap']),
   },
   watch: {
@@ -57,7 +56,6 @@ export default {
       }
 
       this.composite.texture().source.update()
-      this.updatedAt = Date.now()
     },
   },
 }
