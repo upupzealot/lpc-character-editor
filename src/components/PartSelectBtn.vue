@@ -48,7 +48,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(useEditerStore, ['state', 'selectedItems', 'selections']),
+    ...mapState(useEditerStore, ['state', 'selections', 'selectedItems']),
     iconsize() {
       if (this.size <= 32) {
         return 32

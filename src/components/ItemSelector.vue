@@ -28,7 +28,7 @@
 <script lang="ts">
 import { mapState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
-import { encodeColor, loadImage } from '@/util/GraphicUtil'
+import { loadImage } from '@/util/GraphicUtil'
 import PaletteSelector from '@/components/PaletteSelector.vue'
 
 export default {
@@ -60,6 +60,7 @@ export default {
       'opItemKey',
       'opItem',
       'selections',
+      'selectedPaletteIndex',
     ]),
     iconsize() {
       if (this.size <= 64) {
@@ -99,13 +100,8 @@ export default {
       const newItem = this.itemMapGroup[this.opPartKey][itemkey]
       if (newItem.key !== 'none') {
         const oldPalettes = this.selections[this.opPartKey].palettes
-        const newPaletteColors = newItem.palettes
-        const resPalettes = [...newPaletteColors].map((palette) => {
-          return {
-            key: palette.map(encodeColor).join(';'),
-            colors: palette,
-          }
-        })
+        const newPalettes = newItem.palettes
+        const resPalettes = [...newPalettes]
         for (let i = 0; i < resPalettes.length && i < oldPalettes.length; i++) {
           resPalettes[i] = oldPalettes[i]
         }
@@ -113,6 +109,9 @@ export default {
         this.selections[this.opPartKey].palettes = resPalettes
       }
 
+      if (this.selectedPaletteIndex >= newItem.palettes.length) {
+        this.state.opPaletteIndex = 0
+      }
       this.selections[this.opPartKey].itemKey = itemkey
     },
     async getCanvasUrl(partKey: string) {

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-import type { Color, Item, Palette } from '@/components/types'
+import type { Item, Palette } from '@/components/types'
 import { itemListGroup, itemMapGroup } from '@/stores/itemData'
 import { paletteList, paletteMap } from '@/stores/paletteData'
 
@@ -24,7 +24,6 @@ export const useEditerStore = defineStore('editor', {
         opPart: '',
         opItem: '',
         opPaletteIndex: 0,
-        // palettes: [] as string[],
       },
       /** 编辑器选择状态 */
       selections: {
@@ -70,7 +69,7 @@ export const useEditerStore = defineStore('editor', {
       return this.itemMapGroup[this.opPartKey][this.opItemKey]
     },
     /** 打开的项目的色板 */
-    opItemPalettes(): Color[][] {
+    opItemPalettes(): Palette[] {
       return this.opItem.palettes
     },
     /** 每个部位当前选中的项目 */
@@ -90,8 +89,8 @@ export const useEditerStore = defineStore('editor', {
       return this.state.opPaletteIndex
     },
     /** 打开的项目当前选中的色板 */
-    selectedPalette(): Color[] {
-      return this.opItemPalettes[this.selectedPaletteIndex]
+    selectedPalettes(): Palette[] {
+      return this.selections[this.opPartKey].palettes
     },
   },
 })

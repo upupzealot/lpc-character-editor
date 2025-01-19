@@ -1,13 +1,37 @@
-import type { Item } from '@/components/types'
+import type { Color, Item } from '@/components/types'
 import bodyItems from '@/assets/item-data/body'
 import hairItems from '@/assets/item-data/hair'
 import upperItems from '@/assets/item-data/upper'
 import lowerItems from '@/assets/item-data/lower'
+import { encodeColor } from '@/util/GraphicUtil'
+
+type RawItemData = {
+  key: string
+  name: string
+  image: string
+  palettes: {
+    colors: Color[]
+  }[]
+}
+
+function initItems(items: RawItemData[]) {
+  return items.map((item) => {
+    return {
+      ...item,
+      palettes: item.palettes.map((palette) => {
+        return {
+          key: palette.colors.map(encodeColor).join(';'),
+          colors: palette.colors,
+        }
+      }),
+    }
+  }) as Item[]
+}
 export const itemListGroup = {
-  body: bodyItems,
-  hair: hairItems,
-  upper: upperItems,
-  lower: lowerItems,
+  body: initItems(bodyItems as RawItemData[]),
+  hair: initItems(hairItems as RawItemData[]),
+  upper: initItems(upperItems as RawItemData[]),
+  lower: initItems(lowerItems as RawItemData[]),
 } as unknown as {
   [k: string]: Item[]
 }

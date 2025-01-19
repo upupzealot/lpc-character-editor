@@ -89,9 +89,10 @@ export default {
       'state',
       'opPartKey',
       'opItem',
-      'selectedPaletteIndex',
-      'selectedPalette',
+      'opItemPalettes',
       'selections',
+      'selectedPaletteIndex',
+      'selectedPalettes',
     ]),
     iconsize() {
       if (this.size <= 64) {
@@ -132,14 +133,21 @@ export default {
       const g2d = this.ctx.g2d() as CanvasRenderingContext2D
       g2d.clearRect(0, 0, canvas.width, canvas.height)
 
-      const palettes = this.palettes.map((palette) => palette.colors)
-      const srcPalettes = this.selectedPalette
+      // 当前项目的原始色板
+      const srcPalettes = this.opItemPalettes
+      const srcColors = srcPalettes.map((p) => p.colors)
+      // 当前项目选中的色板
+      const selectedPalettes = this.selectedPalettes
+      // 待预览的色板列表
+      const dstPalettes = this.palettes as Palette[]
+      for (let i = 0; i < dstPalettes.length; i++) {
+        const previewPalettes = selectedPalettes.map((palette, index) => {
+          return index === this.selectedPaletteIndex ? dstPalettes[i] : palette
+        })
 
-      for (let i = 0; i < palettes.length; i++) {
-        const palette = palettes[i]
+        const previewColors = previewPalettes.map((p) => p.colors)
         const image = await loadImage(this.itemImageUrl)
-
-        const imageCanvas = await replaceColor(image, [srcPalettes], [palette])
+        const imageCanvas = await replaceColor(image, srcColors, previewColors)
         g2d.drawImage(
           imageCanvas,
           0,
