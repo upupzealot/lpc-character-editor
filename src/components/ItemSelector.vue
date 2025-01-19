@@ -60,7 +60,6 @@ export default {
       'opItemKey',
       'opItem',
       'selections',
-      'selectedItems',
     ]),
     iconsize() {
       if (this.size <= 64) {
@@ -95,27 +94,26 @@ export default {
     },
   },
   methods: {
-    selectItem(Itemkey: string) {
-      this.state.opItem = Itemkey
-      const newItem = this.itemMapGroup[this.opPartKey][Itemkey]
+    selectItem(itemkey: string) {
+      this.state.opItem = itemkey
+      const newItem = this.itemMapGroup[this.opPartKey][itemkey]
       if (newItem.key !== 'none') {
-        const selectedPalettes = this.selections[this.opPartKey].palettes
-        const newItemPalettes = newItem.palettes
-        const palettes = [...newItemPalettes].map((palette) =>
-          palette.map(encodeColor).join(';'),
-        )
-        for (
-          let i = 0;
-          i < newItemPalettes.length && i < selectedPalettes.length;
-          i++
-        ) {
-          palettes[i] = selectedPalettes[i]
+        const oldPalettes = this.selections[this.opPartKey].palettes
+        const newPaletteColors = newItem.palettes
+        const resPalettes = [...newPaletteColors].map((palette) => {
+          return {
+            key: palette.map(encodeColor).join(';'),
+            colors: palette,
+          }
+        })
+        for (let i = 0; i < resPalettes.length && i < oldPalettes.length; i++) {
+          resPalettes[i] = oldPalettes[i]
         }
 
-        this.selections[this.opPartKey].palettes = palettes
+        this.selections[this.opPartKey].palettes = resPalettes
       }
 
-      this.selections[this.opPartKey].key = Itemkey
+      this.selections[this.opPartKey].itemKey = itemkey
     },
     async getCanvasUrl(partKey: string) {
       const items = this.itemListGroup[partKey]

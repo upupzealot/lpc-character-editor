@@ -9,7 +9,7 @@ export type Item = {
 
 export type Palette = {
   key: string
-  name: string
+  name?: string
   colors: Color[]
-  materials: string[]
+  materials?: string[]
 }

@@ -54,8 +54,8 @@ export async function replaceColor(
   return canvas
 }
 
+const code = '0123456789abcdef'.split('')
 function hexdec(value: number) {
-  const code = '0123456789abcdef'.split('')
   return `${code[Math.floor(value / 16)]}${code[value % 16]}`
 }
 export function encodeColor(color: Color) {
@@ -68,4 +68,20 @@ export function encodeColor(color: Color) {
       }
     })
     .join('')
+}
+
+export function decodeColor(hexdecStr: string): Color {
+  if (!(hexdecStr.length === 6 || hexdecStr.length === 8)) {
+    throw new Error('Wrong color code')
+  }
+
+  const chars = hexdecStr.split('')
+  const r = code.indexOf(chars[0]) * 16 + code.indexOf(chars[1])
+  const g = code.indexOf(chars[2]) * 16 + code.indexOf(chars[3])
+  const b = code.indexOf(chars[4]) * 16 + code.indexOf(chars[5])
+  let a = 255
+  if (hexdecStr.length === 8) {
+    a = code.indexOf(chars[6]) * 16 + code.indexOf(chars[7])
+  }
+  return [r, g, b, a]
 }

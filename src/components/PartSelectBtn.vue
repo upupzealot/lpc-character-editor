@@ -13,7 +13,7 @@
       ></div>
       <div class="setting">
         <div class="select">{{ partItem.name }}</div>
-        <div v-for="(palette, i) in partPalettes" :key="i" class="palette">
+        <div v-for="(palette, i) in partPaletteKeys" :key="i" class="palette">
           <div
             v-for="(color, j) in palette.colors"
             :key="j"
@@ -48,14 +48,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(useEditerStore, [
-      'state',
-      'opPartItems',
-      'opItemKey',
-      'selectedItems',
-      'selections',
-      'paletteMap',
-    ]),
+    ...mapState(useEditerStore, ['state', 'selectedItems', 'selections']),
     iconsize() {
       if (this.size <= 32) {
         return 32
@@ -80,9 +73,8 @@ export default {
     partItem() {
       return this.selectedItems[this.partKey]
     },
-    partPalettes() {
-      const paletteKeys = this.selections[this.partKey].palettes
-      return paletteKeys.map((paletteKey) => this.paletteMap[paletteKey])
+    partPaletteKeys() {
+      return this.selections[this.partKey].palettes
     },
   },
   methods: {

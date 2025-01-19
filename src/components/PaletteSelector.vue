@@ -19,7 +19,8 @@
         v-for="(palette, i) in palettes"
         :key="palette.name"
         :class="
-          palette.key === selections[opPartKey].palettes[selectedPaletteIndex]
+          palette.key ===
+          selections[opPartKey].palettes[selectedPaletteIndex].key
             ? ['palette-item', 'selected']
             : ['palette-item']
         "
@@ -84,13 +85,10 @@ export default {
   },
   computed: {
     ...mapState(useEditerStore, [
-      'itemMapGroup',
       'paletteList',
-      'paletteMap',
       'state',
       'opPartKey',
       'opItem',
-      'opItemPalettes',
       'selectedPaletteIndex',
       'selectedPalette',
       'selections',
@@ -102,9 +100,6 @@ export default {
         return this.size
       }
     },
-    // paletteIndex() {
-    //   return this.selectedPaletteIndex
-    // },
     palettes() {
       return this.paletteList.filter((p, i) => {
         return i % 20 === 0
@@ -128,7 +123,7 @@ export default {
       this.state.opPaletteIndex = index
     },
     selectPalette(paletteIndex: number, palette: Palette) {
-      this.selections[this.opPartKey].palettes[paletteIndex] = palette.key
+      this.selections[this.opPartKey].palettes[paletteIndex] = palette
     },
     async getCanvasUrl() {
       const t0 = Date.now()

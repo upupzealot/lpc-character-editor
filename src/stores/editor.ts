@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-import type { Color, Item } from '@/components/types'
+import type { Color, Item, Palette } from '@/components/types'
 import { itemListGroup, itemMapGroup } from '@/stores/itemData'
 import { paletteList, paletteMap } from '@/stores/paletteData'
 
@@ -29,25 +29,25 @@ export const useEditerStore = defineStore('editor', {
       /** 编辑器选择状态 */
       selections: {
         body: {
-          key: 'body-1',
-          palettes: ['faece7;f9d5ba;e4a47c;cc8665;99423c;2a1722'],
+          itemKey: 'body-1',
+          palettes: [paletteMap['faece7;f9d5ba;e4a47c;cc8665;99423c;2a1722']],
         },
         hair: {
-          key: 'hair-1',
-          palettes: ['946b44;75502d;61482c;40361d;2b2511;1a1213'],
+          itemKey: 'hair-1',
+          palettes: [paletteMap['946b44;75502d;61482c;40361d;2b2511;1a1213']],
         },
         upper: {
-          key: 'upper-1',
-          palettes: ['cf6f30;b54936;95381c;7b2008;6a1d16;3e111a'],
+          itemKey: 'upper-1',
+          palettes: [paletteMap['cf6f30;b54936;95381c;7b2008;6a1d16;3e111a']],
         },
         lower: {
-          key: 'lower-1',
-          palettes: ['4273c9;324f9a;293982;1d2560;181842;101025'],
+          itemKey: 'lower-1',
+          palettes: [paletteMap['4273c9;324f9a;293982;1d2560;181842;101025']],
         },
       } as {
         [k: string]: {
-          key: string
-          palettes: string[]
+          itemKey: string
+          palettes: Palette[]
         }
       },
     }
@@ -79,8 +79,8 @@ export const useEditerStore = defineStore('editor', {
         [k: string]: Item
       }
       for (const part in this.selections) {
-        const key = this.selections[part].key
-        const item = this.itemMapGroup[part][key]
+        const itemKey = this.selections[part].itemKey
+        const item = this.itemMapGroup[part][itemKey]
         itemsMap[part] = item
       }
       return itemsMap
