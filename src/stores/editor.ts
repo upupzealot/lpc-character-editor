@@ -35,6 +35,11 @@ export const useEditerStore = defineStore('editor', {
           itemKey: 'hair-1',
           palettes: [paletteMap['946b44;75502d;61482c;40361d;2b2511;1a1213']],
         },
+        eye: {
+          itemKey: 'eye-1',
+          palettes: [paletteMap['946b44;75502d;61482c;40361d;2b2511;1a1213']],
+        },
+        // ----- ----- //
         upper: {
           itemKey: 'upper-1',
           palettes: [paletteMap['cf6f30;b54936;95381c;7b2008;6a1d16;3e111a']],
