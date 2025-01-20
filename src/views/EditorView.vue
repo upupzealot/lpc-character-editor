@@ -2,13 +2,14 @@
   <div class="side-bar">
     <PartSelectBtn :part-key="'body'" :size="32" :scale="2"></PartSelectBtn>
     <PartSelectBtn :part-key="'hair'" :size="32" :scale="2"></PartSelectBtn>
-    <PartSelectBtn :part-key="'upper'" :size="32" :scale="2"></PartSelectBtn>
-    <PartSelectBtn :part-key="'lower'" :size="32" :scale="2"></PartSelectBtn>
   </div>
   <div class="center">
     <CharacterPreview></CharacterPreview>
   </div>
-  <div class="side-bar">Right</div>
+  <div class="side-bar">
+    <PartSelectBtn :part-key="'upper'" :size="32" :scale="2"></PartSelectBtn>
+    <PartSelectBtn :part-key="'lower'" :size="32" :scale="2"></PartSelectBtn>
+  </div>
 </template>
 
 <script lang="ts">
