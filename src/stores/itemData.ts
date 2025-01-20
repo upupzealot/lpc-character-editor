@@ -2,6 +2,7 @@ import type { Color, Item } from '@/components/types'
 import bodyItems from '@/assets/item-data/body'
 import hairItems from '@/assets/item-data/hair'
 import eyeItems from '@/assets/item-data/eye'
+import earItems from '@/assets/item-data/ear'
 import upperItems from '@/assets/item-data/upper'
 import lowerItems from '@/assets/item-data/lower'
 import { encodeColor } from '@/util/GraphicUtil'
@@ -32,6 +33,7 @@ export const itemListGroup = {
   body: initItems(bodyItems as RawItemData[]),
   hair: initItems(hairItems as RawItemData[]),
   eye: initItems(eyeItems as RawItemData[]),
+  ear: initItems(earItems as RawItemData[]),
   upper: initItems(upperItems as RawItemData[]),
   lower: initItems(lowerItems as RawItemData[]),
 } as unknown as {
