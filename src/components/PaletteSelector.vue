@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <div class="palette-list">
+    <div class="palette-list" style="position: relative">
       <div
         v-for="(palette, i) in opItem.palettes"
         :key="i"
@@ -12,6 +12,25 @@
         @click="selectPaletteIndex(i)"
       >
         Palette {{ i + 1 }}:
+      </div>
+      <div class="palette-setting">
+        <div
+          :class="
+            mode === 'preview'
+              ? ['palette-setting-btn', 'selected']
+              : ['palette-setting-btn']
+          "
+          @click="mode = 'preview'"
+        ></div>
+        <div
+          :class="
+            mode === 'icon'
+              ? ['palette-setting-btn', 'selected']
+              : ['palette-setting-btn']
+          "
+          :style="{ backgroundImage: `url(${iconUrl})` }"
+          @click="mode = 'icon'"
+        ></div>
       </div>
     </div>
     <div class="palette-preview">
@@ -32,7 +51,7 @@
         }"
         @click="selectPalette(selectedPaletteIndex, palette)"
       >
-        {{ palette.name }}
+        <!-- {{ palette.name }} -->
       </div>
     </div>
   </div>
@@ -43,6 +62,7 @@ import { mapState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
 import type { Palette } from '@/components/types'
 import { loadImage, replaceColor } from '@/util/GraphicUtil'
+import { getIconCanvas, ICON_SIZE, iconUrl } from '@/stores/paletteData'
 
 export default {
   props: {
@@ -61,6 +81,8 @@ export default {
   },
   data() {
     return {
+      mode: 'icon',
+      iconUrl,
       canvasUrl: 'none',
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ctx: {} as any,
@@ -68,8 +90,9 @@ export default {
   },
   async created() {
     const canvas = document.createElement('canvas')
-    canvas.width = this.iconsize * this.palettes.length
-    canvas.height = this.iconsize
+    const size = Math.max(this.size * this.scale, ICON_SIZE)
+    canvas.width = size * this.palettes.length
+    canvas.height = size
     canvas.style.imageRendering = 'pixelated'
     const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
     g2d.imageSmoothingEnabled = false
@@ -95,10 +118,12 @@ export default {
       'selectedPalettes',
     ]),
     iconsize() {
-      if (this.size <= 64) {
-        return 64
+      if (this.mode === 'preview') {
+        return this.size * this.scale
       } else {
-        return this.size
+        // this.mode === 'icon'
+        // marble.png size=16
+        return ICON_SIZE * this.scale
       }
     },
     palettes() {
@@ -108,6 +133,11 @@ export default {
     },
   },
   watch: {
+    async mode() {
+      if (this.itemImageUrl) {
+        await this.getCanvasUrl()
+      }
+    },
     async itemImageUrl() {
       if (this.itemImageUrl) {
         await this.getCanvasUrl()
@@ -127,6 +157,40 @@ export default {
       this.selections[this.opPartKey].palettes[paletteIndex] = palette
     },
     async getCanvasUrl() {
+      if (this.mode === 'preview') {
+        return this.getPreviewCanvasUrl()
+      } else {
+        // this.mode === 'icon'
+        return this.getIconCanvasUrl()
+      }
+    },
+    async getIconCanvasUrl() {
+      const t0 = Date.now()
+
+      const canvas = this.ctx.canvas() as HTMLCanvasElement
+      const g2d = this.ctx.g2d() as CanvasRenderingContext2D
+      g2d.clearRect(0, 0, canvas.width, canvas.height)
+
+      const imageCanvas = await getIconCanvas(this.palettes)
+      document.body.prepend(canvas)
+      for (let i = 0; i < this.palettes.length; i++) {
+        g2d.drawImage(
+          imageCanvas,
+          i * ICON_SIZE,
+          0,
+          ICON_SIZE,
+          ICON_SIZE,
+          i * this.iconsize,
+          0,
+          this.iconsize,
+          this.iconsize,
+        )
+      }
+
+      this.canvasUrl = `url(${canvas.toDataURL('image/png')})`
+      console.log('color replacement cost: ', Date.now() - t0, 'ms')
+    },
+    async getPreviewCanvasUrl() {
       const t0 = Date.now()
 
       const canvas = this.ctx.canvas() as HTMLCanvasElement
@@ -140,13 +204,13 @@ export default {
       const selectedPalettes = this.selectedPalettes
       // 待预览的色板列表
       const dstPalettes = this.palettes as Palette[]
+      const image = await loadImage(this.itemImageUrl)
       for (let i = 0; i < dstPalettes.length; i++) {
         const previewPalettes = selectedPalettes.map((palette, index) => {
           return index === this.selectedPaletteIndex ? dstPalettes[i] : palette
         })
 
         const previewColors = previewPalettes.map((p) => p.colors)
-        const image = await loadImage(this.itemImageUrl)
         const imageCanvas = await replaceColor(image, srcColors, previewColors)
         g2d.drawImage(
           imageCanvas,
@@ -189,17 +253,43 @@ export default {
 .palette-tab.selected {
   border: black 2px solid;
 }
+.palette-setting {
+  position: absolute;
+  right: 0;
+
+  height: 36px;
+  line-height: 36px;
+  padding: 0px 10px;
+  margin: 0 -2.5px;
+
+  display: flex;
+  flex-direction: row;
+}
+.palette-setting-btn {
+  width: 32px;
+  height: 32px;
+  background-color: aqua;
+  image-rendering: pixelated;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  margin: 0 2.5px;
+  border: transparent 2px solid;
+}
+.palette-setting-btn.selected {
+  border: black 2px solid;
+}
 .palette-preview {
   padding: 5px 10px;
   display: flex;
   flex-direction: row;
   flex-flow: wrap;
-  margin: 0 -5px;
+  margin: 0 -2.5px;
 }
 .palette-item {
   background-color: aliceblue;
-  margin: 5px;
-  padding: -5px;
+  background-repeat: no-repeat;
+  margin: 2.5px;
   border: aliceblue 2px solid;
   image-rendering: pixelated;
   cursor: pointer;
