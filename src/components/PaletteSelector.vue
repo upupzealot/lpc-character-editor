@@ -172,7 +172,6 @@ export default {
       g2d.clearRect(0, 0, canvas.width, canvas.height)
 
       const imageCanvas = await getIconCanvas(this.palettes)
-      document.body.prepend(canvas)
       for (let i = 0; i < this.palettes.length; i++) {
         g2d.drawImage(
           imageCanvas,
