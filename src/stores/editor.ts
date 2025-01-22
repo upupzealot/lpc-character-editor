@@ -40,7 +40,7 @@ export const useEditerStore = defineStore('editor', {
           palettes: [paletteMap['946b44;75502d;61482c;40361d;2b2511;1a1213']],
         },
         ear: {
-          itemKey: 'none',
+          itemKey: 'ear-1',
           palettes: [paletteMap['faece7;f9d5ba;e4a47c;cc8665;99423c;2a1722']],
         },
         // ----- ----- //
