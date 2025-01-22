@@ -6,5 +6,9 @@
   {
     "name": "walk",
     "direction": "4"
+  },
+  {
+    "name": "attack",
+    "direction": "4"
   }
 ]

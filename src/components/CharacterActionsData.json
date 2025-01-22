@@ -46,5 +46,29 @@
     "x": 4,
     "y": 3,
     "frameCount": 4
+  },
+  {
+    "name": "attack(down)",
+    "x": 0,
+    "y": 4,
+    "frameCount": 4
+  },
+  {
+    "name": "attack(left)",
+    "x": 0,
+    "y": 5,
+    "frameCount": 4
+  },
+  {
+    "name": "attack(right)",
+    "x": 0,
+    "y": 6,
+    "frameCount": 4
+  },
+  {
+    "name": "attack(up)",
+    "x": 0,
+    "y": 7,
+    "frameCount": 4
   }
 ]

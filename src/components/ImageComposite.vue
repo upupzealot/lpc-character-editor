@@ -38,6 +38,8 @@ export default {
           lastImg = lastImg || img
         }),
       )
+      const bodyImg = imgMap['body'] as HTMLImageElement
+      lastImg = bodyImg || lastImg
       if (lastImg) {
         this.composite.canvas().width = lastImg.naturalWidth
         this.composite.canvas().height = lastImg.naturalHeight
