@@ -1,5 +1,58 @@
 import type { Color } from '@/components/types'
 
+export async function makeWeaponLayer(
+  size: number,
+  bodyHandPointImage: HTMLImageElement,
+  weaponTileImage: HTMLImageElement,
+  weaponData: {
+    x: number
+    y: number
+    color: Color
+  }[][],
+) {
+  const frameWidth = Math.floor(bodyHandPointImage.naturalWidth / size)
+  const frameHeight = Math.floor(bodyHandPointImage.naturalHeight / size)
+  const frameCount = frameWidth * frameHeight
+
+  const canvas = document.createElement('canvas') as HTMLCanvasElement
+  document.body.prepend(canvas)
+  canvas.style.imageRendering = 'pixelated'
+  canvas.style.transformOrigin = 'top left'
+  canvas.style.transform = 'scale(2,2)'
+  canvas.width = bodyHandPointImage.width
+  canvas.height = bodyHandPointImage.height
+  const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
+
+  const handData = parseData(size, bodyHandPointImage)
+
+  for (let i = 0; i < frameCount; i++) {
+    const x = i % frameWidth
+    const y = Math.floor(i / frameWidth)
+
+    const handPoint = handData[i].length ? handData[i][0] : null
+    if (!handPoint) continue
+    const tileIndex = (handPoint.color[0] - 127) / 16 - 1
+    const weaponPoint = weaponData[tileIndex].length
+      ? weaponData[tileIndex][0]
+      : null
+    if (!weaponPoint) continue
+    g2d.save()
+    g2d.translate(handPoint.x - weaponPoint.x, handPoint.y - weaponPoint.y)
+    g2d.drawImage(
+      weaponTileImage,
+      tileIndex * size,
+      0,
+      size,
+      size,
+      x * size,
+      y * size,
+      size,
+      size,
+    )
+    g2d.restore()
+  }
+}
+
 export async function makeWeaponTile(
   size: number,
   miniImage: HTMLImageElement | HTMLCanvasElement,
