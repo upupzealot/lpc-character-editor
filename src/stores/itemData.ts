@@ -5,6 +5,7 @@ import eyeItems from '@/assets/item-data/eye'
 import earItems from '@/assets/item-data/ear'
 import upperItems from '@/assets/item-data/upper'
 import lowerItems from '@/assets/item-data/lower'
+import weaponItems from '@/assets/item-data/weapon'
 import { encodeColor } from '@/util/GraphicUtil'
 
 type RawItemData = {
@@ -36,6 +37,7 @@ export const itemListGroup = {
   ear: initItems(earItems as RawItemData[]),
   upper: initItems(upperItems as RawItemData[]),
   lower: initItems(lowerItems as RawItemData[]),
+  weapon: initItems(weaponItems as RawItemData[]),
 } as unknown as {
   [k: string]: Item[]
 }

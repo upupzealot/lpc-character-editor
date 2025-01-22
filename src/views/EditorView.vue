@@ -11,6 +11,7 @@
   <div class="side-bar">
     <PartSelectBtn :part-key="'upper'" :size="32" :scale="2"></PartSelectBtn>
     <PartSelectBtn :part-key="'lower'" :size="32" :scale="2"></PartSelectBtn>
+    <PartSelectBtn :part-key="'weapon'" :size="32" :scale="2"></PartSelectBtn>
   </div>
 </template>
 

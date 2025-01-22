@@ -52,6 +52,10 @@ export const useEditerStore = defineStore('editor', {
           itemKey: 'lower-1',
           palettes: [paletteMap['4273c9;324f9a;293982;1d2560;181842;101025']],
         },
+        weapon: {
+          itemKey: 'weapon-1',
+          palettes: [paletteMap['ffffff;e0f2f3;c7cfcc;818e97;595e70;29253a']],
+        },
       } as {
         [k: string]: {
           itemKey: string
