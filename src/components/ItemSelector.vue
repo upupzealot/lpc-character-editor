@@ -30,6 +30,7 @@ import { mapState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
 import { loadImage } from '@/util/GraphicUtil'
 import PaletteSelector from '@/components/PaletteSelector.vue'
+import { makeWeaponTile } from '@/util/ItemUtil'
 
 export default {
   components: { PaletteSelector },
@@ -95,7 +96,23 @@ export default {
     },
   },
   methods: {
-    selectItem(itemkey: string) {
+    async selectItem(itemkey: string) {
+      const partKey = this.opPartKey
+      if (partKey === 'weapon' && itemkey !== 'none') {
+        const item = this.itemMapGroup[partKey][itemkey]
+        const imageUrl = `/images/${partKey}/${item.image}`
+        const miniImage = await loadImage(imageUrl.replace('.png', '.mini.png'))
+        const miniDataImage = await loadImage(
+          imageUrl.replace('.png', '.minidata.png'),
+        )
+        const weaponImage = await makeWeaponTile(
+          this.size,
+          miniImage,
+          miniDataImage,
+        )
+        document.body.prepend(weaponImage.image)
+      }
+
       this.state.opItem = itemkey
       const newItem = this.itemMapGroup[this.opPartKey][itemkey]
       if (newItem.key !== 'none') {
