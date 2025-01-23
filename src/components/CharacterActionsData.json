@@ -1,72 +1,96 @@
 [
   {
     "name": "idle(down)",
+    "action": "idle",
+    "direction": "down",
     "x": 0,
     "y": 0,
     "frameCount": 4
   },
   {
     "name": "idle(left)",
+    "action": "idle",
+    "direction": "left",
     "x": 0,
     "y": 1,
     "frameCount": 4
   },
   {
     "name": "idle(right)",
+    "action": "idle",
+    "direction": "right",
     "x": 0,
     "y": 2,
     "frameCount": 4
   },
   {
     "name": "idle(up)",
+    "action": "idle",
+    "direction": "up",
     "x": 0,
     "y": 3,
     "frameCount": 4
   },
   {
     "name": "walk(down)",
+    "action": "walk",
+    "direction": "down",
     "x": 4,
     "y": 0,
     "frameCount": 4
   },
   {
     "name": "walk(left)",
+    "action": "walk",
+    "direction": "left",
     "x": 4,
     "y": 1,
     "frameCount": 4
   },
   {
     "name": "walk(right)",
+    "action": "walk",
+    "direction": "right",
     "x": 4,
     "y": 2,
     "frameCount": 4
   },
   {
     "name": "walk(up)",
+    "action": "walk",
+    "direction": "up",
     "x": 4,
     "y": 3,
     "frameCount": 4
   },
   {
     "name": "attack(down)",
+    "action": "attack",
+    "direction": "down",
     "x": 0,
     "y": 4,
     "frameCount": 4
   },
   {
     "name": "attack(left)",
+    "action": "attack",
+    "direction": "left",
     "x": 0,
     "y": 5,
     "frameCount": 4
   },
   {
     "name": "attack(right)",
+    "action": "attack",
+    "direction": "right",
     "x": 0,
     "y": 6,
     "frameCount": 4
   },
   {
     "name": "attack(up)",
+    "action": "attack",
+    "direction": "up",
     "x": 0,
     "y": 7,
     "frameCount": 4
