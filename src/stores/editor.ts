@@ -106,4 +106,8 @@ export const useEditerStore = defineStore('editor', {
       return this.selections[this.opPartKey].palettes
     },
   },
+  persist: {
+    storage: localStorage,
+    omit: ['itemListGroup', 'itemMapGroup', 'paletteList', 'paletteMap'],
+  },
 })
