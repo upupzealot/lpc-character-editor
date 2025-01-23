@@ -86,13 +86,16 @@ export default {
     },
   },
   watch: {
-    async opPartKey(partKey) {
-      let url = this.canvasUrlMap[partKey]
-      if (!url) {
-        url = await this.getCanvasUrl(this.opPartKey)
-        this.canvasUrlMap[partKey] = url
-      }
-      this.canvasUrl = url
+    opPartKey: {
+      async handler(partKey) {
+        let url = this.canvasUrlMap[partKey]
+        if (!url) {
+          url = await this.getCanvasUrl(this.opPartKey)
+          this.canvasUrlMap[partKey] = url
+        }
+        this.canvasUrl = url
+      },
+      immediate: true,
     },
   },
   methods: {
