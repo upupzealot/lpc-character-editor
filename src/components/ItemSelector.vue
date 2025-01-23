@@ -110,7 +110,6 @@ export default {
           miniImage,
           miniDataImage,
         )
-        // document.body.prepend(weaponImage.image)
 
         const bodyItem =
           this.itemMapGroup['body'][this.selections['body'].itemKey]
@@ -118,11 +117,15 @@ export default {
         const bodyDataImage = await loadImage(
           bodyImageUrl.replace('.png', '.handdata.png'),
         )
+        const bodyHandImage = await loadImage(
+          bodyImageUrl.replace('.png', '.hands.png'),
+        )
         makeWeaponLayer(
           this.size,
-          bodyDataImage,
           weaponTile.image,
           weaponTile.data,
+          bodyDataImage,
+          bodyHandImage,
         )
       }
 
