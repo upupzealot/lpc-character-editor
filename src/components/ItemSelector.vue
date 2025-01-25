@@ -120,15 +120,11 @@ export default {
         const bodyDataImage = await loadImage(
           bodyImageUrl.replace('.png', '.handdata.png'),
         )
-        const bodyHandImage = await loadImage(
-          bodyImageUrl.replace('.png', '.hands.png'),
-        )
         makeWeaponLayer(
           this.size,
           weaponTile.image,
           weaponTile.data,
           bodyDataImage,
-          bodyHandImage,
         )
       }
 

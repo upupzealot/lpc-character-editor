@@ -95,8 +95,9 @@ export default {
         ],
         left: [
           'body',
-          'weapon',
           'body.arm1',
+          'weapon',
+          'body.hands',
           'body.arm2',
           'lower',
           'upper',
@@ -106,8 +107,9 @@ export default {
         ],
         right: [
           'body',
-          'weapon',
           'body.arm1',
+          'weapon',
+          'body.hands',
           'body.arm2',
           'lower',
           'upper',

@@ -159,7 +159,9 @@ export function parseData(size: number, image: HTMLImageElement) {
   canvas.style.imageRendering = 'pixelated'
   canvas.width = image.width
   canvas.height = image.height
-  const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
+  const g2d = canvas.getContext('2d', {
+    willReadFrequently: true,
+  }) as CanvasRenderingContext2D
   g2d.drawImage(image, 0, 0)
 
   const frames = [] as { x: number; y: number; color: Color }[][]
