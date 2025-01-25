@@ -9,7 +9,6 @@ export async function makeWeaponLayer(
     color: Color
   }[][],
   bodyHandPointImage: HTMLImageElement,
-  bodyHandImage: HTMLImageElement,
 ) {
   const frameWidth = Math.floor(bodyHandPointImage.naturalWidth / size)
   const frameHeight = Math.floor(bodyHandPointImage.naturalHeight / size)
@@ -54,9 +53,6 @@ export async function makeWeaponLayer(
     )
     g2d.restore()
   }
-
-  g2d.globalCompositeOperation = 'destination-out'
-  g2d.drawImage(bodyHandImage, 0, 0)
 }
 
 export async function makeWeaponTile(
