@@ -11,12 +11,21 @@ import PixiPixelComponent from '@/components/PixiPixelComponent.vue'
 export default {
   extends: PixiPixelComponent,
   computed: {
-    ...mapState(useEditerStore, ['direction', 'action']),
-    gridSize() {
-      return this.size * this.scale
+    ...mapState(useEditerStore, ['state', 'direction', 'action']),
+    previewScale() {
+      return this.state.previewScale
+    },
+    previewSpeed() {
+      return this.state.previewSpeed
     },
   },
   watch: {
+    async previewScale() {
+      await this.update()
+    },
+    async previewSpeed() {
+      await this.update()
+    },
     async direction() {
       await this.update()
     },
@@ -38,12 +47,13 @@ export default {
         characterSheet.animations[`${this.action}(${this.direction})`],
       )
       sprite.roundPixels = true
-      sprite.animationSpeed = (1 / 60) * 8
+      sprite.animationSpeed = (1 / 60) * this.state.previewSpeed
       sprite.play()
 
-      sprite.x = 0
-      sprite.y = 0
-      sprite.scale = this.scale
+      sprite.anchor = 0.5
+      sprite.x = app.canvas.width / 2
+      sprite.y = app.canvas.height / 2
+      sprite.scale = this.state.previewScale
       app.stage.addChild(sprite)
     },
   },

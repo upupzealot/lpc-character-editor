@@ -18,7 +18,7 @@ export async function makeWeaponLayer(
   const canvas = document.createElement('canvas') as HTMLCanvasElement
   canvas.width = bodyHandPointImage.width
   canvas.height = bodyHandPointImage.height
-  document.body.prepend(canvas)
+  // document.body.prepend(canvas)
   canvas.style.imageRendering = 'pixelated'
   canvas.style.transformOrigin = 'top left'
   canvas.style.transform = 'scale(2,2)'

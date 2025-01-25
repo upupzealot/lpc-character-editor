@@ -24,6 +24,8 @@ export const useEditerStore = defineStore('editor', {
         opPart: '',
         opItem: '',
         opPaletteIndex: 0,
+        previewSpeed: 8,
+        previewScale: 4,
       },
       /** 编辑器选择状态 */
       selections: {

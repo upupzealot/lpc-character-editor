@@ -2,10 +2,12 @@
   <div class="wrapper">
     <ItemSelector class="item-selector" :size="32" :scale="2"></ItemSelector>
 
+    <PreviewSettings></PreviewSettings>
+
     <AnimationPreview
       class="animation-preview"
       :size="32"
-      :scale="4"
+      :scale="10"
     ></AnimationPreview>
 
     <ActionSelector
@@ -30,6 +32,7 @@
 <script lang="ts">
 import { mapWritableState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
+import PreviewSettings from './PreviewSettings.vue'
 import AnimationPreview from '@/components/ActionPreview.vue'
 import ActionSelector from '@/components/ActionSelector.vue'
 import actions from '@/components/CharacterActions.json'
@@ -58,12 +61,17 @@ export default {
       actions,
     }
   },
-  components: { ItemSelector, AnimationPreview, ActionSelector },
+  components: {
+    ItemSelector,
+    PreviewSettings,
+    AnimationPreview,
+    ActionSelector,
+  },
   async created() {
     await this.draw()
   },
   computed: {
-    ...mapWritableState(useEditerStore, ['action']),
+    ...mapWritableState(useEditerStore, ['state', 'action']),
   },
   methods: {
     selectAction(action: Action) {
