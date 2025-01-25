@@ -10,5 +10,9 @@
   {
     "name": "attack",
     "direction": "4"
+  },
+  {
+    "name": "stub",
+    "direction": "4"
   }
 ]

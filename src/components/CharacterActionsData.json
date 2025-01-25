@@ -94,5 +94,37 @@
     "x": 0,
     "y": 7,
     "frameCount": 4
+  },
+  {
+    "name": "stub(down)",
+    "action": "stub",
+    "direction": "down",
+    "x": 4,
+    "y": 4,
+    "frameCount": 4
+  },
+  {
+    "name": "stub(left)",
+    "action": "stub",
+    "direction": "left",
+    "x": 4,
+    "y": 5,
+    "frameCount": 4
+  },
+  {
+    "name": "stub(right)",
+    "action": "stub",
+    "direction": "right",
+    "x": 4,
+    "y": 6,
+    "frameCount": 4
+  },
+  {
+    "name": "stub(up)",
+    "action": "stub",
+    "direction": "up",
+    "x": 4,
+    "y": 7,
+    "frameCount": 4
   }
 ]
