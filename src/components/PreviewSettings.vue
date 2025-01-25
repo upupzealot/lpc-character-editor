@@ -1,6 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="scale-selector">
+      <div class="scale-btn">Scale</div>
       <div
         v-for="scale in scales"
         :key="scale"
@@ -15,6 +16,7 @@
       </div>
     </div>
     <div class="speed-selector">
+      <div class="speed-btn">Speed</div>
       <div
         v-for="speed in speeds"
         :key="speed"
