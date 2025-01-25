@@ -80,16 +80,68 @@ export default {
       }
 
       const renderOrder = {
-        down: ['body', 'lower', 'upper', 'hair', 'ear', 'eye', 'weapon'],
-        left: ['weapon', 'body', 'lower', 'upper', 'hair', 'ear', 'eye'],
-        right: ['weapon', 'body', 'lower', 'upper', 'hair', 'ear', 'eye'],
+        down: [
+          'body',
+          'weapon',
+          'body.chest',
+          'body.arm1',
+          'body.arm2',
+          'body.head',
+          'lower',
+          'upper',
+          'hair',
+          'ear',
+          'eye',
+        ],
+        left: [
+          'body',
+          'weapon',
+          'body.arm1',
+          'body.arm2',
+          'lower',
+          'upper',
+          'hair',
+          'ear',
+          'eye',
+        ],
+        right: [
+          'body',
+          'weapon',
+          'body.arm1',
+          'body.arm2',
+          'lower',
+          'upper',
+          'hair',
+          'ear',
+          'eye',
+        ],
         up: ['weapon', 'body', 'lower', 'upper', 'hair', 'ear', 'eye'],
       } as { [k: string]: string[] }
       for (const action of CharactorActions) {
         const partKeysInOrder = renderOrder[action.direction]
         for (let i = 0; i < partKeys.length; i++) {
           const partKey = partKeysInOrder[i]
-          const canvas = canvasMap[partKey]
+
+          let canvas
+          if (partKey.includes('.')) {
+            const [part, mask] = partKey.split('.')
+            const partCanvas = canvasMap[part]
+            canvas = new OffscreenCanvas(partCanvas.width, partCanvas.height)
+            const g2d = canvas.getContext(
+              '2d',
+            ) as OffscreenCanvasRenderingContext2D
+            g2d.imageSmoothingEnabled = false
+            g2d.drawImage(partCanvas, 0, 0)
+            g2d.globalCompositeOperation = 'destination-in'
+            const partImgUrl = this.selectedItems[part].image
+            const maskImg = await loadImage(
+              `images/${part}/${partImgUrl.replace('.png', `.${mask}mask.png`)}`,
+            )
+            g2d.drawImage(maskImg, 0, 0)
+          } else {
+            canvas = canvasMap[partKey]
+          }
+
           if (canvas) {
             const x = action.x * this.size
             const y = action.y * this.size

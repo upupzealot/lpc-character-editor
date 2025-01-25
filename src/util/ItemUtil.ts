@@ -150,7 +150,6 @@ export async function makeWeaponTile(
   })
   dataImage.style.imageRendering = 'pixelated'
   const frameData = parseData(size, dataImage)
-  console.log('frameData', frameData)
 
   return { image, data: frameData }
 }
