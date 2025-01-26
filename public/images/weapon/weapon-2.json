@@ -1,6 +1,7 @@
 {
   "key": "weapon-2",
   "name": "Spear",
+  "size": 48,
   "image": "weapon-2.png",
   "palettes": [
     {

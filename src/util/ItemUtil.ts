@@ -1,58 +1,83 @@
 import type { Color } from '@/components/types'
 
+type DataPoint = {
+  x: number
+  y: number
+  color: Color
+}
+
+type DataRect = {
+  count: number
+  left: number
+  right: number
+  top: number
+  bottom: number
+}
+
+type WeaponTile = {
+  image: HTMLImageElement
+  data: {
+    points: DataPoint[]
+    rect: DataRect
+  }[]
+}
+
 export async function makeWeaponLayer(
   size: number,
-  weaponTileImage: HTMLImageElement,
-  weaponData: {
-    x: number
-    y: number
-    color: Color
-  }[][],
   bodyHandPointImage: HTMLImageElement,
-) {
+  weaponTile: WeaponTile,
+): Promise<number> {
+  const frameHandPoints: DataPoint[][] = parsePoints(size, bodyHandPointImage)
+  const padding = getOversizePadding(size, frameHandPoints, weaponTile)
+  const frameSize = size + padding * 2
+
   const frameWidth = Math.floor(bodyHandPointImage.naturalWidth / size)
   const frameHeight = Math.floor(bodyHandPointImage.naturalHeight / size)
   const frameCount = frameWidth * frameHeight
 
   const canvas = document.createElement('canvas') as HTMLCanvasElement
-  canvas.width = bodyHandPointImage.width
-  canvas.height = bodyHandPointImage.height
+  canvas.width = frameWidth * frameSize
+  canvas.height = frameHeight * frameSize
   // document.body.prepend(canvas)
   canvas.style.imageRendering = 'pixelated'
   canvas.style.transformOrigin = 'top left'
   canvas.style.transform = 'scale(2,2)'
   const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
-
-  const handData = parseData(size, bodyHandPointImage)
-
   for (let i = 0; i < frameCount; i++) {
     const x = i % frameWidth
     const y = Math.floor(i / frameWidth)
 
-    const handPoint = handData[i].length ? handData[i][0] : null
+    const handPoint = frameHandPoints[i].length ? frameHandPoints[i][0] : null
     if (!handPoint) continue
     const tileIndex = (handPoint.color[0] - 127) / 8 - 1
-    const weaponPoint = weaponData[tileIndex].length
-      ? weaponData[tileIndex][0]
+    const weaponImage = weaponTile.image
+    const weaponData = weaponTile.data
+    const weaponPoint = weaponData[tileIndex].points.length
+      ? weaponData[tileIndex].points[0]
       : null
     if (!weaponPoint) continue
     const tx = tileIndex % 4
     const ty = Math.floor(tileIndex / 4)
     g2d.save()
-    g2d.translate(handPoint.x - weaponPoint.x, handPoint.y - weaponPoint.y)
+    g2d.translate(
+      padding + handPoint.x - weaponPoint.x,
+      padding + handPoint.y - weaponPoint.y,
+    )
     g2d.drawImage(
-      weaponTileImage,
+      weaponImage,
       tx * size,
       ty * size,
       size,
       size,
-      x * size,
-      y * size,
+      x * frameSize,
+      y * frameSize,
       size,
       size,
     )
     g2d.restore()
   }
+
+  return frameSize
 }
 
 export async function makeWeaponTile(
@@ -62,10 +87,15 @@ export async function makeWeaponTile(
 ): Promise<{
   image: HTMLImageElement
   data: {
-    x: number
-    y: number
-    color: Color
-  }[][]
+    points: { x: number; y: number; color: Color }[]
+    rect: {
+      count: number
+      left: number
+      right: number
+      top: number
+      bottom: number
+    }
+  }[]
 }> {
   const canvas = document.createElement('canvas') as HTMLCanvasElement
   canvas.style.imageRendering = 'pixelated'
@@ -145,12 +175,22 @@ export async function makeWeaponTile(
     dataImage.src = dataCanvas.toDataURL('image/png')
   })
   dataImage.style.imageRendering = 'pixelated'
-  const frameData = parseData(size, dataImage)
+  const framePoints = parsePoints(size, dataImage)
+  const frameRects = parseBoundingBox(size, image)
+  const data = framePoints.map((points, i) => {
+    return {
+      points,
+      rect: frameRects[i],
+    }
+  })
 
-  return { image, data: frameData }
+  return {
+    image,
+    data,
+  }
 }
 
-export function parseData(size: number, image: HTMLImageElement) {
+function getFrames(size: number, image: HTMLImageElement) {
   const frameWidth = Math.floor(image.naturalWidth / size)
   const frameHeight = Math.floor(image.naturalHeight / size)
   const frameCount = frameWidth * frameHeight
@@ -164,28 +204,105 @@ export function parseData(size: number, image: HTMLImageElement) {
   }) as CanvasRenderingContext2D
   g2d.drawImage(image, 0, 0)
 
-  const frames = [] as { x: number; y: number; color: Color }[][]
+  const frames = [] as Uint8ClampedArray<ArrayBufferLike>[]
   for (let i = 0; i < frameCount; i++) {
     const x = i % frameWidth
     const y = Math.floor(i / frameWidth)
 
     const { data } = g2d.getImageData(x * size, y * size, size, size)
+    frames[i] = data
+  }
+  return frames
+}
 
-    frames.push([] as { x: number; y: number; color: Color }[])
+function getOversizePadding(
+  size: number,
+  handPoints: DataPoint[][],
+  weaponTile: WeaponTile,
+): number {
+  const weaponData = weaponTile.data
+
+  const boundingBoxes = handPoints.map((handPoints) => {
+    const handPoint = handPoints.length ? handPoints[0] : null
+    if (!handPoint) return null
+
+    const tileIndex = (handPoint.color[0] - 127) / 8 - 1
+    const weaponPoints = weaponData[tileIndex].points
+    const weaponPoint = weaponPoints.length ? weaponPoints[0] : null
+    if (!weaponPoint) return null
+    const weaponRect = weaponData[tileIndex].rect
+    if (!weaponRect.count) return null
+
+    const left = handPoint.x - (weaponPoint.x - weaponRect.left)
+    const right = handPoint.x + (weaponRect.right - weaponPoint.x)
+    const top = handPoint.y - (weaponPoint.y - weaponRect.top)
+    const bottom = handPoint.y + (weaponRect.bottom - weaponPoint.y)
+    return { left, right, top, bottom }
+  })
+  let minLeft = NaN
+  let maxRight = NaN
+  let minTop = NaN
+  let maxBottom = NaN
+  boundingBoxes.forEach((bb) => {
+    if (!bb) return
+    const { left, right, top, bottom } = bb
+    minLeft = isNaN(minLeft) ? left : Math.min(minLeft, left)
+    maxRight = isNaN(maxRight) ? right : Math.max(maxRight, right)
+    minTop = isNaN(minTop) ? top : Math.min(minTop, top)
+    maxBottom = isNaN(maxBottom) ? bottom : Math.max(maxBottom, bottom)
+  })
+  const paddingLeft = minLeft < 0 ? Math.abs(minLeft) : 0
+  const paddingRight = maxRight >= size ? maxRight - size + 1 : 0
+  const paddingTop = minTop < 0 ? Math.abs(minTop) : 0
+  const paddingBottom = maxBottom >= size ? maxBottom - size + 1 : 0
+  let padding = Math.max(paddingLeft, paddingRight, paddingTop, paddingBottom)
+  padding = Math.ceil(padding / 8) * 8
+  return padding
+}
+
+export function parseBoundingBox(size: number, image: HTMLImageElement) {
+  const framesData = getFrames(size, image)
+
+  const frameRects = framesData.map((data) => {
+    let [count, left, right, top, bottom] = [0, -1, -1, -1, -1]
     for (let p = 0; p < data.length / 4; p++) {
       const a = data[p * 4 + 3]
-
       if (a) {
+        count++
+        const x = p % size
+        const y = Math.floor(p / size)
+        left = left >= 0 ? Math.min(left, x) : x
+        right = right >= 0 ? Math.max(right, x) : x
+        top = top >= 0 ? Math.min(top, y) : y
+        bottom = bottom >= 0 ? Math.max(bottom, y) : y
+      }
+    }
+    return { count, left, right, top, bottom }
+  })
+  return frameRects
+}
+
+export function parsePoints(size: number, image: HTMLImageElement) {
+  const framesData = getFrames(size, image)
+
+  const framePoints = framesData.map((data) => {
+    const points = [] as { x: number; y: number; color: Color }[]
+    for (let p = 0; p < data.length / 4; p++) {
+      const a = data[p * 4 + 3]
+      if (a) {
+        const x = p % size
+        const y = Math.floor(p / size)
         const r = data[p * 4]
         const g = data[p * 4 + 1]
         const b = data[p * 4 + 2]
-        frames[i].push({
-          x: p % size,
-          y: Math.floor(p / size),
+        points.push({
+          x,
+          y,
           color: [r, g, b, a],
         })
       }
     }
-  }
-  return frames
+    return points
+  })
+  return framePoints
 }

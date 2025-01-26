@@ -6,7 +6,7 @@ interface AtlasData extends SpritesheetData {
 }
 
 export default class CharactorSheet extends Spritesheet {
-  constructor(image: Texture) {
+  constructor(image: Texture, size: number) {
     const atlasData: AtlasData = {
       frames: {},
       meta: {
@@ -16,7 +16,6 @@ export default class CharactorSheet extends Spritesheet {
     }
 
     CharactorActions.forEach((action) => {
-      const size = 32
       const { x, y, frameCount } = action
       const frames = []
       for (let i = 0; i < frameCount; i++) {

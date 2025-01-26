@@ -3,18 +3,22 @@
 </template>
 
 <script lang="ts">
-import { AnimatedSprite, Application, Spritesheet } from 'pixi.js'
+import { AnimatedSprite, Application } from 'pixi.js'
 import { mapState, mapWritableState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
 import PixiPixelComponent from '@/components/PixiPixelComponent.vue'
+import CharactorActionSheet from './CharactorActionSheet'
 
 export default {
   extends: PixiPixelComponent,
   computed: {
-    ...mapState(useEditerStore, ['action']),
+    ...mapState(useEditerStore, ['state', 'action']),
     ...mapWritableState(useEditerStore, ['direction']),
     canvasWidth() {
       return this.gridSize * 4
+    },
+    frameSize() {
+      return this.state.frameSize
     },
   },
   watch: {
@@ -22,6 +26,9 @@ export default {
       await this.update()
     },
     async action() {
+      await this.update()
+    },
+    async frameSize() {
       await this.update()
     },
   },
@@ -34,10 +41,17 @@ export default {
       const app = this.ctx.app!() as Application
       app.stage.removeChildren()
 
-      const characterSheet = this.ctx.characterSheet!() as Spritesheet
+      const characterSheet = new CharactorActionSheet(
+        this.composite.texture(),
+        this.state.frameSize,
+      )
+      await characterSheet.parse()
+
       const directions = ['down', 'left', 'right', 'up']
       directions.forEach((dirction, i) => {
-        const sprite = new AnimatedSprite(characterSheet.animations[`${this.action}(${dirction})`])
+        const sprite = new AnimatedSprite(
+          characterSheet.animations[`${this.action}(${dirction})`],
+        )
         sprite.roundPixels = true
         sprite.animationSpeed = (1 / 60) * 8
         sprite.play()

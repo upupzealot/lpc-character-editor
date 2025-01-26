@@ -1,8 +1,8 @@
 <script lang="ts">
-import { mapWritableState } from 'pinia'
-import { useGraphicsStore } from '@/stores/graphics'
 import { Application } from 'pixi.js'
-import CharactorActionSheet from '@/components/CharactorActionSheet'
+import { mapState, mapWritableState } from 'pinia'
+import { useGraphicsStore } from '@/stores/graphics'
+import { useEditerStore } from '@/stores/editor'
 
 export default {
   props: {
@@ -27,8 +27,9 @@ export default {
   },
   computed: {
     ...mapWritableState(useGraphicsStore, ['composite']),
+    ...mapState(useEditerStore, ['state', 'direction', 'action']),
     gridSize() {
-      return this.size * this.scale
+      return this.state.frameSize * this.scale
     },
     canvasWidth() {
       return this.gridSize
@@ -50,12 +51,6 @@ export default {
       app.canvas.style.imageRendering = 'pixelated'
       this.ctx.app = () => {
         return app
-      }
-
-      const characterSheet = new CharactorActionSheet(this.composite.texture())
-      await characterSheet.parse()
-      this.ctx.characterSheet = () => {
-        return characterSheet
       }
     },
   },

@@ -3,6 +3,7 @@ import { mapState } from 'pinia'
 import { useGraphicsStore } from '@/stores/graphics'
 import { useEditerStore } from '@/stores/editor'
 import { loadImage, replaceColor } from '@/util/GraphicUtil'
+import { renderOrder } from '@/components/ImageComposite'
 import CharactorActions from '@/components/CharacterActionsData.json'
 
 export default {
@@ -37,16 +38,22 @@ export default {
         'eye',
         'weapon',
       ]
+
+      const bodyItem = this.selectedItems['body']
+      const bodySize = (bodyItem && bodyItem.size) || 32
+      let maxSize = bodySize
       const imgMap = {} as { [k: string]: null | HTMLImageElement }
       let lastImg = null as null | HTMLImageElement
+
       await Promise.all(
         partKeys.map(async (partKey) => {
           let img = null as null | HTMLImageElement
-          const imgSrc = this.selectedItems[partKey].image
-          if (imgSrc) {
-            img = await loadImage(
-              `images/${partKey}/${this.selectedItems[partKey].image}`,
-            )
+          const partItem = this.selectedItems[partKey]
+          if (partItem.size) {
+            maxSize = Math.max(maxSize, partItem.size)
+          }
+          if (partItem.image) {
+            img = await loadImage(`images/${partKey}/${partItem.image}`)
           }
           imgMap[partKey] = img
           lastImg = lastImg || img
@@ -55,8 +62,10 @@ export default {
       const bodyImg = imgMap['body'] as HTMLImageElement
       lastImg = bodyImg || lastImg
       if (lastImg) {
-        this.composite.canvas().width = lastImg.naturalWidth
-        this.composite.canvas().height = lastImg.naturalHeight
+        this.composite.canvas().width =
+          (bodyImg.naturalWidth / bodySize) * maxSize
+        this.composite.canvas().height =
+          (bodyImg.naturalHeight / bodySize) * maxSize
       }
 
       const canvasMap = {} as { [k: string]: OffscreenCanvas }
@@ -79,54 +88,15 @@ export default {
         }
       }
 
-      const renderOrder = {
-        down: [
-          'body',
-          'weapon',
-          'body.chest',
-          'body.arm1',
-          'body.arm2',
-          'body.head',
-          'lower',
-          'upper',
-          'hair',
-          'ear',
-          'eye',
-        ],
-        left: [
-          'body',
-          'body.arm1',
-          'weapon',
-          'body.hands',
-          'body.arm2',
-          'lower',
-          'upper',
-          'hair',
-          'ear',
-          'eye',
-        ],
-        right: [
-          'body',
-          'body.arm1',
-          'weapon',
-          'body.hands',
-          'body.arm2',
-          'lower',
-          'upper',
-          'hair',
-          'ear',
-          'eye',
-        ],
-        up: ['weapon', 'body', 'lower', 'upper', 'hair', 'ear', 'eye'],
-      } as { [k: string]: string[] }
       for (const action of CharactorActions) {
-        const partKeysInOrder = renderOrder[action.direction]
+        const partKeysInOrder = renderOrder(action.direction)
         for (let i = 0; i < partKeys.length; i++) {
-          const partKey = partKeysInOrder[i]
+          let partKey = partKeysInOrder[i]
 
           let canvas
           if (partKey.includes('.')) {
             const [part, mask] = partKey.split('.')
+            partKey = part
             const partCanvas = canvasMap[part]
             canvas = new OffscreenCanvas(partCanvas.width, partCanvas.height)
             const g2d = canvas.getContext(
@@ -144,22 +114,24 @@ export default {
             canvas = canvasMap[partKey]
           }
 
+          const item = this.selectedItems[partKey]
+          const itemSize = item.size || 32
           if (canvas) {
-            const x = action.x * this.size
-            const y = action.y * this.size
-            this.composite
-              .g2d()
-              .drawImage(
-                canvas,
-                x,
-                y,
-                this.size * action.frameCount,
-                this.size,
-                x,
-                y,
-                this.size * action.frameCount,
-                this.size,
-              )
+            for (let i = 0; i < action.frameCount; i++) {
+              this.composite
+                .g2d()
+                .drawImage(
+                  canvas,
+                  (action.x + i) * itemSize,
+                  action.y * itemSize,
+                  itemSize,
+                  itemSize,
+                  (action.x + i) * maxSize + (maxSize - itemSize) / 2,
+                  action.y * maxSize + (maxSize - itemSize) / 2,
+                  itemSize,
+                  itemSize,
+                )
+            }
           }
         }
       }

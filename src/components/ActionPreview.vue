@@ -3,10 +3,11 @@
 </template>
 
 <script lang="ts">
-import { AnimatedSprite, Application, Spritesheet } from 'pixi.js'
+import { AnimatedSprite, Application } from 'pixi.js'
 import { mapState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
 import PixiPixelComponent from '@/components/PixiPixelComponent.vue'
+import CharactorActionSheet from './CharactorActionSheet'
 
 export default {
   extends: PixiPixelComponent,
@@ -42,7 +43,12 @@ export default {
       const app = this.ctx.app!() as Application
       app.stage.removeChildren()
 
-      const characterSheet = this.ctx.characterSheet!() as Spritesheet
+      const characterSheet = new CharactorActionSheet(
+        this.composite.texture(),
+        this.state.frameSize,
+      )
+      await characterSheet.parse()
+
       const sprite = new AnimatedSprite(
         characterSheet.animations[`${this.action}(${this.direction})`],
       )
