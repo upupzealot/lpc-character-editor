@@ -91,7 +91,7 @@ export default {
 
       for (const action of CharactorActions) {
         const partKeysInOrder = renderOrder(action.direction)
-        for (let i = 0; i < partKeys.length; i++) {
+        for (let i = 0; i < partKeysInOrder.length; i++) {
           let partKey = partKeysInOrder[i]
 
           let canvas
