@@ -5,6 +5,7 @@
 <script lang="ts">
 import { AnimatedSprite, Application } from 'pixi.js'
 import { mapState, mapWritableState } from 'pinia'
+import { useGraphicsStore } from '@/stores/graphics'
 import { useEditerStore } from '@/stores/editor'
 import PixiPixelComponent from '@/components/PixiPixelComponent.vue'
 import CharactorActionSheet from './CharactorActionSheet'
@@ -12,13 +13,11 @@ import CharactorActionSheet from './CharactorActionSheet'
 export default {
   extends: PixiPixelComponent,
   computed: {
-    ...mapState(useEditerStore, ['state', 'action']),
+    ...mapState(useGraphicsStore, ['compositeAt']),
+    ...mapState(useEditerStore, ['action']),
     ...mapWritableState(useEditerStore, ['direction']),
     canvasWidth() {
       return this.gridSize * 4
-    },
-    frameSize() {
-      return this.state.frameSize
     },
   },
   watch: {
@@ -28,7 +27,7 @@ export default {
     async action() {
       await this.update()
     },
-    async frameSize() {
+    async compositeAt() {
       await this.update()
     },
   },
@@ -40,6 +39,10 @@ export default {
     async update() {
       const app = this.ctx.app!() as Application
       app.stage.removeChildren()
+
+      app.canvas.width = this.canvasWidth
+      app.canvas.height = this.canvasHeight
+      app.resize()
 
       const characterSheet = new CharactorActionSheet(
         this.composite.texture(),

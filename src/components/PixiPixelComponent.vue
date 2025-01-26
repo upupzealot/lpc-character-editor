@@ -29,7 +29,7 @@ export default {
     ...mapWritableState(useGraphicsStore, ['composite']),
     ...mapState(useEditerStore, ['state', 'direction', 'action']),
     gridSize() {
-      return this.state.frameSize * this.scale
+      return this.size * this.scale
     },
     canvasWidth() {
       return this.gridSize
@@ -46,6 +46,7 @@ export default {
         background: 'lightgrey',
         width: this.canvasWidth,
         height: this.canvasHeight,
+        resizeTo: $root,
       })
       $root.appendChild(app.canvas)
       app.canvas.style.imageRendering = 'pixelated'

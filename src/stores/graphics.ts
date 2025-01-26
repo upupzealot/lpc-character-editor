@@ -13,6 +13,7 @@ const texture = Texture.from(canvas)
 export const useGraphicsStore = defineStore('graphics', {
   state: () => {
     return {
+      compositeAt: Date.now(),
       composite: {
         canvas: () => {
           return canvas

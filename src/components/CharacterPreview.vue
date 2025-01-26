@@ -6,13 +6,13 @@
 
     <AnimationPreview
       class="animation-preview"
-      :size="32"
+      :size="frameSize"
       :scale="10"
     ></AnimationPreview>
 
     <ActionSelector
       class="direction-selector"
-      :size="32"
+      :size="frameSize"
       :scale="2"
     ></ActionSelector>
 
@@ -39,16 +39,6 @@ import actions from '@/components/CharacterActions.json'
 import ImageComposite from '@/components/ImageComposite.vue'
 import ItemSelector from '@/components/ItemSelector.vue'
 
-// idle: 4
-// walk: 4
-// idle-combat: 4
-// combat-slash: 2
-// combat-stub: 2
-// combat-shoot: 2
-// combat-fire: 2
-// combat-cast: 2
-// dead: 2
-
 type Action = {
   name: string
   direction: string
@@ -72,6 +62,9 @@ export default {
   },
   computed: {
     ...mapWritableState(useEditerStore, ['state', 'action']),
+    frameSize() {
+      return this.state.frameSize
+    },
   },
   methods: {
     selectAction(action: Action) {

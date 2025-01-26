@@ -5,6 +5,7 @@
 <script lang="ts">
 import { AnimatedSprite, Application } from 'pixi.js'
 import { mapState } from 'pinia'
+import { useGraphicsStore } from '@/stores/graphics'
 import { useEditerStore } from '@/stores/editor'
 import PixiPixelComponent from '@/components/PixiPixelComponent.vue'
 import CharactorActionSheet from './CharactorActionSheet'
@@ -12,7 +13,8 @@ import CharactorActionSheet from './CharactorActionSheet'
 export default {
   extends: PixiPixelComponent,
   computed: {
-    ...mapState(useEditerStore, ['state', 'direction', 'action']),
+    ...mapState(useGraphicsStore, ['compositeAt']),
+    ...mapState(useEditerStore, ['direction', 'action']),
     previewScale() {
       return this.state.previewScale
     },
@@ -31,6 +33,9 @@ export default {
       await this.update()
     },
     async action() {
+      await this.update()
+    },
+    async compositeAt() {
       await this.update()
     },
   },
