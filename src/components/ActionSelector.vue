@@ -59,8 +59,9 @@ export default {
         sprite.animationSpeed = (1 / 60) * 8
         sprite.play()
 
-        sprite.x = i * this.gridSize
-        sprite.y = 0
+        sprite.anchor = 0.5
+        sprite.x = (i + 0.5) * this.gridSize
+        sprite.y = 0.5 * this.gridSize
         sprite.scale = this.scale
         app.stage.addChild(sprite)
 

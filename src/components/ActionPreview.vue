@@ -1,5 +1,7 @@
 <template>
-  <div ref="pixiRoot"></div>
+  <div ref="pixiRoot">
+    <PreviewSettings></PreviewSettings>
+  </div>
 </template>
 
 <script lang="ts">
@@ -8,10 +10,12 @@ import { mapState } from 'pinia'
 import { useGraphicsStore } from '@/stores/graphics'
 import { useEditerStore } from '@/stores/editor'
 import PixiPixelComponent from '@/components/PixiPixelComponent.vue'
-import CharactorActionSheet from './CharactorActionSheet'
+import PreviewSettings from '@/components/PreviewSettings.vue'
+import CharactorActionSheet from '@/components/CharactorActionSheet'
 
 export default {
   extends: PixiPixelComponent,
+  components: { PreviewSettings },
   computed: {
     ...mapState(useGraphicsStore, ['compositeAt']),
     ...mapState(useEditerStore, ['direction', 'action']),
@@ -20,6 +24,12 @@ export default {
     },
     previewSpeed() {
       return this.state.previewSpeed
+    },
+    canvasWidth() {
+      return 320
+    },
+    canvasHeight() {
+      return 320
     },
   },
   watch: {
@@ -47,6 +57,10 @@ export default {
     async update() {
       const app = this.ctx.app!() as Application
       app.stage.removeChildren()
+
+      app.canvas.width = this.canvasWidth
+      app.canvas.height = this.canvasHeight
+      app.resize()
 
       const characterSheet = new CharactorActionSheet(
         this.composite.texture(),

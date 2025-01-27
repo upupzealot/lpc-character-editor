@@ -29,8 +29,6 @@ import { RouterView } from 'vue-router'
   width: 1000px;
 
   justify-content: flex-start;
-  align-items: stretch;
-
   display: flex;
   flex-direction: column;
   align-items: stretch;

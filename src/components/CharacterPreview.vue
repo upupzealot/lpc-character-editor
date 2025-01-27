@@ -1,31 +1,25 @@
 <template>
   <div class="wrapper">
-    <ItemSelector class="item-selector" :size="32" :scale="2"></ItemSelector>
+    <AnimationPreview
+      class="animation-preview"
+      :size="frameSize"
+      :scale="10"
+    ></AnimationPreview>
 
-    <div>
-      <PreviewSettings></PreviewSettings>
+    <ActionSelector
+      class="direction-selector"
+      :size="size"
+      :scale="2"
+    ></ActionSelector>
 
-      <AnimationPreview
-        class="animation-preview"
-        :size="frameSize"
-        :scale="10"
-      ></AnimationPreview>
-
-      <ActionSelector
-        class="direction-selector"
-        :size="frameSize"
-        :scale="2"
-      ></ActionSelector>
-
-      <div class="action-selector">
-        <div
-          v-for="action in actions"
-          :key="action.name"
-          class="action-btn"
-          @click="selectAction(action)"
-        >
-          {{ action.name }}
-        </div>
+    <div class="action-selector">
+      <div
+        v-for="action in actions"
+        :key="action.name"
+        class="action-btn"
+        @click="selectAction(action)"
+      >
+        {{ action.name }}
       </div>
     </div>
   </div>
@@ -34,12 +28,11 @@
 <script lang="ts">
 import { mapWritableState } from 'pinia'
 import { useEditerStore } from '@/stores/editor'
-import PreviewSettings from './PreviewSettings.vue'
+
 import AnimationPreview from '@/components/ActionPreview.vue'
 import ActionSelector from '@/components/ActionSelector.vue'
 import actions from '@/components/CharacterActions.json'
 import ImageComposite from '@/components/ImageComposite.vue'
-import ItemSelector from '@/components/ItemSelector.vue'
 
 type Action = {
   name: string
@@ -54,8 +47,6 @@ export default {
     }
   },
   components: {
-    ItemSelector,
-    PreviewSettings,
     AnimationPreview,
     ActionSelector,
   },
@@ -80,20 +71,11 @@ export default {
 .wrapper {
   display: flex;
   flex-direction: column;
-  @media screen and (max-width: 600px) {
-    flex-direction: column-reverse;
-  }
   align-items: center;
   justify-items: stretch;
   width: 100%;
 }
-.item-selector {
-  display: block;
-}
 .animation-preview {
-  flex-grow: 0;
-}
-.direction-selector {
   flex-grow: 0;
 }
 .action-selector {

@@ -6,6 +6,7 @@
     <PartSelectBtn :part-key="'ear'" :size="32" :scale="2"></PartSelectBtn>
   </div>
   <div class="center">
+    <ItemSelector class="item-selector" :size="32" :scale="2"></ItemSelector>
     <CharacterPreview></CharacterPreview>
   </div>
   <div style="display: flex; flex-direction: column">
@@ -24,11 +25,12 @@
 </template>
 
 <script lang="ts">
+import ItemSelector from '@/components/ItemSelector.vue'
 import CharacterPreview from '@/components/CharacterPreview.vue'
 import PartSelectBtn from '@/components/PartSelectBtn.vue'
 
 export default {
-  components: { CharacterPreview, PartSelectBtn },
+  components: { ItemSelector, CharacterPreview, PartSelectBtn },
 }
 </script>
 
@@ -58,5 +60,13 @@ export default {
 .center {
   flex-grow: 1;
   background-color: white;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: stretch;
+  @media screen and (max-width: 600px) {
+    flex-direction: column-reverse;
+  }
 }
 </style>
