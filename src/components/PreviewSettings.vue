@@ -42,6 +42,7 @@
   position: absolute;
   display: flex;
   flex-direction: column;
+  top: 0;
 }
 .scale-selector {
   right: 10px;

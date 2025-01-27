@@ -238,6 +238,7 @@ export default {
 .palette-list {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 .palette-tab {
   height: 16px;

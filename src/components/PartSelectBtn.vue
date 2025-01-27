@@ -97,11 +97,17 @@ export default {
 .title {
   height: 16px;
   padding: 5px 10px 0px 10px;
+  @media screen and (max-width: 600px) {
+    padding: 5px 5px 0 5px;
+  }
 }
 .content {
-  padding: 5px 10px;
   display: flex;
   flex-direction: row;
+  padding: 5px 10px;
+  @media screen and (max-width: 600px) {
+    padding: 5px;
+  }
 }
 .setting {
   display: flex;
@@ -110,6 +116,8 @@ export default {
 }
 .select {
   height: 20px;
+  width: 0;
+  white-space: nowrap;
 }
 .icon {
   background-color: lightblue;
@@ -122,5 +130,9 @@ export default {
 .color-box {
   height: 12px;
   width: 12px;
+  @media screen and (max-width: 600px) {
+    height: 6px;
+    width: 6px;
+  }
 }
 </style>

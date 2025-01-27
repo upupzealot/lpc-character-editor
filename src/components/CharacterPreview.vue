@@ -2,28 +2,30 @@
   <div class="wrapper">
     <ItemSelector class="item-selector" :size="32" :scale="2"></ItemSelector>
 
-    <PreviewSettings></PreviewSettings>
+    <div>
+      <PreviewSettings></PreviewSettings>
 
-    <AnimationPreview
-      class="animation-preview"
-      :size="frameSize"
-      :scale="10"
-    ></AnimationPreview>
+      <AnimationPreview
+        class="animation-preview"
+        :size="frameSize"
+        :scale="10"
+      ></AnimationPreview>
 
-    <ActionSelector
-      class="direction-selector"
-      :size="frameSize"
-      :scale="2"
-    ></ActionSelector>
+      <ActionSelector
+        class="direction-selector"
+        :size="frameSize"
+        :scale="2"
+      ></ActionSelector>
 
-    <div class="action-selector">
-      <div
-        v-for="action in actions"
-        :key="action.name"
-        class="action-btn"
-        @click="selectAction(action)"
-      >
-        {{ action.name }}
+      <div class="action-selector">
+        <div
+          v-for="action in actions"
+          :key="action.name"
+          class="action-btn"
+          @click="selectAction(action)"
+        >
+          {{ action.name }}
+        </div>
       </div>
     </div>
   </div>
@@ -78,6 +80,9 @@ export default {
 .wrapper {
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 600px) {
+    flex-direction: column-reverse;
+  }
   align-items: center;
   justify-items: stretch;
   width: 100%;
@@ -97,9 +102,9 @@ export default {
 
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 .action-btn {
-  width: 100px;
   height: 16px;
   line-height: 16px;
   padding: 5px 10px;

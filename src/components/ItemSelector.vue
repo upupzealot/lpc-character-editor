@@ -193,6 +193,7 @@ export default {
   padding: 5px 10px;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   margin: 0 -5px;
 }
 .item {
