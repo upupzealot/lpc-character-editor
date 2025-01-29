@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import { RouterView, RouterLink } from 'vue-router'
 </script>
 
 <template>
   <div class="container">
     <div class="layout">
       <div class="header">
-        <div></div>
+        <RouterLink class="nav" to="/">Home</RouterLink>
+        <RouterLink class="nav" to="/tile">Tile</RouterLink>
       </div>
       <div class="body">
         <RouterView />
@@ -38,6 +39,11 @@ import { RouterView } from 'vue-router'
   flex-grow: 0;
   min-height: 46px;
   background-color: lightgrey;
+}
+.nav {
+  height: 36px;
+  line-height: 36px;
+  margin: 10px 5px;
 }
 .body {
   flex-grow: 1;

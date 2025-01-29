@@ -10,6 +10,11 @@ const router = createRouter({
       component: EditorView,
     },
     {
+      path: '/tile',
+      name: 'tile',
+      component: () => import('../views/TileView.vue'),
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
