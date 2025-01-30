@@ -68,7 +68,7 @@
 
 <script lang="ts">
 import { mapState } from 'pinia'
-import { useEditerStore } from '@/stores/editor'
+import { useCharacterEditerStore } from '@/stores/characterEditor'
 
 export default {
   data() {
@@ -78,7 +78,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useEditerStore, ['state']),
+    ...mapState(useCharacterEditerStore, ['state']),
     scale() {
       return this.state.previewScale
     },

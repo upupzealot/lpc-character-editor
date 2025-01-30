@@ -8,7 +8,7 @@
 import { AnimatedSprite, Application } from 'pixi.js'
 import { mapState } from 'pinia'
 import { useGraphicsStore } from '@/stores/graphics'
-import { useEditerStore } from '@/stores/editor'
+import { useCharacterEditerStore } from '@/stores/characterEditor'
 import PixiPixelComponent from '@/components/PixiPixelComponent.vue'
 import PreviewSettings from '@/components/PreviewSettings.vue'
 import CharactorActionSheet from '@/components/CharactorActionSheet'
@@ -18,7 +18,7 @@ export default {
   components: { PreviewSettings },
   computed: {
     ...mapState(useGraphicsStore, ['compositeAt']),
-    ...mapState(useEditerStore, ['direction', 'action']),
+    ...mapState(useCharacterEditerStore, ['direction', 'action']),
     previewScale() {
       return this.state.previewScale
     },

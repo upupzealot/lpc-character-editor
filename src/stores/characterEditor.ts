@@ -4,7 +4,7 @@ import type { Item, Palette } from '@/components/types'
 import { itemListGroup, itemMapGroup } from '@/stores/itemData'
 import { paletteList, paletteMap } from '@/stores/paletteData'
 
-export const useEditerStore = defineStore('editor', {
+export const useCharacterEditerStore = defineStore('editor', {
   state: () => {
     return {
       size: 32,

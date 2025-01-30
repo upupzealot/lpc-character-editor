@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import { mapState } from 'pinia'
-import { useEditerStore } from '@/stores/editor'
+import { useCharacterEditerStore } from '@/stores/characterEditor'
 import { loadImage } from '@/util/GraphicUtil'
 import PaletteSelector from '@/components/PaletteSelector.vue'
 import { makeWeaponLayer, makeWeaponTile } from '@/util/ItemUtil'
@@ -52,7 +52,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useEditerStore, [
+    ...mapState(useCharacterEditerStore, [
       'itemListGroup',
       'itemMapGroup',
       'state',

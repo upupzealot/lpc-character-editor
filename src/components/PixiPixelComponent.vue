@@ -2,7 +2,7 @@
 import { Application } from 'pixi.js'
 import { mapState, mapWritableState } from 'pinia'
 import { useGraphicsStore } from '@/stores/graphics'
-import { useEditerStore } from '@/stores/editor'
+import { useCharacterEditerStore } from '@/stores/characterEditor'
 
 export default {
   props: {
@@ -27,7 +27,7 @@ export default {
   },
   computed: {
     ...mapWritableState(useGraphicsStore, ['composite']),
-    ...mapState(useEditerStore, ['state', 'direction', 'action']),
+    ...mapState(useCharacterEditerStore, ['state', 'direction', 'action']),
     gridSize() {
       return this.size * this.scale
     },

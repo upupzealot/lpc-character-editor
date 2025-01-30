@@ -6,7 +6,7 @@
 import { AnimatedSprite, Application } from 'pixi.js'
 import { mapState, mapWritableState } from 'pinia'
 import { useGraphicsStore } from '@/stores/graphics'
-import { useEditerStore } from '@/stores/editor'
+import { useCharacterEditerStore } from '@/stores/characterEditor'
 import PixiPixelComponent from '@/components/PixiPixelComponent.vue'
 import CharactorActionSheet from './CharactorActionSheet'
 
@@ -14,8 +14,8 @@ export default {
   extends: PixiPixelComponent,
   computed: {
     ...mapState(useGraphicsStore, ['compositeAt']),
-    ...mapState(useEditerStore, ['action']),
-    ...mapWritableState(useEditerStore, ['direction']),
+    ...mapState(useCharacterEditerStore, ['action']),
+    ...mapWritableState(useCharacterEditerStore, ['direction']),
     canvasWidth() {
       return this.gridSize * 4
     },

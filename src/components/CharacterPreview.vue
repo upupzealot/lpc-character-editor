@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import { mapWritableState } from 'pinia'
-import { useEditerStore } from '@/stores/editor'
+import { useCharacterEditerStore } from '@/stores/characterEditor'
 
 import AnimationPreview from '@/components/ActionPreview.vue'
 import ActionSelector from '@/components/ActionSelector.vue'
@@ -54,7 +54,7 @@ export default {
     await this.draw()
   },
   computed: {
-    ...mapWritableState(useEditerStore, ['state', 'action']),
+    ...mapWritableState(useCharacterEditerStore, ['state', 'action']),
     frameSize() {
       return this.state.frameSize
     },

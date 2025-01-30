@@ -59,7 +59,7 @@
 
 <script lang="ts">
 import { mapState } from 'pinia'
-import { useEditerStore } from '@/stores/editor'
+import { useCharacterEditerStore } from '@/stores/characterEditor'
 import type { Palette } from '@/components/types'
 import { loadImage, replaceColor } from '@/util/GraphicUtil'
 import { getIconCanvas, ICON_SIZE, iconUrl } from '@/stores/paletteData'
@@ -107,7 +107,7 @@ export default {
     await this.getCanvasUrl()
   },
   computed: {
-    ...mapState(useEditerStore, [
+    ...mapState(useCharacterEditerStore, [
       'paletteList',
       'state',
       'opPartKey',

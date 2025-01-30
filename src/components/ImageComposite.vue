@@ -1,7 +1,7 @@
 <script lang="ts">
 import { mapState, mapWritableState } from 'pinia'
 import { useGraphicsStore } from '@/stores/graphics'
-import { useEditerStore } from '@/stores/editor'
+import { useCharacterEditerStore } from '@/stores/characterEditor'
 import { loadImage, replaceColor } from '@/util/GraphicUtil'
 import { renderOrder } from '@/components/ImageComposite'
 import CharactorActions from '@/components/CharacterActionsData.json'
@@ -10,7 +10,7 @@ export default {
   computed: {
     ...mapState(useGraphicsStore, ['composite']),
     ...mapWritableState(useGraphicsStore, ['compositeAt']),
-    ...mapState(useEditerStore, [
+    ...mapState(useCharacterEditerStore, [
       'size',
       'selections',
       'selectedItems',

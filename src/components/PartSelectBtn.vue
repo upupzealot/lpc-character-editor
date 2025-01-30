@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { mapState } from 'pinia'
-import { useEditerStore } from '@/stores/editor'
+import { useCharacterEditerStore } from '@/stores/characterEditor'
 
 export default {
   props: {
@@ -48,7 +48,11 @@ export default {
     },
   },
   computed: {
-    ...mapState(useEditerStore, ['state', 'selections', 'selectedItems']),
+    ...mapState(useCharacterEditerStore, [
+      'state',
+      'selections',
+      'selectedItems',
+    ]),
     iconsize() {
       if (this.size <= 32) {
         return 32
