@@ -72,23 +72,23 @@ export const useCharacterEditerStore = defineStore('characterEditor', {
     opPartKey(): string {
       return this.state.opPart
     },
-    /** 打开部位的项目列表 */
+    /** 打开部位的部件列表 */
     opPartItems(): Item[] {
       return this.itemListGroup[this.opPartKey]
     },
-    /** 打开的项目Key */
+    /** 打开的部件Key */
     opItemKey(): string {
       return this.state.opItem
     },
-    /** 打开的项目 */
+    /** 打开的部件 */
     opItem(): Item {
       return this.itemMapGroup[this.opPartKey][this.opItemKey]
     },
-    /** 打开的项目的色板 */
+    /** 打开的部件的色板 */
     opItemPalettes(): Palette[] {
       return this.opItem.palettes
     },
-    /** 每个部位当前选中的项目 */
+    /** 每个部位当前选中的部件 */
     selectedItems() {
       const itemsMap = {} as {
         [k: string]: Item
@@ -100,11 +100,11 @@ export const useCharacterEditerStore = defineStore('characterEditor', {
       }
       return itemsMap
     },
-    /** 打开的项目当前选中的色板索引 */
+    /** 打开的部件当前选中的色板索引 */
     selectedPaletteIndex(): number {
       return this.state.opPaletteIndex
     },
-    /** 打开的项目当前选中的色板 */
+    /** 打开的部件当前选中的色板 */
     selectedPalettes(): Palette[] {
       return this.selections[this.opPartKey].palettes
     },

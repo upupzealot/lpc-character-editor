@@ -196,10 +196,10 @@ export default {
       const g2d = this.ctx.g2d() as CanvasRenderingContext2D
       g2d.clearRect(0, 0, canvas.width, canvas.height)
 
-      // 当前项目的原始色板
+      // 当前部件的原始色板
       const srcPalettes = this.opItemPalettes
       const srcColors = srcPalettes.map((p) => p.colors)
-      // 当前项目选中的色板
+      // 当前部件选中的色板
       const selectedPalettes = this.selectedPalettes
       // 待预览的色板列表
       const dstPalettes = this.palettes as Palette[]
