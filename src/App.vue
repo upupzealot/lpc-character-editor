@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import { RouterView, RouterLink } from 'vue-router'
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
   <div class="container">
     <div class="layout">
       <div class="header">
-        <RouterLink class="nav" to="/">Home</RouterLink>
-        <RouterLink class="nav" to="/tile">Tile</RouterLink>
+        <a-menu
+          theme="dark"
+          mode="horizontal"
+          :selected-keys="[currentRoute]"
+          @select="onMenuSelect"
+        >
+          <a-menu-item key="editor"> Editor </a-menu-item>
+          <a-menu-item key="tile"> Tile </a-menu-item></a-menu
+        >
       </div>
       <div class="body">
         <RouterView />
@@ -16,6 +23,21 @@ import { RouterView, RouterLink } from 'vue-router'
     </div>
   </div>
 </template>
+
+<script lang="ts">
+export default {
+  computed: {
+    currentRoute() {
+      return this.$route.name
+    },
+  },
+  methods: {
+    onMenuSelect({ key }: { key: string }) {
+      this.$router.push({ name: key })
+    },
+  },
+}
+</script>
 
 <style scoped>
 .container {
