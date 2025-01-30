@@ -12,9 +12,9 @@ import { RouterView } from 'vue-router'
           :selected-keys="[currentRoute]"
           @select="onMenuSelect"
         >
-          <a-menu-item key="editor"> Editor </a-menu-item>
-          <a-menu-item key="tile"> Tile </a-menu-item></a-menu
-        >
+          <a-menu-item key="character"> Character </a-menu-item>
+          <a-menu-item key="item"> Item </a-menu-item>
+        </a-menu>
       </div>
       <div class="body">
         <RouterView />

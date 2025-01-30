@@ -4,7 +4,7 @@ import type { Item, Palette } from '@/components/types'
 import { itemListGroup, itemMapGroup } from '@/stores/itemData'
 import { paletteList, paletteMap } from '@/stores/paletteData'
 
-export const useCharacterEditerStore = defineStore('editor', {
+export const useCharacterEditerStore = defineStore('characterEditor', {
   state: () => {
     return {
       size: 32,
@@ -110,6 +110,7 @@ export const useCharacterEditerStore = defineStore('editor', {
     },
   },
   persist: {
+    key: 'character-editor',
     storage: localStorage,
     omit: ['itemListGroup', 'itemMapGroup', 'paletteList', 'paletteMap'],
   },
