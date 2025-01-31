@@ -18,36 +18,41 @@
       </a-menu>
     </div>
     <div class="content">
-      <input
-        ref="miniTileInput"
-        type="file"
-        accept=".png"
-        @change="tileSelected('mini')"
-        hidden="hidden"
-      />
-      <img
-        ref="miniTilePreview"
-        :class="miniTileImage ? 'preview-img' : ['preview-img', 'hidden']"
-      />
-      <input
-        ref="fullTileInput"
-        type="file"
-        accept=".png"
-        @change="tileSelected('full')"
-        hidden="hidden"
-      />
-      <img
-        ref="fullTilePreview"
-        class="preview-img"
-        :class="fullTileImage ? 'preview-img' : ['preview-img', 'hidden']"
-      />
-      <a-button @click="uploadTile('mini')">
-        upload minimum {{ state.opPart }} tile
-      </a-button>
-      /
-      <a-button @click="uploadTile('full')">
-        upload {{ state.opPart }} tile
-      </a-button>
+      <DetailRadio :options="options" v-model="mode"></DetailRadio>
+
+      <div class="panel" v-show="mode === 'mini'">
+        <input
+          ref="miniTileInput"
+          type="file"
+          accept=".png"
+          @change="tileSelected('mini')"
+          hidden="hidden"
+        />
+        <img
+          ref="miniTilePreview"
+          :class="miniTileImage ? 'preview-img' : ['preview-img', 'hidden']"
+        />
+        <a-button @click="uploadTile('mini')">
+          upload minimum {{ state.opPart }} tile
+        </a-button>
+      </div>
+      <div class="panel" v-show="mode === 'full'">
+        <input
+          ref="fullTileInput"
+          type="file"
+          accept=".png"
+          @change="tileSelected('full')"
+          hidden="hidden"
+        />
+        <img
+          ref="fullTilePreview"
+          class="preview-img"
+          :class="fullTileImage ? 'preview-img' : ['preview-img', 'hidden']"
+        />
+        <a-button @click="uploadTile('full')">
+          upload {{ state.opPart }} tile
+        </a-button>
+      </div>
     </div>
   </div>
 </template>
@@ -55,13 +60,30 @@
 <script lang="ts">
 import { mapState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
+import DetailRadio from '@/components/item/DetailRadio.vue'
 
 export default {
+  components: { DetailRadio },
   data() {
     return {
+      mode: 'mini',
+      options: [
+        {
+          value: 'mini',
+          label: 'from minimum',
+          desc: 'create item from minimum weapon tile image',
+        },
+        {
+          value: 'full',
+          label: 'import exist',
+          desc: 'import exist weapon tile',
+        },
+      ],
       miniTileImage: null,
       fullTileImage: null,
     } as {
+      mode: string
+      options: { value: string; label: string; desc: string }[]
       miniTileImage: null | HTMLImageElement
       fullTileImage: null | HTMLImageElement
     }
@@ -125,6 +147,9 @@ export default {
   padding: 15px;
 
   flex-grow: 1;
+}
+.panel {
+  margin-top: 10px;
 }
 .preview-img {
   image-rendering: pixelated;

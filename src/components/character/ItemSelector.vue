@@ -88,6 +88,8 @@ export default {
   watch: {
     opPartKey: {
       async handler(partKey) {
+        if (!partKey) return
+
         let url = this.canvasUrlMap[partKey]
         if (!url) {
           url = await this.getCanvasUrl(this.opPartKey)
