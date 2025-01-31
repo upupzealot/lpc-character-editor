@@ -1,4 +1,4 @@
-import type { Color, Palette } from '@/components/types'
+import type { Color, Palette } from '@/components/character/types'
 
 // PaletteData comes from:
 // https://github.com/vitruvianstudio/vitruvian-web/blob/main/src/data/colors.json

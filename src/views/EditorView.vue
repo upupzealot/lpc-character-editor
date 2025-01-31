@@ -25,9 +25,9 @@
 </template>
 
 <script lang="ts">
-import ItemSelector from '@/components/ItemSelector.vue'
-import CharacterPreview from '@/components/CharacterPreview.vue'
-import PartSelectBtn from '@/components/PartSelectBtn.vue'
+import ItemSelector from '@/components/character/ItemSelector.vue'
+import CharacterPreview from '@/components/character/CharacterPreview.vue'
+import PartSelectBtn from '@/components/character/PartSelectBtn.vue'
 
 export default {
   components: { ItemSelector, CharacterPreview, PartSelectBtn },

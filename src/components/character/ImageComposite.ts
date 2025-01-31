@@ -1,5 +1,3 @@
-// export async function name(params: type) {}
-
 export function renderOrder(direction: string) {
   const directionOders = {
     down: [

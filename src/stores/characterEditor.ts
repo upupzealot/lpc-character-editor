@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-import type { Item, Palette } from '@/components/types'
+import type { Item, Palette } from '@/components/character/types'
 import { itemListGroup, itemMapGroup } from '@/stores/itemData'
 import { paletteList, paletteMap } from '@/stores/paletteData'
 

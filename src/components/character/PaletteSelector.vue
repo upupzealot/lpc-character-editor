@@ -60,7 +60,7 @@
 <script lang="ts">
 import { mapState } from 'pinia'
 import { useCharacterEditerStore } from '@/stores/characterEditor'
-import type { Palette } from '@/components/types'
+import type { Palette } from '@/components/character/types'
 import { loadImage, replaceColor } from '@/util/GraphicUtil'
 import { getIconCanvas, ICON_SIZE, iconUrl } from '@/stores/paletteData'
 

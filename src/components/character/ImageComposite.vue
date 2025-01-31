@@ -3,8 +3,8 @@ import { mapState, mapWritableState } from 'pinia'
 import { useGraphicsStore } from '@/stores/graphics'
 import { useCharacterEditerStore } from '@/stores/characterEditor'
 import { loadImage, replaceColor } from '@/util/GraphicUtil'
-import { renderOrder } from '@/components/ImageComposite'
-import CharactorActions from '@/components/CharacterActionsData.json'
+import { renderOrder } from '@/components/character/ImageComposite'
+import CharactorActions from '@/components/character/CharacterActionsData.json'
 
 export default {
   computed: {

@@ -29,7 +29,7 @@
 import { mapState } from 'pinia'
 import { useCharacterEditerStore } from '@/stores/characterEditor'
 import { loadImage } from '@/util/GraphicUtil'
-import PaletteSelector from '@/components/PaletteSelector.vue'
+import PaletteSelector from '@/components/character/PaletteSelector.vue'
 import { makeWeaponLayer, makeWeaponTile } from '@/util/ItemUtil'
 
 export default {

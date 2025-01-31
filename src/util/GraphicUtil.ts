@@ -1,4 +1,4 @@
-import type { Color } from '@/components/types'
+import type { Color } from '@/components/character/types'
 
 export async function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {

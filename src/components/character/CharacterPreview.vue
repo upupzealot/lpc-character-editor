@@ -29,10 +29,10 @@
 import { mapWritableState } from 'pinia'
 import { useCharacterEditerStore } from '@/stores/characterEditor'
 
-import AnimationPreview from '@/components/ActionPreview.vue'
-import ActionSelector from '@/components/ActionSelector.vue'
-import actions from '@/components/CharacterActions.json'
-import ImageComposite from '@/components/ImageComposite.vue'
+import AnimationPreview from '@/components/character/ActionPreview.vue'
+import ActionSelector from '@/components/character/ActionSelector.vue'
+import actions from '@/components/character/CharacterActions.json'
+import ImageComposite from '@/components/character/ImageComposite.vue'
 
 type Action = {
   name: string

@@ -1,4 +1,4 @@
-import type { Color, Item } from '@/components/types'
+import type { Color, Item } from '@/components/character/types'
 import bodyItems from '@/assets/item-data/body'
 import hairItems from '@/assets/item-data/hair'
 import eyeItems from '@/assets/item-data/eye'

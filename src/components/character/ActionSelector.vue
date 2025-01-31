@@ -7,7 +7,7 @@ import { AnimatedSprite, Application } from 'pixi.js'
 import { mapState, mapWritableState } from 'pinia'
 import { useGraphicsStore } from '@/stores/graphics'
 import { useCharacterEditerStore } from '@/stores/characterEditor'
-import PixiPixelComponent from '@/components/PixiPixelComponent.vue'
+import PixiPixelComponent from '@/components/character/PixiPixelComponent.vue'
 import CharactorActionSheet from './CharactorActionSheet'
 
 export default {
