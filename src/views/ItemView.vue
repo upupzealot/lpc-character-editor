@@ -21,37 +21,10 @@
       <DetailRadio :options="options" v-model="mode"></DetailRadio>
 
       <div class="panel" v-show="mode === 'mini'">
-        <input
-          ref="miniTileInput"
-          type="file"
-          accept=".png"
-          @change="tileSelected('mini')"
-          hidden="hidden"
-        />
-        <img
-          ref="miniTilePreview"
-          :class="miniTileImage ? 'preview-img' : ['preview-img', 'hidden']"
-        />
-        <a-button @click="uploadTile('mini')">
-          upload minimum {{ state.opPart }} tile
-        </a-button>
+        <MiniTileEditor></MiniTileEditor>
       </div>
       <div class="panel" v-show="mode === 'full'">
-        <input
-          ref="fullTileInput"
-          type="file"
-          accept=".png"
-          @change="tileSelected('full')"
-          hidden="hidden"
-        />
-        <img
-          ref="fullTilePreview"
-          class="preview-img"
-          :class="fullTileImage ? 'preview-img' : ['preview-img', 'hidden']"
-        />
-        <a-button @click="uploadTile('full')">
-          upload {{ state.opPart }} tile
-        </a-button>
+        <ItemTileEditor></ItemTileEditor>
       </div>
     </div>
   </div>
@@ -61,9 +34,11 @@
 import { mapState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
 import DetailRadio from '@/components/item/DetailRadio.vue'
+import MiniTileEditor from '@/components/item/MiniTileEditor.vue'
+import ItemTileEditor from '@/components/item/ItemTileEditor.vue'
 
 export default {
-  components: { DetailRadio },
+  components: { DetailRadio, MiniTileEditor, ItemTileEditor },
   data() {
     return {
       mode: 'mini',
@@ -102,31 +77,6 @@ export default {
           ? (this.$refs.miniTileInput as HTMLInputElement)
           : (this.$refs.fullTileInput as HTMLInputElement)
       $input.click()
-    },
-    tileSelected(type: 'mini' | 'full') {
-      const $input =
-        type === 'mini'
-          ? (this.$refs.miniTileInput as HTMLInputElement)
-          : (this.$refs.fullTileInput as HTMLInputElement)
-      const file = $input.files?.length && $input.files[0]
-
-      if (file) {
-        const reader = new FileReader()
-        reader.onload = () => {
-          const $preview =
-            type === 'mini'
-              ? (this.$refs.miniTilePreview as HTMLImageElement)
-              : (this.$refs.fullTilePreview as HTMLImageElement)
-          if (type === 'mini') {
-            this.miniTileImage = $preview
-          } else {
-            this.fullTileImage = $preview
-          }
-          $preview.src = reader.result as string
-        }
-
-        reader.readAsDataURL(file)
-      }
     },
   },
 }

@@ -23,8 +23,7 @@
 }
 .item {
   position: relative;
-  border: rgb(217, 217, 217) 1px solid;
-  border-radius: 4px;
+  border-radius: 8px;
   padding: 5px 10px;
   flex: 1;
 
@@ -32,15 +31,6 @@
   flex-direction: row;
   align-items: flex-start;
   cursor: pointer;
-}
-.item:first-child {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-.item:not(:first-child) {
-  border-left: none;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
 }
 .item.selected {
   background-color: #e6f4ff;
@@ -57,9 +47,6 @@
 .item.selected .icon {
   background-color: #fff;
   border-color: #1677ff;
-}
-.content {
-  // margin-left: 26px;
 }
 .title {
   font-size: 24px;
