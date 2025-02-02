@@ -1,13 +1,10 @@
 <template>
   <div class="step">
-    <a-button :type="tileImageUrl ? 'primary' : 'default'" shape="circle"
+    <a-button :type="tileImage ? 'primary' : 'default'" shape="circle"
       >1</a-button
     ><span class="title">{{ tileImageBtnText }}</span>
     <div class="content">
-      <TileSelecter
-        ref="tileImageSelecter"
-        v-model="tileImageUrl"
-      ></TileSelecter>
+      <TileSelecter ref="tileImageSelecter" v-model="tileImage"></TileSelecter>
       <a-button @click="$refs.tileImageSelecter!.openSelecter()">
         upload
       </a-button>
@@ -17,13 +14,13 @@
   <a-divider></a-divider>
 
   <div class="step">
-    <a-button :type="tileDataImageUrl ? 'primary' : 'default'" shape="circle"
+    <a-button :type="tileDataImage ? 'primary' : 'default'" shape="circle"
       >2</a-button
     ><span class="title">{{ tileDataImageBtnText }}</span>
     <div class="content">
       <TileSelecter
         ref="tileDataImageSelecter"
-        v-model="tileDataImageUrl"
+        v-model="tileDataImage"
       ></TileSelecter>
       <a-button @click="$refs.tileDataImageSelecter!.openSelecter()">
         upload
@@ -37,8 +34,13 @@
   <div class="step">
     <a-button :type="'default'" shape="circle">3</a-button
     ><span class="title">Genarate {{ state.opPart }} title</span>
+    <div class="content">
+      <div ref="tilePreview"></div>
+      <a-button :disabled="!tileImage || !tileDataImage" @click="generateTile">
+        generate
+      </a-button>
+    </div>
   </div>
-  <a-button :disabled="!tileImageUrl || !tileDataImageUrl">generate</a-button>
 </template>
 
 <style scoped>
@@ -59,14 +61,18 @@
 <script lang="ts">
 import { mapState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
-import TileSelecter from './TileSelecter.vue'
+import TileSelecter from '@/components/item/TileSelecter.vue'
+import { makeWeaponTile } from '@/util/ItemUtil'
 
 export default {
   components: { TileSelecter },
   data() {
     return {
-      tileImageUrl: '',
-      tileDataImageUrl: '',
+      tileImage: null,
+      tileDataImage: null,
+    } as {
+      tileImage: HTMLImageElement | null
+      tileDataImage: HTMLImageElement | null
     }
   },
   computed: {
@@ -76,6 +82,19 @@ export default {
     },
     tileDataImageBtnText() {
       return `upload minimum ${this.state.opPart} tile data image`
+    },
+  },
+  methods: {
+    async generateTile() {
+      if (!this.tileImage || !this.tileDataImage) return
+
+      // 不同朝向的瓦片和数据
+      const weaponTile = await makeWeaponTile(
+        32,
+        this.tileImage,
+        this.tileDataImage,
+      )
+      ;(this.$refs.tilePreview as HTMLElement).replaceChildren(weaponTile.image)
     },
   },
 }

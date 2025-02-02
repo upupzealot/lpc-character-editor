@@ -17,7 +17,7 @@
 export default {
   props: {
     modelValue: {
-      type: String,
+      type: [HTMLImageElement, null],
       required: true,
     },
     scaleTo: {
@@ -32,10 +32,10 @@ export default {
       $input.click()
     },
     async onTileSelected() {
-      const dataUrl = await this.tileSelected()
-      this.$emit('update:modelValue', dataUrl)
+      const image = await this.tileSelected()
+      this.$emit('update:modelValue', image)
     },
-    async tileSelected(): Promise<string> {
+    async tileSelected(): Promise<HTMLImageElement | null> {
       const $input = this.$refs.tileInput as HTMLInputElement
       const file = $input.files?.length && $input.files[0]
 
@@ -56,14 +56,14 @@ export default {
               g2d.scale(scale, scale)
               g2d.imageSmoothingEnabled = false
               g2d.drawImage(image, 0, 0)
+              resolve(image)
             }
-            resolve(dataUrl)
           }
           reader.onerror = reject
           reader.readAsDataURL(file)
         })
       } else {
-        return Promise.resolve(dataUrl)
+        return Promise.resolve(null)
       }
     },
   },
