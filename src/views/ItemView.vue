@@ -17,9 +17,25 @@
         <a-menu-item key="weapon"> weapon </a-menu-item>
       </a-menu>
     </div>
-    <div class="content">
-      <DetailRadio :options="options" v-model="mode"></DetailRadio>
 
+    <div class="content">
+      <a-steps
+        type="navigation"
+        :current="0"
+        :items="[
+          {
+            title: `Create item`,
+          },
+          {
+            title: `Genarate layer`,
+          },
+          {
+            title: 'Save / Export',
+          },
+        ]"
+      >
+      </a-steps>
+      <DetailRadio :options="options" v-model="mode"></DetailRadio>
       <div class="panel" v-show="mode === 'mini'">
         <MiniTileEditor></MiniTileEditor>
       </div>
