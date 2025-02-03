@@ -53,38 +53,26 @@
       <a-button :disabled="!tileImage" @click="downloadTileImage">
         export
       </a-button>
+      <a-button type="primary" :disabled="!tileImage" @click="nextStep">
+        Go to generate full weapon layer
+      </a-button>
     </div>
   </div>
 </template>
 
-<style scoped>
-.step {
-  margin: 10px 0;
-}
-.step .title {
-  margin-left: 10px;
-}
-.step .content {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-}
-.preview-img {
-  image-rendering: pixelated;
-  display: block;
-  border: rgb(217, 217, 217) 1px solid;
-  border-radius: 6px;
-}
+<style lang="less" scoped>
+@import url(./EditorCommon.less);
 </style>
 
 <script lang="ts">
 import { mapState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
+import EditorCommon from '@/components/item/EditorCommon.vue'
 import TileSelecter from '@/components/item/TileSelecter.vue'
 import { makeWeaponTile } from '@/util/ItemUtil'
 
 export default {
+  extends: EditorCommon,
   components: { TileSelecter },
   data() {
     return {
@@ -103,6 +91,7 @@ export default {
       return !!this.miniTileImage && !!this.miniTileDataImage
     },
   },
+  emits: ['nextStep'],
   methods: {
     async generateTile() {
       if (!this.miniTileImage || !this.miniTileDataImage) return
@@ -116,21 +105,10 @@ export default {
       this.tileImage = weaponTile.image
       ;(this.$refs.tilePreview as HTMLElement).replaceChildren(weaponTile.image)
     },
-    btnType(value: unknown) {
-      return value ? 'primary' : 'default'
-    },
     downloadTileImage() {
       if (!this.$refs.tilePreview) return
       const img = (this.$refs.tilePreview as HTMLElement).querySelector('img')
-      const dataUrl = (img as HTMLImageElement).src
-
-      // 创建下载链接
-      const link = document.createElement('a')
-      link.href = dataUrl
-      link.download = 'item-tile.png' // 设置下载的文件名
-      document.body.appendChild(link)
-      link.click() // 触发下载
-      document.body.removeChild(link) // 移除链接
+      this.downloadImage(img as HTMLImageElement)
     },
   },
 }

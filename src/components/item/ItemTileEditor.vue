@@ -1,16 +1,48 @@
 <template>
-  <TileSelecter :btn-text="`upload ${state.opPart} tile image`"></TileSelecter>
+  <div class="step">
+    <a-button :type="btnType(tileImage)" shape="circle">1</a-button
+    ><span class="title">{{
+      `import existed ${state.opPart} tile image`
+    }}</span>
+    <div class="content">
+      <TileSelecter ref="tileImageSelecter" v-model="tileImage"></TileSelecter>
+      <a-button @click="$refs.tileImageSelecter!.openSelecter()">
+        upload
+      </a-button>
+      <a-button type="primary" :disabled="!tileImage" @click="nextStep">
+        Go to generate full weapon layer
+      </a-button>
+    </div>
+  </div>
 </template>
+
+<style lang="less" scoped>
+@import url(./EditorCommon.less);
+</style>
 
 <script lang="ts">
 import { mapState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
-import TileSelecter from './TileSelecter.vue'
+import EditorCommon from '@/components/item/EditorCommon.vue'
+import TileSelecter from '@/components/item/TileSelecter.vue'
 
 export default {
+  extends: EditorCommon,
   components: { TileSelecter },
+  data() {
+    return {
+      tileImage: null,
+    } as {
+      tileImage: HTMLImageElement | null
+    }
+  },
   computed: {
     ...mapState(useItemEditerStore, ['state']),
+  },
+  methods: {
+    btnType(value: unknown) {
+      return value ? 'primary' : 'default'
+    },
   },
 }
 </script>

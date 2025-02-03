@@ -21,26 +21,21 @@
     <div class="content">
       <a-steps
         type="navigation"
-        :current="0"
-        :items="[
-          {
-            title: `Create item`,
-          },
-          {
-            title: `Genarate layer`,
-          },
-          {
-            title: 'Save / Export',
-          },
-        ]"
+        v-model:current="currentStep"
+        :items="steps"
+        style="margin-bottom: 10px"
       >
       </a-steps>
-      <DetailRadio :options="options" v-model="mode"></DetailRadio>
-      <div class="panel" v-show="mode === 'mini'">
-        <MiniTileEditor></MiniTileEditor>
-      </div>
-      <div class="panel" v-show="mode === 'full'">
-        <ItemTileEditor></ItemTileEditor>
+
+      <div v-show="currentStep === 0">
+        <DetailRadio :options="options" v-model="mode"></DetailRadio>
+        <a-divider style="margin-top: 10px"></a-divider>
+        <div class="panel" v-show="mode === 'mini'">
+          <MiniTileEditor @next-step="currentStep++"></MiniTileEditor>
+        </div>
+        <div class="panel" v-show="mode === 'full'">
+          <ItemTileEditor @next-step="currentStep++"></ItemTileEditor>
+        </div>
       </div>
     </div>
   </div>
@@ -57,6 +52,18 @@ export default {
   components: { DetailRadio, MiniTileEditor, ItemTileEditor },
   data() {
     return {
+      currentStep: 0,
+      steps: [
+        {
+          title: `Create item`,
+        },
+        {
+          title: `Genarate layer`,
+        },
+        {
+          title: 'Save / Export',
+        },
+      ],
       mode: 'mini',
       options: [
         {
@@ -70,13 +77,11 @@ export default {
           desc: 'import exist weapon tile',
         },
       ],
-      miniTileImage: null,
-      fullTileImage: null,
     } as {
+      currentStep: number
+      steps: { title: string }[]
       mode: string
       options: { value: string; label: string; desc: string }[]
-      miniTileImage: null | HTMLImageElement
-      fullTileImage: null | HTMLImageElement
     }
   },
   computed: {
