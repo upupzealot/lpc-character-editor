@@ -1,9 +1,19 @@
 import { defineStore } from 'pinia'
+import { itemListGroup, itemMapGroup } from '@/stores/itemData'
+import type { WeaponTileData } from '@/util/ItemUtil'
 
 export const useItemEditerStore = defineStore('itemEditor', {
   state: () => {
     return {
-      /** 编辑器浏览状态 */
+      body: 'body-1',
+      tileImage: null as HTMLImageElement | null,
+      tileData: null as WeaponTileData[] | null,
+      layerImage: null as HTMLImageElement | null,
+
+      itemListGroup,
+      itemMapGroup,
+
+      /** 编辑器操作状态 */
       state: {
         opPart: '',
       },
@@ -12,5 +22,6 @@ export const useItemEditerStore = defineStore('itemEditor', {
   persist: {
     key: 'item-editor',
     storage: localStorage,
+    omit: ['tileImage', 'tileData', 'layerImage'],
   },
 })

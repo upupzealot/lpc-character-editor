@@ -26,6 +26,11 @@ export default {
     },
   },
   emits: ['update:modelValue'],
+  watch: {
+    modelValue() {
+      this.draw(this.modelValue)
+    },
+  },
   methods: {
     openSelecter() {
       const $input = this.$refs.tileInput as HTMLInputElement
@@ -48,14 +53,7 @@ export default {
             const image = this.$refs.tileImage as HTMLImageElement
             image.src = dataUrl
             image.onload = () => {
-              const canvas = this.$refs.tileCanvas as HTMLCanvasElement
-              const scale = Math.ceil(this.scaleTo / image.naturalHeight)
-              canvas.width = image.naturalWidth * scale
-              canvas.height = image.naturalHeight * scale
-              const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
-              g2d.scale(scale, scale)
-              g2d.imageSmoothingEnabled = false
-              g2d.drawImage(image, 0, 0)
+              this.draw(image)
               resolve(image)
             }
           }
@@ -65,6 +63,20 @@ export default {
       } else {
         return Promise.resolve(null)
       }
+    },
+    draw(image: HTMLImageElement | null) {
+      if (!image) return
+
+      const canvas = this.$refs.tileCanvas as HTMLCanvasElement
+      const scale = Math.ceil(this.scaleTo / image.naturalHeight)
+      canvas.width = image.naturalWidth * scale
+      canvas.height = image.naturalHeight * scale
+      const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
+      g2d.clearRect(0, 0, canvas.width, canvas.height)
+      g2d.imageSmoothingEnabled = false
+
+      g2d.scale(scale, scale)
+      g2d.drawImage(image, 0, 0)
     },
   },
 }

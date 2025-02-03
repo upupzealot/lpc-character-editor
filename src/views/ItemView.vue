@@ -37,6 +37,10 @@
           <ItemTileEditor @next-step="currentStep++"></ItemTileEditor>
         </div>
       </div>
+
+      <div v-show="currentStep === 1">
+        <ItemLayerEditor @next-step="currentStep++"></ItemLayerEditor>
+      </div>
     </div>
   </div>
 </template>
@@ -47,9 +51,10 @@ import { useItemEditerStore } from '@/stores/itemEditor'
 import DetailRadio from '@/components/item/DetailRadio.vue'
 import MiniTileEditor from '@/components/item/MiniTileEditor.vue'
 import ItemTileEditor from '@/components/item/ItemTileEditor.vue'
+import ItemLayerEditor from '@/components/item/ItemLayerEditor.vue'
 
 export default {
-  components: { DetailRadio, MiniTileEditor, ItemTileEditor },
+  components: { DetailRadio, MiniTileEditor, ItemTileEditor, ItemLayerEditor },
   data() {
     return {
       currentStep: 0,

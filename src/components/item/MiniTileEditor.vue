@@ -38,7 +38,7 @@
 
   <div class="step">
     <a-button :type="btnType(tileImage)" shape="circle">3</a-button
-    ><span class="title">Genarate {{ state.opPart }} title</span>
+    ><span class="title">Generate {{ state.opPart }} tile</span>
     <div class="content">
       <div
         ref="tilePreview"
@@ -65,7 +65,7 @@
 </style>
 
 <script lang="ts">
-import { mapState } from 'pinia'
+import { mapState, mapWritableState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
 import EditorCommon from '@/components/item/EditorCommon.vue'
 import TileSelecter from '@/components/item/TileSelecter.vue'
@@ -78,15 +78,14 @@ export default {
     return {
       miniTileImage: null,
       miniTileDataImage: null,
-      tileImage: null,
     } as {
       miniTileImage: HTMLImageElement | null
       miniTileDataImage: HTMLImageElement | null
-      tileImage: HTMLImageElement | null
     }
   },
   computed: {
     ...mapState(useItemEditerStore, ['state']),
+    ...mapWritableState(useItemEditerStore, ['tileImage', 'tileData']),
     generateReady() {
       return !!this.miniTileImage && !!this.miniTileDataImage
     },
@@ -103,6 +102,7 @@ export default {
         this.miniTileDataImage,
       )
       this.tileImage = weaponTile.image
+      this.tileData = weaponTile.data
       ;(this.$refs.tilePreview as HTMLElement).replaceChildren(weaponTile.image)
     },
     downloadTileImage() {

@@ -21,7 +21,7 @@
 </style>
 
 <script lang="ts">
-import { mapState } from 'pinia'
+import { mapState, mapWritableState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
 import EditorCommon from '@/components/item/EditorCommon.vue'
 import TileSelecter from '@/components/item/TileSelecter.vue'
@@ -29,15 +29,9 @@ import TileSelecter from '@/components/item/TileSelecter.vue'
 export default {
   extends: EditorCommon,
   components: { TileSelecter },
-  data() {
-    return {
-      tileImage: null,
-    } as {
-      tileImage: HTMLImageElement | null
-    }
-  },
   computed: {
     ...mapState(useItemEditerStore, ['state']),
+    ...mapWritableState(useItemEditerStore, ['tileImage']),
   },
   methods: {
     btnType(value: unknown) {

@@ -14,19 +14,24 @@ type DataRect = {
   bottom: number
 }
 
-type WeaponTile = {
+export type WeaponTileData = {
+  points: DataPoint[]
+  rect: DataRect
+}
+
+export type WeaponTile = {
   image: HTMLImageElement
-  data: {
-    points: DataPoint[]
-    rect: DataRect
-  }[]
+  data: WeaponTileData[]
 }
 
 export async function makeWeaponLayer(
   size: number,
   bodyHandPointImage: HTMLImageElement,
   weaponTile: WeaponTile,
-): Promise<number> {
+): Promise<{
+  frameSize: number
+  layerImageDataUrl: string
+}> {
   const frameHandPoints: DataPoint[][] = parsePoints(size, bodyHandPointImage)
   const padding = getOversizePadding(size, frameHandPoints, weaponTile)
   const frameSize = size + padding * 2
@@ -77,7 +82,10 @@ export async function makeWeaponLayer(
     g2d.restore()
   }
 
-  return frameSize
+  return {
+    frameSize,
+    layerImageDataUrl: canvas.toDataURL(),
+  }
 }
 
 export async function makeWeaponTile(
