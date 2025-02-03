@@ -1,10 +1,14 @@
 <template>
   <div class="step">
-    <a-button :type="tileImage ? 'primary' : 'default'" shape="circle"
-      >1</a-button
-    ><span class="title">{{ tileImageBtnText }}</span>
+    <a-button :type="btnType(miniTileImage)" shape="circle">1</a-button
+    ><span class="title">{{
+      `upload minimum ${state.opPart} tile image`
+    }}</span>
     <div class="content">
-      <TileSelecter ref="tileImageSelecter" v-model="tileImage"></TileSelecter>
+      <TileSelecter
+        ref="tileImageSelecter"
+        v-model="miniTileImage"
+      ></TileSelecter>
       <a-button @click="$refs.tileImageSelecter!.openSelecter()">
         upload
       </a-button>
@@ -14,15 +18,16 @@
   <a-divider></a-divider>
 
   <div class="step">
-    <a-button :type="tileDataImage ? 'primary' : 'default'" shape="circle"
-      >2</a-button
-    ><span class="title">{{ tileDataImageBtnText }}</span>
+    <a-button :type="btnType(miniTileDataImage)" shape="circle">2</a-button
+    ><span class="title">{{
+      `upload minimum ${state.opPart} tile data image`
+    }}</span>
     <div class="content">
       <TileSelecter
-        ref="tileDataImageSelecter"
-        v-model="tileDataImage"
+        ref="miniTileDataImageSelecter"
+        v-model="miniTileDataImage"
       ></TileSelecter>
-      <a-button @click="$refs.tileDataImageSelecter!.openSelecter()">
+      <a-button @click="$refs.miniTileDataImageSelecter!.openSelecter()">
         upload
       </a-button>
       <a-button disabled> create </a-button>
@@ -32,12 +37,21 @@
   <a-divider></a-divider>
 
   <div class="step">
-    <a-button :type="'default'" shape="circle">3</a-button
+    <a-button :type="btnType(tileImage)" shape="circle">3</a-button
     ><span class="title">Genarate {{ state.opPart }} title</span>
     <div class="content">
-      <div ref="tilePreview"></div>
-      <a-button :disabled="!tileImage || !tileDataImage" @click="generateTile">
+      <div
+        ref="tilePreview"
+        class="preview-img"
+        :style="{
+          display: tileImage ? 'block' : 'none',
+        }"
+      ></div>
+      <a-button :disabled="!generateReady" @click="generateTile">
         generate
+      </a-button>
+      <a-button :disabled="!tileImage" @click="downloadTileImage">
+        export
       </a-button>
     </div>
   </div>
@@ -56,6 +70,12 @@
   flex-direction: row;
   gap: 10px;
 }
+.preview-img {
+  image-rendering: pixelated;
+  display: block;
+  border: rgb(217, 217, 217) 1px solid;
+  border-radius: 6px;
+}
 </style>
 
 <script lang="ts">
@@ -68,33 +88,49 @@ export default {
   components: { TileSelecter },
   data() {
     return {
+      miniTileImage: null,
+      miniTileDataImage: null,
       tileImage: null,
-      tileDataImage: null,
     } as {
+      miniTileImage: HTMLImageElement | null
+      miniTileDataImage: HTMLImageElement | null
       tileImage: HTMLImageElement | null
-      tileDataImage: HTMLImageElement | null
     }
   },
   computed: {
     ...mapState(useItemEditerStore, ['state']),
-    tileImageBtnText() {
-      return `upload minimum ${this.state.opPart} tile image`
-    },
-    tileDataImageBtnText() {
-      return `upload minimum ${this.state.opPart} tile data image`
+    generateReady() {
+      return !!this.miniTileImage && !!this.miniTileDataImage
     },
   },
   methods: {
     async generateTile() {
-      if (!this.tileImage || !this.tileDataImage) return
+      if (!this.miniTileImage || !this.miniTileDataImage) return
 
       // 不同朝向的瓦片和数据
       const weaponTile = await makeWeaponTile(
         32,
-        this.tileImage,
-        this.tileDataImage,
+        this.miniTileImage,
+        this.miniTileDataImage,
       )
+      this.tileImage = weaponTile.image
       ;(this.$refs.tilePreview as HTMLElement).replaceChildren(weaponTile.image)
+    },
+    btnType(value: unknown) {
+      return value ? 'primary' : 'default'
+    },
+    downloadTileImage() {
+      if (!this.$refs.tilePreview) return
+      const img = (this.$refs.tilePreview as HTMLElement).querySelector('img')
+      const dataUrl = (img as HTMLImageElement).src
+
+      // 创建下载链接
+      const link = document.createElement('a')
+      link.href = dataUrl
+      link.download = 'item-tile.png' // 设置下载的文件名
+      document.body.appendChild(link)
+      link.click() // 触发下载
+      document.body.removeChild(link) // 移除链接
     },
   },
 }

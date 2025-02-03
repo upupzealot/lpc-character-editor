@@ -75,7 +75,7 @@ export default {
   image-rendering: pixelated;
   display: block;
   border: rgb(217, 217, 217) 1px solid;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 .preview-img.hidden {
   display: none;
