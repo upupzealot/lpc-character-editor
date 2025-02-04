@@ -6,16 +6,27 @@
     }}</span>
     <div class="content">
       <TileSelecter ref="tileImageSelecter" v-model="tile.image"></TileSelecter>
-      <a-button @click="$refs.tileImageSelecter!.openSelecter()">
-        import
-      </a-button>
-      <a-button
-        type="primary"
-        :disabled="!tile.image"
-        @click="$emit('switchMode')"
-      >
-        Go to generate layer
-      </a-button>
+      <TileSelecter
+        ref="tileDataImageSelecter"
+        v-model="tile.dataImage"
+      ></TileSelecter>
+      <div class="row">
+        <div class="col">
+          <a-button @click="$refs.tileImageSelecter!.openSelecter()">
+            import tile image
+          </a-button>
+          <a-button @click="$refs.tileDataImageSelecter!.openSelecter()">
+            import data image
+          </a-button>
+        </div>
+        <a-button
+          type="primary"
+          :disabled="!tile.image"
+          @click="$emit('switchMode')"
+        >
+          Go to generate layer
+        </a-button>
+      </div>
     </div>
   </div>
 </template>

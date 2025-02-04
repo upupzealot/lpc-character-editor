@@ -29,7 +29,7 @@ export type ItemTile = {
   data: TileData
 }
 
-export async function makeWeaponLayer(
+export async function makeItemLayer(
   size: number,
   bodyHandPointImage: HTMLImageElement,
   tileImage: HTMLImageElement,
@@ -67,16 +67,16 @@ export async function makeWeaponLayer(
     const handPoint = frameHandPoints[i].length ? frameHandPoints[i][0] : null
     if (!handPoint) continue
     const tileIndex = (handPoint.color[0] - 127) / 8 - 1
-    const weaponPoint = data[tileIndex].points.length
+    const anchorPoint = data[tileIndex].points.length
       ? data[tileIndex].points[0]
       : null
-    if (!weaponPoint) continue
+    if (!anchorPoint) continue
     const tx = tileIndex % 4
     const ty = Math.floor(tileIndex / 4)
     g2d.save()
     g2d.translate(
-      padding + handPoint.x - weaponPoint.x,
-      padding + handPoint.y - weaponPoint.y,
+      padding + handPoint.x - anchorPoint.x,
+      padding + handPoint.y - anchorPoint.y,
     )
     g2d.drawImage(
       tileImage,
@@ -98,7 +98,7 @@ export async function makeWeaponLayer(
   }
 }
 
-export async function makeWeaponTile(
+export async function makeItemTile(
   size: number,
   miniImage: HTMLImageElement | HTMLCanvasElement,
   miniDataImage: HTMLImageElement,
@@ -247,16 +247,16 @@ function getOversizePadding(
     if (!handPoint) return null
 
     const tileIndex = (handPoint.color[0] - 127) / 8 - 1
-    const weaponPoints = tileData[tileIndex].points
-    const weaponPoint = weaponPoints.length ? weaponPoints[0] : null
-    if (!weaponPoint) return null
-    const weaponRect = tileData[tileIndex].rect
-    if (!weaponRect.count) return null
+    const anchorPoints = tileData[tileIndex].points
+    const anchorPoint = anchorPoints.length ? anchorPoints[0] : null
+    if (!anchorPoint) return null
+    const boundingRect = tileData[tileIndex].rect
+    if (!boundingRect.count) return null
 
-    const left = handPoint.x - (weaponPoint.x - weaponRect.left)
-    const right = handPoint.x + (weaponRect.right - weaponPoint.x)
-    const top = handPoint.y - (weaponPoint.y - weaponRect.top)
-    const bottom = handPoint.y + (weaponRect.bottom - weaponPoint.y)
+    const left = handPoint.x - (anchorPoint.x - boundingRect.left)
+    const right = handPoint.x + (boundingRect.right - anchorPoint.x)
+    const top = handPoint.y - (anchorPoint.y - boundingRect.top)
+    const bottom = handPoint.y + (boundingRect.bottom - anchorPoint.y)
     return { left, right, top, bottom }
   })
   let minLeft = NaN

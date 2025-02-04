@@ -1,13 +1,26 @@
 <template>
   <div class="step">
-    <a-button :type="btnType(tile.imageUrl)" shape="circle">1</a-button
+    <a-button :type="btnType(tile.image)" shape="circle">1</a-button
     ><span class="title">{{ `current ${state.opPart} tile` }}</span>
     <div class="content">
       <TileSelecter ref="tileImageSelecter" v-model="tile.image"></TileSelecter>
-      <a-button @click="$refs.tileImageSelecter!.openSelecter()">
-        import
-      </a-button>
-      <a-button @click="$emit('switchMode')"> create new item </a-button>
+      <TileSelecter
+        ref="tileImageDataSelecter"
+        v-model="tile.dataImage"
+      ></TileSelecter>
+      <div class="row">
+        <div class="col">
+          <a-button @click="$refs.tileImageSelecter!.openSelecter()">
+            import tile image
+          </a-button>
+          <a-button @click="$refs.tileImageDataSelecter!.openSelecter()">
+            import data image
+          </a-button>
+        </div>
+        <a-button @click="$emit('switchMode')">
+          create item from minimum
+        </a-button>
+      </div>
     </div>
   </div>
 
@@ -23,22 +36,24 @@
   </div>
 
   <div class="step">
-    <a-button :type="btnType(layer.imageUrl)" shape="circle">3</a-button
+    <a-button :type="btnType(layer.image)" shape="circle">3</a-button
     ><span class="title">Generate {{ state.opPart }} layer</span>
     <div class="content">
       <img
-        ref="layerPreview"
+        ref="previewLayer"
         class="preview-img"
         :style="{
-          display: layer.imageUrl ? 'block' : 'none',
+          display: layer.image ? 'block' : 'none',
         }"
       />
-      <a-button :disabled="!generateReady" @click="generateLayer"
-        >generate</a-button
-      >
-      <a-button :disabled="!layer.imageUrl" @click="downloadTileImage">
-        export
-      </a-button>
+      <div class="col">
+        <a-button :disabled="!generateReady" @click="generateLayer"
+          >generate</a-button
+        >
+        <a-button :disabled="!layer.image" @click="downloadLayerImage">
+          export
+        </a-button>
+      </div>
     </div>
   </div>
 </template>
@@ -55,7 +70,7 @@ import { mapState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
 import EditorCommon from '@/components/item/EditorCommon.vue'
 import TileSelecter from '@/components/item/TileSelecter.vue'
-import { makeWeaponLayer } from '@/util/ItemUtil'
+import { makeItemLayer } from '@/util/ItemUtil'
 import { loadImage } from '@/util/GraphicUtil'
 
 export default {
@@ -64,7 +79,7 @@ export default {
   computed: {
     ...mapState(useItemEditerStore, ['tile', 'layer', 'state', 'itemMapGroup']),
     generateReady() {
-      return !!this.tile.imageUrl && !!this.layer.body
+      return !!this.tile.image && !!this.layer.body
     },
   },
   methods: {
@@ -79,19 +94,18 @@ export default {
       )
       const handDataImage = await loadImage(handDataImageUrl)
 
-      const { imageUrl } = await makeWeaponLayer(
+      const { imageUrl } = await makeItemLayer(
         32,
         handDataImage,
         this.tile.image,
         data,
       )
       this.layer.imageUrl = imageUrl
-
-      const layerImage = this.$refs.layerPreview as HTMLImageElement
+      const layerImage = this.$refs.previewLayer as HTMLImageElement
       layerImage.src = imageUrl
       this.layer.image = layerImage
     },
-    downloadTileImage() {
+    downloadLayerImage() {
       if (!this.$refs.layerPreview) return
       this.downloadImage(this.$refs.layerPreview as HTMLImageElement)
     },

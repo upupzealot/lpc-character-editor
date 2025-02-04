@@ -41,25 +41,39 @@
     ><span class="title">Generate {{ state.opPart }} tile</span>
     <div class="content">
       <div
-        ref="tilePreview"
+        ref="previewTileImage"
         class="preview-img"
         :style="{
           display: tile.image ? 'block' : 'none',
         }"
       ></div>
-      <a-button :disabled="!generateReady" @click="generateTile">
-        generate
-      </a-button>
-      <a-button :disabled="!generateReady" @click="downloadTileImage">
-        export
-      </a-button>
-      <a-button
-        type="primary"
-        :disabled="!generateReady"
-        @click="$emit('switchMode')"
-      >
-        Go to generate layer
-      </a-button>
+      <div
+        ref="previewTileDataImage"
+        class="preview-img"
+        :style="{
+          display: tile.dataImage ? 'block' : 'none',
+        }"
+      ></div>
+      <div class="row">
+        <div class="col">
+          <a-button :disabled="!generateReady" @click="generateTile">
+            generate
+          </a-button>
+          <a-button :disabled="!tile.image" @click="downloadTileImage">
+            export tile image
+          </a-button>
+          <a-button :disabled="!tile.dataImage" @click="downloadTileDataImage">
+            export data image
+          </a-button>
+        </div>
+        <a-button
+          type="primary"
+          :disabled="!tile.image || !tile.dataImage"
+          @click="$emit('switchMode')"
+        >
+          Go to generate layer
+        </a-button>
+      </div>
     </div>
   </div>
 </template>
@@ -73,7 +87,7 @@ import { mapState, mapWritableState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
 import EditorCommon from '@/components/item/EditorCommon.vue'
 import TileSelecter from '@/components/item/TileSelecter.vue'
-import { makeWeaponTile } from '@/util/ItemUtil'
+import { makeItemTile } from '@/util/ItemUtil'
 
 export default {
   extends: EditorCommon,
@@ -99,17 +113,31 @@ export default {
       if (!this.miniTileImage || !this.miniTileDataImage) return
 
       // 不同朝向的瓦片和数据
-      const weaponTile = await makeWeaponTile(
+      const itemTile = await makeItemTile(
         32,
         this.miniTileImage,
         this.miniTileDataImage,
       )
-      this.tile = weaponTile
-      ;(this.$refs.tilePreview as HTMLElement).replaceChildren(weaponTile.image)
+      this.tile = itemTile
+      ;(this.$refs.previewTileImage as HTMLElement).replaceChildren(
+        itemTile.image,
+      )
+      ;(this.$refs.previewTileDataImage as HTMLElement).replaceChildren(
+        itemTile.dataImage,
+      )
     },
     downloadTileImage() {
-      if (!this.$refs.tilePreview) return
-      const img = (this.$refs.tilePreview as HTMLElement).querySelector('img')
+      if (!this.$refs.previewTileImage) return
+      const img = (this.$refs.previewTileImage as HTMLElement).querySelector(
+        'img',
+      )
+      this.downloadImage(img as HTMLImageElement)
+    },
+    downloadTileDataImage() {
+      if (!this.$refs.previewTileDataImage) return
+      const img = (
+        this.$refs.previewTileDataImage as HTMLElement
+      ).querySelector('img')
       this.downloadImage(img as HTMLImageElement)
     },
   },
