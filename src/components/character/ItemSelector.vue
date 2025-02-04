@@ -101,6 +101,12 @@ export default {
   },
   methods: {
     async selectItem(itemkey: string) {
+      const partKey = this.opPartKey
+      if (partKey === 'weapon' && itemkey !== 'none') {
+        const item = this.itemMapGroup[partKey][itemkey]
+        this.state.frameSize = item.size || 32
+      }
+
       this.state.opItem = itemkey
       const newItem = this.itemMapGroup[this.opPartKey][itemkey]
       if (newItem.key !== 'none') {

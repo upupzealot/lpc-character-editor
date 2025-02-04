@@ -1,10 +1,10 @@
 <template>
   <div class="wrapper">
-    <AnimationPreview
+    <ActionPreview
       class="animation-preview"
       :size="frameSize"
       :scale="10"
-    ></AnimationPreview>
+    ></ActionPreview>
 
     <ActionSelector
       class="direction-selector"
@@ -29,7 +29,7 @@
 import { mapWritableState } from 'pinia'
 import { useCharacterEditerStore } from '@/stores/characterEditor'
 
-import AnimationPreview from '@/components/character/ActionPreview.vue'
+import ActionPreview from '@/components/character/ActionPreview.vue'
 import ActionSelector from '@/components/character/ActionSelector.vue'
 import actions from '@/components/character/CharacterActions.json'
 import ImageComposite from '@/components/character/ImageComposite.vue'
@@ -47,7 +47,7 @@ export default {
     }
   },
   components: {
-    AnimationPreview,
+    ActionPreview,
     ActionSelector,
   },
   async created() {
