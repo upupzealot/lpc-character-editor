@@ -37,23 +37,23 @@
   <a-divider></a-divider>
 
   <div class="step">
-    <a-button :type="btnType(tileImage)" shape="circle">3</a-button
+    <a-button :type="btnType(tile.image)" shape="circle">3</a-button
     ><span class="title">Generate {{ state.opPart }} tile</span>
     <div class="content">
       <div
         ref="tilePreview"
         class="preview-img"
         :style="{
-          display: tileImage ? 'block' : 'none',
+          display: tile.image ? 'block' : 'none',
         }"
       ></div>
       <a-button :disabled="!generateReady" @click="generateTile">
         generate
       </a-button>
-      <a-button :disabled="!tileImage" @click="downloadTileImage">
+      <a-button :disabled="!tile.image" @click="downloadTileImage">
         export
       </a-button>
-      <a-button type="primary" :disabled="!tileImage" @click="nextStep">
+      <a-button type="primary" :disabled="!tile.image" @click="nextStep">
         Go to generate full weapon layer
       </a-button>
     </div>
@@ -69,7 +69,7 @@ import { mapState, mapWritableState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
 import EditorCommon from '@/components/item/EditorCommon.vue'
 import TileSelecter from '@/components/item/TileSelecter.vue'
-import { getTileData, makeWeaponTile } from '@/util/ItemUtil'
+import { makeWeaponTile } from '@/util/ItemUtil'
 
 export default {
   extends: EditorCommon,
@@ -85,11 +85,7 @@ export default {
   },
   computed: {
     ...mapState(useItemEditerStore, ['state']),
-    ...mapWritableState(useItemEditerStore, [
-      'tileImage',
-      'tileDataImage',
-      'tileData',
-    ]),
+    ...mapWritableState(useItemEditerStore, ['tile']),
     generateReady() {
       return !!this.miniTileImage && !!this.miniTileDataImage
     },
@@ -105,10 +101,7 @@ export default {
         this.miniTileImage,
         this.miniTileDataImage,
       )
-      this.tileImage = weaponTile.image
-      this.tileDataImage = weaponTile.dataImage
-      const tileData = getTileData(32, this.tileImage, this.tileDataImage)
-      this.tileData = tileData
+      this.tile = weaponTile
       ;(this.$refs.tilePreview as HTMLElement).replaceChildren(weaponTile.image)
     },
     downloadTileImage() {

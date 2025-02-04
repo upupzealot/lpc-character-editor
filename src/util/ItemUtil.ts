@@ -21,9 +21,12 @@ export type FrameData = {
 
 export type TileData = FrameData[]
 
-export type WeaponTile = {
+export type ItemTile = {
   image: HTMLImageElement
-  data: TileData[]
+  imageUrl: string
+  dataImage: HTMLImageElement
+  dataImageUrl: string
+  data: TileData
 }
 
 export async function makeWeaponLayer(
@@ -33,7 +36,7 @@ export async function makeWeaponLayer(
   tileData: TileData | HTMLImageElement,
 ): Promise<{
   frameSize: number
-  dataUrl: string
+  imageUrl: string
 }> {
   const frameHandPoints: DataPoint[][] = parsePoints(size, bodyHandPointImage)
   let data
@@ -91,7 +94,7 @@ export async function makeWeaponLayer(
 
   return {
     frameSize,
-    dataUrl: canvas.toDataURL(),
+    imageUrl: canvas.toDataURL(),
   }
 }
 
@@ -99,11 +102,7 @@ export async function makeWeaponTile(
   size: number,
   miniImage: HTMLImageElement | HTMLCanvasElement,
   miniDataImage: HTMLImageElement,
-): Promise<{
-  image: HTMLImageElement
-  dataImage: HTMLImageElement
-  data: TileData
-}> {
+): Promise<ItemTile> {
   const canvas = document.createElement('canvas') as HTMLCanvasElement
   canvas.style.imageRendering = 'pixelated'
   canvas.width = size * 4
@@ -187,7 +186,9 @@ export async function makeWeaponTile(
 
   return {
     image,
+    imageUrl: canvas.toDataURL(),
     dataImage,
+    dataImageUrl: dataCanvas.toDataURL(),
     data,
   }
 }
@@ -196,7 +197,7 @@ export function getTileData(
   size: number,
   image: HTMLImageElement,
   dataImage: HTMLImageElement,
-) {
+): TileData {
   const framePoints = parsePoints(size, dataImage)
   const frameRects = parseBoundingBox(size, image)
   const data = framePoints.map((points, i) => {
@@ -208,7 +209,10 @@ export function getTileData(
   return data
 }
 
-function getFrames(size: number, image: HTMLImageElement) {
+function getFrames(
+  size: number,
+  image: HTMLImageElement,
+): Uint8ClampedArray<ArrayBufferLike>[] {
   const frameWidth = Math.floor(image.naturalWidth / size)
   const frameHeight = Math.floor(image.naturalHeight / size)
   const frameCount = frameWidth * frameHeight

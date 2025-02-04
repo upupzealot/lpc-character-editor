@@ -30,7 +30,6 @@ import { mapState } from 'pinia'
 import { useCharacterEditerStore } from '@/stores/characterEditor'
 import { loadImage } from '@/util/GraphicUtil'
 import PaletteSelector from '@/components/character/PaletteSelector.vue'
-import { makeWeaponLayer, makeWeaponTile } from '@/util/ItemUtil'
 
 export default {
   components: { PaletteSelector },
@@ -102,36 +101,6 @@ export default {
   },
   methods: {
     async selectItem(itemkey: string) {
-      const partKey = this.opPartKey
-      if (partKey === 'weapon' && itemkey !== 'none') {
-        const item = this.itemMapGroup[partKey][itemkey]
-        const imageUrl = `/images/${partKey}/${item.image}`
-        const miniImage = await loadImage(imageUrl.replace('.png', '.mini.png'))
-        const miniDataImage = await loadImage(
-          imageUrl.replace('.png', '.minidata.png'),
-        )
-        // 不同朝向的瓦片和数据
-        const { image, data } = await makeWeaponTile(
-          this.size,
-          miniImage,
-          miniDataImage,
-        )
-
-        const bodyItem =
-          this.itemMapGroup['body'][this.selections['body'].itemKey]
-        const bodyImageUrl = `/images/body/${bodyItem.image}`
-        const bodyDataImage = await loadImage(
-          bodyImageUrl.replace('.png', '.handdata.png'),
-        )
-        const { frameSize } = await makeWeaponLayer(
-          this.size,
-          bodyDataImage,
-          image,
-          data,
-        )
-        this.state.frameSize = frameSize
-      }
-
       this.state.opItem = itemkey
       const newItem = this.itemMapGroup[this.opPartKey][itemkey]
       if (newItem.key !== 'none') {

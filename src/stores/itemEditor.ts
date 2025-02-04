@@ -5,11 +5,20 @@ import type { TileData } from '@/util/ItemUtil'
 export const useItemEditerStore = defineStore('itemEditor', {
   state: () => {
     return {
-      body: 'body-1',
-      tileImage: null as HTMLImageElement | null,
-      tileDataImage: null as HTMLImageElement | null,
-      tileData: null as TileData | null,
-      layerImage: null as HTMLImageElement | null,
+      tile: {
+        image: null as HTMLImageElement | null,
+        imageUrl: '' as string,
+        dataImage: null as HTMLImageElement | null,
+        dataImageUrl: '' as string,
+        data: null as TileData | null,
+      },
+      layer: {
+        body: 'body-1',
+        image: null as HTMLImageElement | null,
+        imageUrl: '' as string,
+        dataImage: null as HTMLImageElement | null,
+        dataImageUrl: '' as string,
+      },
 
       itemListGroup,
       itemMapGroup,
@@ -23,6 +32,6 @@ export const useItemEditerStore = defineStore('itemEditor', {
   persist: {
     key: 'item-editor',
     storage: localStorage,
-    omit: ['tileImage', 'tileDataImage', 'tileData', 'layerImage'],
+    omit: ['tile', 'layer'],
   },
 })
