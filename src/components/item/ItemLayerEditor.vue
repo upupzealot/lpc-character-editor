@@ -17,12 +17,14 @@
             import data image
           </a-button>
         </div>
-        <a-button @click="$emit('switchMode')">
-          create item from minimum
+        <a-button type="primary" @click="$emit('switchMode')">
+          Go to create item from minimum
         </a-button>
       </div>
     </div>
   </div>
+
+  <a-divider></a-divider>
 
   <div class="step">
     <a-button :type="btnType(layer.body)" shape="circle">2</a-button
@@ -34,6 +36,8 @@
       </a-select>
     </div>
   </div>
+
+  <a-divider></a-divider>
 
   <div class="step">
     <a-button :type="btnType(layer.image)" shape="circle">3</a-button
