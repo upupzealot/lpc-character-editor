@@ -131,14 +131,20 @@ export default {
       const img = (this.$refs.previewTileImage as HTMLElement).querySelector(
         'img',
       )
-      this.downloadImage(img as HTMLImageElement)
+      this.downloadImage(
+        img as HTMLImageElement,
+        `${this.state.opPart}.tile.png`,
+      )
     },
     downloadTileDataImage() {
       if (!this.$refs.previewTileDataImage) return
       const img = (
         this.$refs.previewTileDataImage as HTMLElement
       ).querySelector('img')
-      this.downloadImage(img as HTMLImageElement)
+      this.downloadImage(
+        img as HTMLImageElement,
+        `${this.state.opPart}.tiledata.png`,
+      )
     },
   },
 }

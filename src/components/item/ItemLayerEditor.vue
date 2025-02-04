@@ -107,7 +107,8 @@ export default {
     },
     downloadLayerImage() {
       if (!this.$refs.layerPreview) return
-      this.downloadImage(this.$refs.layerPreview as HTMLImageElement)
+      const image = this.$refs.layerPreview as HTMLImageElement
+      this.downloadImage(image, `${this.state.opPart}.png`)
     },
   },
 }
