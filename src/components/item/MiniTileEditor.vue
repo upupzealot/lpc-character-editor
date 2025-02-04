@@ -69,7 +69,7 @@ import { mapState, mapWritableState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
 import EditorCommon from '@/components/item/EditorCommon.vue'
 import TileSelecter from '@/components/item/TileSelecter.vue'
-import { makeWeaponTile } from '@/util/ItemUtil'
+import { getTileData, makeWeaponTile } from '@/util/ItemUtil'
 
 export default {
   extends: EditorCommon,
@@ -85,7 +85,11 @@ export default {
   },
   computed: {
     ...mapState(useItemEditerStore, ['state']),
-    ...mapWritableState(useItemEditerStore, ['tileImage', 'tileData']),
+    ...mapWritableState(useItemEditerStore, [
+      'tileImage',
+      'tileDataImage',
+      'tileData',
+    ]),
     generateReady() {
       return !!this.miniTileImage && !!this.miniTileDataImage
     },
@@ -102,7 +106,9 @@ export default {
         this.miniTileDataImage,
       )
       this.tileImage = weaponTile.image
-      this.tileData = weaponTile.data
+      this.tileDataImage = weaponTile.dataImage
+      const tileData = getTileData(32, this.tileImage, this.tileDataImage)
+      this.tileData = tileData
       ;(this.$refs.tilePreview as HTMLElement).replaceChildren(weaponTile.image)
     },
     downloadTileImage() {

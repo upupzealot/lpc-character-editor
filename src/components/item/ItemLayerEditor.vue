@@ -63,6 +63,7 @@ export default {
   computed: {
     ...mapState(useItemEditerStore, [
       'tileImage',
+      'tileDataImage',
       'tileData',
       'state',
       'itemMapGroup',
@@ -75,7 +76,12 @@ export default {
   methods: {
     async generateLayer() {
       const bodyItem = this.itemMapGroup['body'][this.body]
-      if (!this.tileImage || !this.tileData || !bodyItem) return
+      if (
+        !this.tileImage ||
+        !(this.tileDataImage || this.tileData) ||
+        !bodyItem
+      )
+        return
 
       const handDataImageUrl = `images/body/${bodyItem.image}`.replace(
         '.png',
@@ -83,12 +89,14 @@ export default {
       )
       const handDataImage = await loadImage(handDataImageUrl)
 
-      const { layerImageDataUrl } = await makeWeaponLayer(32, handDataImage, {
-        image: this.tileImage,
-        data: this.tileData,
-      })
+      const { dataUrl } = await makeWeaponLayer(
+        32,
+        handDataImage,
+        this.tileImage,
+        this.tileData || this.tileImage,
+      )
       const layerImage = this.$refs.layerPreview as HTMLImageElement
-      layerImage.src = layerImageDataUrl
+      layerImage.src = dataUrl
       this.layerImage = layerImage
     },
     downloadTileImage() {

@@ -111,7 +111,7 @@ export default {
           imageUrl.replace('.png', '.minidata.png'),
         )
         // 不同朝向的瓦片和数据
-        const weaponTile = await makeWeaponTile(
+        const { image, data } = await makeWeaponTile(
           this.size,
           miniImage,
           miniDataImage,
@@ -126,7 +126,8 @@ export default {
         const { frameSize } = await makeWeaponLayer(
           this.size,
           bodyDataImage,
-          weaponTile,
+          image,
+          data,
         )
         this.state.frameSize = frameSize
       }

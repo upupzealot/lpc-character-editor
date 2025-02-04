@@ -14,26 +14,35 @@ type DataRect = {
   bottom: number
 }
 
-export type WeaponTileData = {
+export type FrameData = {
   points: DataPoint[]
   rect: DataRect
 }
 
+export type TileData = FrameData[]
+
 export type WeaponTile = {
   image: HTMLImageElement
-  data: WeaponTileData[]
+  data: TileData[]
 }
 
 export async function makeWeaponLayer(
   size: number,
   bodyHandPointImage: HTMLImageElement,
-  weaponTile: WeaponTile,
+  tileImage: HTMLImageElement,
+  tileData: TileData | HTMLImageElement,
 ): Promise<{
   frameSize: number
-  layerImageDataUrl: string
+  dataUrl: string
 }> {
   const frameHandPoints: DataPoint[][] = parsePoints(size, bodyHandPointImage)
-  const padding = getOversizePadding(size, frameHandPoints, weaponTile)
+  let data
+  if (tileData instanceof HTMLImageElement) {
+    data = getTileData(size, tileImage, tileData)
+  } else {
+    data = tileData
+  }
+  const padding = getOversizePadding(size, frameHandPoints, data)
   const frameSize = size + padding * 2
 
   const frameWidth = Math.floor(bodyHandPointImage.naturalWidth / size)
@@ -55,10 +64,8 @@ export async function makeWeaponLayer(
     const handPoint = frameHandPoints[i].length ? frameHandPoints[i][0] : null
     if (!handPoint) continue
     const tileIndex = (handPoint.color[0] - 127) / 8 - 1
-    const weaponImage = weaponTile.image
-    const weaponData = weaponTile.data
-    const weaponPoint = weaponData[tileIndex].points.length
-      ? weaponData[tileIndex].points[0]
+    const weaponPoint = data[tileIndex].points.length
+      ? data[tileIndex].points[0]
       : null
     if (!weaponPoint) continue
     const tx = tileIndex % 4
@@ -69,7 +76,7 @@ export async function makeWeaponLayer(
       padding + handPoint.y - weaponPoint.y,
     )
     g2d.drawImage(
-      weaponImage,
+      tileImage,
       tx * size,
       ty * size,
       size,
@@ -84,7 +91,7 @@ export async function makeWeaponLayer(
 
   return {
     frameSize,
-    layerImageDataUrl: canvas.toDataURL(),
+    dataUrl: canvas.toDataURL(),
   }
 }
 
@@ -94,16 +101,8 @@ export async function makeWeaponTile(
   miniDataImage: HTMLImageElement,
 ): Promise<{
   image: HTMLImageElement
-  data: {
-    points: { x: number; y: number; color: Color }[]
-    rect: {
-      count: number
-      left: number
-      right: number
-      top: number
-      bottom: number
-    }
-  }[]
+  dataImage: HTMLImageElement
+  data: TileData
 }> {
   const canvas = document.createElement('canvas') as HTMLCanvasElement
   canvas.style.imageRendering = 'pixelated'
@@ -183,6 +182,21 @@ export async function makeWeaponTile(
     dataImage.src = dataCanvas.toDataURL('image/png')
   })
   dataImage.style.imageRendering = 'pixelated'
+
+  const data = getTileData(size, image, dataImage)
+
+  return {
+    image,
+    dataImage,
+    data,
+  }
+}
+
+export function getTileData(
+  size: number,
+  image: HTMLImageElement,
+  dataImage: HTMLImageElement,
+) {
   const framePoints = parsePoints(size, dataImage)
   const frameRects = parseBoundingBox(size, image)
   const data = framePoints.map((points, i) => {
@@ -191,11 +205,7 @@ export async function makeWeaponTile(
       rect: frameRects[i],
     }
   })
-
-  return {
-    image,
-    data,
-  }
+  return data
 }
 
 function getFrames(size: number, image: HTMLImageElement) {
@@ -226,19 +236,17 @@ function getFrames(size: number, image: HTMLImageElement) {
 function getOversizePadding(
   size: number,
   handPoints: DataPoint[][],
-  weaponTile: WeaponTile,
+  tileData: TileData,
 ): number {
-  const weaponData = weaponTile.data
-
   const boundingBoxes = handPoints.map((handPoints) => {
     const handPoint = handPoints.length ? handPoints[0] : null
     if (!handPoint) return null
 
     const tileIndex = (handPoint.color[0] - 127) / 8 - 1
-    const weaponPoints = weaponData[tileIndex].points
+    const weaponPoints = tileData[tileIndex].points
     const weaponPoint = weaponPoints.length ? weaponPoints[0] : null
     if (!weaponPoint) return null
-    const weaponRect = weaponData[tileIndex].rect
+    const weaponRect = tileData[tileIndex].rect
     if (!weaponRect.count) return null
 
     const left = handPoint.x - (weaponPoint.x - weaponRect.left)
