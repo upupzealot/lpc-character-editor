@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  emits: ['nextStep'],
+  emits: ['switchMode'],
   methods: {
     btnType(value: unknown) {
       return value ? 'primary' : 'default'
@@ -14,9 +14,6 @@ export default {
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
-    },
-    nextStep() {
-      this.$emit('nextStep')
     },
   },
 }

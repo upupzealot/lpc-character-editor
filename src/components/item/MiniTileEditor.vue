@@ -2,7 +2,7 @@
   <div class="step">
     <a-button :type="btnType(miniTileImage)" shape="circle">1</a-button
     ><span class="title">{{
-      `upload minimum ${state.opPart} tile image`
+      `import minimum ${state.opPart} tile image`
     }}</span>
     <div class="content">
       <TileSelecter
@@ -10,7 +10,7 @@
         v-model="miniTileImage"
       ></TileSelecter>
       <a-button @click="$refs.tileImageSelecter!.openSelecter()">
-        upload
+        import
       </a-button>
     </div>
   </div>
@@ -20,7 +20,7 @@
   <div class="step">
     <a-button :type="btnType(miniTileDataImage)" shape="circle">2</a-button
     ><span class="title">{{
-      `upload minimum ${state.opPart} tile data image`
+      `import minimum ${state.opPart} tile data image`
     }}</span>
     <div class="content">
       <TileSelecter
@@ -28,7 +28,7 @@
         v-model="miniTileDataImage"
       ></TileSelecter>
       <a-button @click="$refs.miniTileDataImageSelecter!.openSelecter()">
-        upload
+        import
       </a-button>
       <a-button disabled> create </a-button>
     </div>
@@ -50,18 +50,22 @@
       <a-button :disabled="!generateReady" @click="generateTile">
         generate
       </a-button>
-      <a-button :disabled="!tile.image" @click="downloadTileImage">
+      <a-button :disabled="!generateReady" @click="downloadTileImage">
         export
       </a-button>
-      <a-button type="primary" :disabled="!tile.image" @click="nextStep">
-        Go to generate full weapon layer
+      <a-button
+        type="primary"
+        :disabled="!generateReady"
+        @click="$emit('switchMode')"
+      >
+        Go to generate layer
       </a-button>
     </div>
   </div>
 </template>
 
 <style lang="less" scoped>
-@import url(./EditorCommon.less);
+@import url(@/components/item/EditorCommon.less);
 </style>
 
 <script lang="ts">
@@ -90,7 +94,6 @@ export default {
       return !!this.miniTileImage && !!this.miniTileDataImage
     },
   },
-  emits: ['nextStep'],
   methods: {
     async generateTile() {
       if (!this.miniTileImage || !this.miniTileDataImage) return

@@ -7,17 +7,21 @@
     <div class="content">
       <TileSelecter ref="tileImageSelecter" v-model="tile.image"></TileSelecter>
       <a-button @click="$refs.tileImageSelecter!.openSelecter()">
-        upload
+        import
       </a-button>
-      <a-button type="primary" :disabled="!tile.imageUrl" @click="nextStep">
-        Go to generate full weapon layer
+      <a-button
+        type="primary"
+        :disabled="!tile.image"
+        @click="$emit('switchMode')"
+      >
+        Go to generate layer
       </a-button>
     </div>
   </div>
 </template>
 
 <style lang="less" scoped>
-@import url(./EditorCommon.less);
+@import url(@/components/item/EditorCommon.less);
 </style>
 
 <script lang="ts">

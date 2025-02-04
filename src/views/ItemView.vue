@@ -19,27 +19,26 @@
     </div>
 
     <div class="content">
-      <a-steps
-        type="navigation"
-        v-model:current="currentStep"
-        :items="steps"
-        style="margin-bottom: 10px"
-      >
-      </a-steps>
+      <DetailRadio :options="options" v-model="mode"></DetailRadio>
 
-      <div v-show="currentStep === 0">
-        <DetailRadio :options="options" v-model="mode"></DetailRadio>
-        <a-divider style="margin-top: 10px"></a-divider>
-        <div class="panel" v-show="mode === 'mini'">
-          <MiniTileEditor @next-step="currentStep++"></MiniTileEditor>
-        </div>
-        <div class="panel" v-show="mode === 'full'">
-          <ItemTileEditor @next-step="currentStep++"></ItemTileEditor>
-        </div>
+      <div v-show="mode === 'tile'">
+        <a-tabs v-model:activeKey="tileMode" type="card">
+          <a-tab-pane key="create" tab="Create" force-render>
+            <div class="panel" v-show="tileMode === 'create'">
+              <MiniTileEditor @switch-mode="mode = 'layer'"></MiniTileEditor>
+            </div>
+          </a-tab-pane>
+          <a-tab-pane key="edit" tab="Edit" force-render>
+            <div class="panel" v-show="tileMode === 'edit'">
+              <ItemTileEditor @switch-mode="mode = 'layer'"></ItemTileEditor>
+            </div>
+          </a-tab-pane>
+        </a-tabs>
       </div>
 
-      <div v-show="currentStep === 1">
-        <ItemLayerEditor @next-step="currentStep++"></ItemLayerEditor>
+      <div v-show="mode === 'layer'">
+        <a-divider style="margin-top: 10px"></a-divider>
+        <ItemLayerEditor @switch-mode="mode = 'tile'"></ItemLayerEditor>
       </div>
     </div>
   </div>
@@ -57,36 +56,37 @@ export default {
   components: { DetailRadio, MiniTileEditor, ItemTileEditor, ItemLayerEditor },
   data() {
     return {
-      currentStep: 0,
-      steps: [
-        {
-          title: `Create item`,
-        },
-        {
-          title: `Genarate layer`,
-        },
-        {
-          title: 'Save / Export',
-        },
-      ],
-      mode: 'mini',
+      mode: 'tile',
       options: [
         {
-          value: 'mini',
-          label: 'from minimum',
-          desc: 'create item from minimum weapon tile image',
+          value: 'tile',
+          label: 'Item Maker',
+          desc: 'create item from minimum or edit existed ones',
         },
         {
-          value: 'full',
-          label: 'import exist',
-          desc: 'import exist weapon tile',
+          value: 'layer',
+          label: 'Layer Maker',
+          desc: 'create item layer for selected body',
+        },
+      ],
+      tileMode: 'create',
+      tileOptions: [
+        {
+          value: 'create',
+          label: 'Create',
+          desc: 'create new item from minimum',
+        },
+        {
+          value: 'edit',
+          label: 'Edit',
+          desc: 'edit existed item',
         },
       ],
     } as {
-      currentStep: number
-      steps: { title: string }[]
       mode: string
       options: { value: string; label: string; desc: string }[]
+      tileMode: string
+      tileOptions: { value: string; label: string; desc: string }[]
     }
   },
   computed: {
@@ -108,7 +108,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+@import url(@/components/item/EditorCommon.less);
+
 .wrapper {
   width: 100%;
   display: flex;

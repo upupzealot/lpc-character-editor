@@ -5,8 +5,9 @@
     <div class="content">
       <TileSelecter ref="tileImageSelecter" v-model="tile.image"></TileSelecter>
       <a-button @click="$refs.tileImageSelecter!.openSelecter()">
-        reselect
+        import
       </a-button>
+      <a-button @click="$emit('switchMode')"> create new item </a-button>
     </div>
   </div>
 
