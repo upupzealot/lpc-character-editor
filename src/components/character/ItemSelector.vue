@@ -101,11 +101,17 @@ export default {
   },
   methods: {
     async selectItem(itemkey: string) {
-      const partKey = this.opPartKey
-      if (partKey === 'weapon' && itemkey !== 'none') {
-        const item = this.itemMapGroup[partKey][itemkey]
-        this.state.frameSize = item.size || 32
+      // frameSize根据所有选中的部件取最大值
+      let frameSize = 32
+      for (const partKey in this.selections) {
+        const { itemKey: selectedItemKey } = this.selections[partKey]
+        const iKey = partKey === this.opPartKey ? itemkey : selectedItemKey
+        const item = this.itemMapGroup[partKey][iKey]
+        if (item.size) {
+          frameSize = Math.max(item.size, frameSize)
+        }
       }
+      this.state.frameSize = frameSize
 
       this.state.opItem = itemkey
       const newItem = this.itemMapGroup[this.opPartKey][itemkey]
