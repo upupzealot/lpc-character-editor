@@ -26,6 +26,7 @@
       <TileSelecter
         ref="miniTileDataImageSelecter"
         v-model="miniTileDataImage"
+        :previewImage="miniTileImage"
       ></TileSelecter>
       <a-button @click="$refs.miniTileDataImageSelecter!.openSelecter()">
         import

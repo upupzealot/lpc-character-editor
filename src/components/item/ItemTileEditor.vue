@@ -9,6 +9,7 @@
       <TileSelecter
         ref="tileDataImageSelecter"
         v-model="tile.dataImage"
+        :previewImage="tile.image"
       ></TileSelecter>
       <div class="row">
         <div class="col">

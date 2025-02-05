@@ -24,10 +24,20 @@ export default {
       type: Number,
       default: 64,
     },
+    previewImage: {
+      type: [HTMLImageElement, null],
+    },
+    previewAlpha: {
+      type: Number,
+      default: 0.3,
+    },
   },
   emits: ['update:modelValue'],
   watch: {
     modelValue() {
+      this.draw(this.modelValue)
+    },
+    previewImage() {
       this.draw(this.modelValue)
     },
   },
@@ -76,6 +86,14 @@ export default {
       g2d.imageSmoothingEnabled = false
 
       g2d.scale(scale, scale)
+      if (this.previewImage) {
+        g2d.save()
+        if (this.previewAlpha) {
+          g2d.globalAlpha = this.previewAlpha
+        }
+        g2d.drawImage(this.previewImage, 0, 0)
+        g2d.restore()
+      }
       g2d.drawImage(image, 0, 0)
     },
   },
