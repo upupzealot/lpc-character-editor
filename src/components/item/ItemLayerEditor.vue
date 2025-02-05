@@ -56,7 +56,7 @@
           display: layer.image ? 'block' : 'none',
         }"
       >
-        <ItemLayerDataForm></ItemLayerDataForm>
+        <ItemLayerDataForm ref="layerDataForm"></ItemLayerDataForm>
       </div>
       <div class="col">
         <a-button :disabled="!generateReady" @click="generateLayer"
@@ -122,13 +122,25 @@ export default {
       this.layer.image = layerImage
       this.layer.data.size = frameSize
     },
-    downloadLayerImage() {
+    async downloadLayerImage() {
       if (!this.$refs.previewLayer) return
+
+      const error = await (
+        this.$refs.layerDataForm as typeof ItemLayerDataForm
+      ).validate()
+      if (error) return
+
       const image = this.$refs.previewLayer as HTMLImageElement
       this.downloadImage(image, `${this.layer.data.key}.png`)
     },
-    downloadLayerDataJson() {
+    async downloadLayerDataJson() {
       if (!this.$refs.previewLayer) return
+
+      const error = await (
+        this.$refs.layerDataForm as typeof ItemLayerDataForm
+      ).validate()
+      if (error) return
+
       const { data } = this.layer
       const dataObj = {
         name: data.name,

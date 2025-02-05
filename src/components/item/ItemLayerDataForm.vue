@@ -1,5 +1,6 @@
 <template>
   <a-form
+    ref="form"
     :model="layer.data"
     :label-col="{ style: { width: '80px' } }"
     size="small"
@@ -82,6 +83,7 @@
 </template>
 
 <script lang="ts">
+import type { Form } from 'ant-design-vue'
 import { mapState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
 import { getIconCanvas, ICON_SIZE, paletteList } from '@/stores/paletteData'
@@ -100,6 +102,17 @@ export default {
   },
   computed: {
     ...mapState(useItemEditerStore, ['layer']),
+  },
+  methods: {
+    async validate() {
+      let error = null
+      try {
+        await (this.$refs.form as typeof Form).validate()
+      } catch (e) {
+        error = e
+      }
+      return error
+    },
   },
 }
 </script>
