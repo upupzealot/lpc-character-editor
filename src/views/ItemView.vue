@@ -22,6 +22,7 @@
       <DetailRadio :options="options" v-model="mode"></DetailRadio>
 
       <div v-show="mode === 'tile'">
+        <a-divider style="margin-top: 10px"></a-divider>
         <a-tabs v-model:activeKey="tileMode" type="card">
           <a-tab-pane key="create" tab="Create" force-render>
             <div class="panel" v-show="tileMode === 'create'">

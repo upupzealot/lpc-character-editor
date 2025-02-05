@@ -16,6 +16,16 @@ export const useItemEditerStore = defineStore('itemEditor', {
         body: 'body-1',
         image: null as HTMLImageElement | null,
         imageUrl: '' as string,
+        data: {} as {
+          name: string
+          key: string
+          image: string
+          size: number
+          palette1: string
+          palette2: string
+          palette3: string
+          palette4: string
+        },
       },
 
       itemListGroup,

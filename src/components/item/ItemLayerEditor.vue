@@ -50,12 +50,23 @@
           display: layer.image ? 'block' : 'none',
         }"
       />
+      <div
+        class="preview-json"
+        :style="{
+          display: layer.image ? 'block' : 'none',
+        }"
+      >
+        <ItemLayerDataForm></ItemLayerDataForm>
+      </div>
       <div class="col">
         <a-button :disabled="!generateReady" @click="generateLayer"
           >generate</a-button
         >
         <a-button :disabled="!layer.image" @click="downloadLayerImage">
-          export
+          export image
+        </a-button>
+        <a-button :disabled="!layer.image" @click="downloadLayerDataJson">
+          export data
         </a-button>
       </div>
     </div>
@@ -72,14 +83,15 @@
 <script lang="ts">
 import { mapState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
+import { decodeColor, loadImage } from '@/util/GraphicUtil'
+import { makeItemLayer } from '@/util/ItemUtil'
 import EditorCommon from '@/components/item/EditorCommon.vue'
 import TileSelecter from '@/components/item/TileSelecter.vue'
-import { makeItemLayer } from '@/util/ItemUtil'
-import { loadImage } from '@/util/GraphicUtil'
+import ItemLayerDataForm from '@/components/item/ItemLayerDataForm.vue'
 
 export default {
   extends: EditorCommon,
-  components: { TileSelecter },
+  components: { TileSelecter, ItemLayerDataForm },
   computed: {
     ...mapState(useItemEditerStore, ['tile', 'layer', 'state', 'itemMapGroup']),
     generateReady() {
@@ -98,7 +110,7 @@ export default {
       )
       const handDataImage = await loadImage(handDataImageUrl)
 
-      const { imageUrl } = await makeItemLayer(
+      const { imageUrl, frameSize } = await makeItemLayer(
         32,
         handDataImage,
         this.tile.image,
@@ -108,11 +120,30 @@ export default {
       const layerImage = this.$refs.previewLayer as HTMLImageElement
       layerImage.src = imageUrl
       this.layer.image = layerImage
+      this.layer.data.size = frameSize
     },
     downloadLayerImage() {
-      if (!this.$refs.layerPreview) return
-      const image = this.$refs.layerPreview as HTMLImageElement
-      this.downloadImage(image, `${this.state.opPart}.png`)
+      if (!this.$refs.previewLayer) return
+      const image = this.$refs.previewLayer as HTMLImageElement
+      this.downloadImage(image, `${this.layer.data.key}.png`)
+    },
+    downloadLayerDataJson() {
+      if (!this.$refs.previewLayer) return
+      const { data } = this.layer
+      const dataObj = {
+        name: data.name,
+        key: data.key,
+        size: data.size,
+        image: `${data.key}.png`,
+        palettes: [data.palette1, data.palette2, data.palette3, data.palette4]
+          .filter((p) => !!p)
+          .map((paletteStr) => {
+            return {
+              colors: paletteStr.split(';').map(decodeColor),
+            }
+          }),
+      }
+      this.downloadJson(dataObj, `${this.layer.data.key}.json`)
     },
   },
 }
