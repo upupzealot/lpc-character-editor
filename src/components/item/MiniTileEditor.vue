@@ -5,10 +5,10 @@
       `import minimum ${state.opPart} tile image`
     }}</span>
     <div class="content">
-      <TileSelecter
+      <PngSelecter
         ref="tileImageSelecter"
         v-model="miniTileImage"
-      ></TileSelecter>
+      ></PngSelecter>
       <a-button @click="$refs.tileImageSelecter!.openSelecter()">
         import
       </a-button>
@@ -23,11 +23,11 @@
       `import minimum ${state.opPart} tile data image`
     }}</span>
     <div class="content">
-      <TileSelecter
+      <PngSelecter
         ref="miniTileDataImageSelecter"
         v-model="miniTileDataImage"
         :previewImage="miniTileImage"
-      ></TileSelecter>
+      ></PngSelecter>
       <a-button @click="$refs.miniTileDataImageSelecter!.openSelecter()">
         import
       </a-button>
@@ -87,12 +87,12 @@
 import { mapState, mapWritableState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
 import EditorCommon from '@/components/item/EditorCommon.vue'
-import TileSelecter from '@/components/item/TileSelecter.vue'
+import PngSelecter from '@/components/item/PngSelecter.vue'
 import { makeItemTile } from '@/util/ItemUtil'
 
 export default {
   extends: EditorCommon,
-  components: { TileSelecter },
+  components: { PngSelecter },
   data() {
     return {
       miniTileImage: null,

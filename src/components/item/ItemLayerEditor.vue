@@ -3,11 +3,11 @@
     <a-button :type="btnType(tile.image)" shape="circle">1</a-button
     ><span class="title">{{ `current ${state.opPart} tile` }}</span>
     <div class="content">
-      <TileSelecter ref="tileImageSelecter" v-model="tile.image"></TileSelecter>
-      <TileSelecter
+      <PngSelecter ref="tileImageSelecter" v-model="tile.image"></PngSelecter>
+      <PngSelecter
         ref="tileImageDataSelecter"
         v-model="tile.dataImage"
-      ></TileSelecter>
+      ></PngSelecter>
       <div class="row">
         <div class="col">
           <a-button @click="$refs.tileImageSelecter!.openSelecter()">
@@ -86,12 +86,12 @@ import { useItemEditerStore } from '@/stores/itemEditor'
 import { decodeColor, loadImage } from '@/util/GraphicUtil'
 import { makeItemLayer } from '@/util/ItemUtil'
 import EditorCommon from '@/components/item/EditorCommon.vue'
-import TileSelecter from '@/components/item/TileSelecter.vue'
+import PngSelecter from '@/components/item/PngSelecter.vue'
 import ItemLayerDataForm from '@/components/item/ItemLayerDataForm.vue'
 
 export default {
   extends: EditorCommon,
-  components: { TileSelecter, ItemLayerDataForm },
+  components: { PngSelecter, ItemLayerDataForm },
   computed: {
     ...mapState(useItemEditerStore, ['tile', 'layer', 'state', 'itemMapGroup']),
     generateReady() {

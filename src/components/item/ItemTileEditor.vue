@@ -5,12 +5,12 @@
       `import existed ${state.opPart} tile image`
     }}</span>
     <div class="content">
-      <TileSelecter ref="tileImageSelecter" v-model="tile.image"></TileSelecter>
-      <TileSelecter
+      <PngSelecter ref="tileImageSelecter" v-model="tile.image"></PngSelecter>
+      <PngSelecter
         ref="tileDataImageSelecter"
         v-model="tile.dataImage"
         :previewImage="tile.image"
-      ></TileSelecter>
+      ></PngSelecter>
       <div class="row">
         <div class="col">
           <a-button @click="$refs.tileImageSelecter!.openSelecter()">
@@ -40,11 +40,11 @@
 import { mapState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
 import EditorCommon from '@/components/item/EditorCommon.vue'
-import TileSelecter from '@/components/item/TileSelecter.vue'
+import PngSelecter from '@/components/item/PngSelecter.vue'
 
 export default {
   extends: EditorCommon,
-  components: { TileSelecter },
+  components: { PngSelecter },
   computed: {
     ...mapState(useItemEditerStore, ['tile', 'state']),
   },
