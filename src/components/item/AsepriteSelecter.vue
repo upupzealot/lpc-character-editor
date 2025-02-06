@@ -48,7 +48,6 @@ export default {
       if (file && file.name.endsWith('.aseprite')) {
         return new Promise(async (resolve, reject) => {
           const ase = new Ase(file)
-          await ase.parse()
           try {
             await ase.parse()
             resolve(ase)

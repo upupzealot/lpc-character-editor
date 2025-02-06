@@ -1,12 +1,10 @@
 import pako from 'pako'
 
 type Frame = {
-  /** 帧大小 */
-  size: number
+  /** 帧索引 */
+  index: number
   /** 帧持续时间 */
   duration: number
-  /** 图层数据 */
-  layers: Array<Layer>
 }
 
 type Layer = {
@@ -25,16 +23,15 @@ type Layer = {
   blendMode: number
   /** 不透明度 */
   opacity: number
-  /** cel 数据 */
-  cels: Array<Cel>
   /** 子图层 */
   layers: Array<Layer>
   /** 父图层 */
   parentLayer: Layer | null
-  canvas: HTMLCanvasElement
 }
 
 type Cel = {
+  /** 帧索引 */
+  frameIndex: number
   /** 图层索引 */
   layerIndex: number
   /** x 坐标 */
@@ -67,14 +64,32 @@ export class Ase {
 
   /** 帧数据 */
   frames: Array<Frame> = []
+  /** 图层数据 */
+  layers: Array<Layer> = []
+  /** 细胞数据 */
+  cels: Array<Array<Cel>> = []
 
   canvas: OffscreenCanvas | null = null
+
+  private _parsed: boolean = false
 
   constructor(file: File) {
     this.file = file
   }
 
+  reset() {
+    this.fileSize = 0
+    this.frameCount = 0
+    this.width = 0
+    this.height = 0
+    this.colorDepth = 0
+    this.frames = []
+    this.canvas = null
+  }
+
   async parse() {
+    this.reset()
+
     const arrayBuffer = await this.file.arrayBuffer()
     const view = new DataView(arrayBuffer)
 
@@ -91,9 +106,12 @@ export class Ase {
     this.colorDepth = view.getUint16(12, true)
     let offset = 128 // 文件头固定长度为 128 字节
 
-    // 逐帧解析
+    let frameStart = 128
+    // 帧数据解析
     for (let frameIndex = 0; frameIndex < this.frameCount; frameIndex++) {
+      offset = frameStart
       const frameSize = view.getUint32(offset, true) // 帧大小
+      const frameEnd = frameStart + frameSize
       const frameMagicNumber = view.getUint16(offset + 4, true) // 帧魔数（应为 0xF1FA）
       if (frameMagicNumber !== 0xf1fa) {
         throw new Error(`帧格式错误，当前帧数：${frameIndex}`)
@@ -101,16 +119,17 @@ export class Ase {
       // const oldChunks = view.getUint16(offset + 6, true) // 旧版 Chunk 数量（忽略）
       const frameDuration = view.getUint16(offset + 8, true) // 帧持续时间
       const frame: Frame = {
-        size: frameSize,
+        index: frameIndex,
         duration: frameDuration,
-        layers: [],
       }
       this.frames.push(frame)
+      this.cels.push([])
+      console.log('parsed frame', frameIndex)
       offset += 16 // 帧头固定长度为 16 字节
 
       // 图层数据解析
       let layerIndex = 0
-      while (offset < view.byteLength) {
+      while (offset < frameEnd) {
         const chunkSize = view.getUint32(offset, true) // Chunk 大小
         const chunkType = view.getUint16(offset + 4, true) // Chunk 类型
 
@@ -146,8 +165,8 @@ export class Ase {
             parentLayer = null
           } else {
             for (let i = layerIndex; i >= 0; i--) {
-              if (frame.layers[i]?.childLevel === layerChildLevel - 1) {
-                parentLayer = frame.layers[i]
+              if (this.layers[i]?.childLevel === layerChildLevel - 1) {
+                parentLayer = this.layers[i]
                 break
               }
             }
@@ -161,13 +180,12 @@ export class Ase {
             childLevel: layerChildLevel,
             blendMode,
             opacity,
-            cels: [],
             layers: [],
             parentLayer: parentLayer,
-            canvas,
           }
           parentLayer?.layers.push(layer)
-          frame.layers.push(layer)
+          this.layers.push(layer)
+          console.log('parsed layer', layerIndex, layerName)
 
           offset = offset0 + chunkSize
           layerIndex++
@@ -225,6 +243,7 @@ export class Ase {
             g2d.putImageData(imageData, 0, 0)
 
             const cel: Cel = {
+              frameIndex,
               layerIndex,
               x,
               y,
@@ -235,26 +254,40 @@ export class Ase {
               height: celHeight,
               canvas,
             }
-            const layer = this.frames[frameIndex].layers[layerIndex]
-            layer.cels.push(cel)
+            if (!this.cels[frameIndex].length) {
+              this.cels[frameIndex] = new Array(this.layers.length)
+            }
+            this.cels[frameIndex][layerIndex] = cel
+            console.log('add cel', frameIndex, layerIndex)
           }
           offset = offset0 + chunkSize
         } else {
           offset += chunkSize
         }
       }
+      frameStart = frameEnd
     }
 
-    this.render()
+    this._parsed = true
+    this.render(0)
   }
 
-  render() {
-    if (!this.frameCount) return
+  private checkParsed() {
+    if (!this._parsed) {
+      throw new Error('没有初始化，使用 parse 方法初始化 Ase 对象')
+    }
+  }
 
-    const frame = this.frames[0]
-    const cels = frame.layers
-      .map((layer) => layer.cels)
-      .flat()
+  render(frameIndex: number, layerIndex?: number) {
+    this.checkParsed()
+
+    if (!this.frameCount) return
+    const cels = this.cels[frameIndex]
+      .filter((frameCel) => {
+        return typeof layerIndex === 'number'
+          ? frameCel.layerIndex === layerIndex
+          : true
+      })
       .sort((c1, c2) => {
         const order1 = c1.layerIndex + c1.zIndex
         const order2 = c2.layerIndex + c2.zIndex
@@ -269,8 +302,7 @@ export class Ase {
       '2d',
     ) as OffscreenCanvasRenderingContext2D
     cels.forEach((cel) => {
-      const layers = frame.layers
-      const layer = layers[cel.layerIndex]
+      const layer = this.layers[cel.layerIndex]
       let visible = layer.visible
       const alpha = layer.opacity / 255
       let parentLayer = layer.parentLayer
