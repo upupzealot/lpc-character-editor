@@ -12,6 +12,13 @@
       <a-button @click="$refs.tileImageSelecter!.openSelecter()">
         import
       </a-button>
+      <AsepriteSelecter
+        ref="tileAseSelecter"
+        v-model="miniTileAse"
+      ></AsepriteSelecter>
+      <a-button @click="$refs.tileAseSelecter!.openSelecter()">
+        import ase (test)
+      </a-button>
     </div>
   </div>
 
@@ -88,18 +95,22 @@ import { mapState, mapWritableState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
 import EditorCommon from '@/components/item/EditorCommon.vue'
 import PngSelecter from '@/components/item/PngSelecter.vue'
+import AsepriteSelecter from '@/components/item/AsepriteSelecter.vue'
 import { makeItemTile } from '@/util/ItemUtil'
+import type { Ase } from '@/util/AsepriteUtil'
 
 export default {
   extends: EditorCommon,
-  components: { PngSelecter },
+  components: { PngSelecter, AsepriteSelecter },
   data() {
     return {
       miniTileImage: null,
       miniTileDataImage: null,
+      miniTileAse: null,
     } as {
       miniTileImage: HTMLImageElement | null
       miniTileDataImage: HTMLImageElement | null
+      miniTileAse: Ase | null
     }
   },
   computed: {
