@@ -1,14 +1,14 @@
 <template>
   <input
-    ref="tileInput"
+    ref="input"
     type="file"
-    accept=".mini.png"
-    @change="onTileSelected"
+    accept=".png"
+    @change="onSelected"
     hidden="hidden"
   />
-  <img ref="tileImage" hidden="hidden" />
+  <img ref="image" hidden="hidden" />
   <canvas
-    ref="tileCanvas"
+    ref="canvas"
     :class="modelValue ? 'preview-img' : ['preview-img', 'hidden']"
   ></canvas>
 </template>
@@ -35,23 +35,23 @@ export default {
   emits: ['update:modelValue'],
   watch: {
     modelValue() {
-      this.draw(this.modelValue)
+      this.draw()
     },
     previewImage() {
-      this.draw(this.modelValue)
+      this.draw()
     },
   },
   methods: {
     openSelecter() {
-      const $input = this.$refs.tileInput as HTMLInputElement
+      const $input = this.$refs.input as HTMLInputElement
       $input.click()
     },
-    async onTileSelected() {
-      const image = await this.tileSelected()
+    async onSelected() {
+      const image = await this.selected()
       this.$emit('update:modelValue', image)
     },
-    async tileSelected(): Promise<HTMLImageElement | null> {
-      const $input = this.$refs.tileInput as HTMLInputElement
+    async selected(): Promise<HTMLImageElement | null> {
+      const $input = this.$refs.input as HTMLInputElement
       const file = $input.files?.length && $input.files[0]
 
       let dataUrl = ''
@@ -60,10 +60,10 @@ export default {
           const reader = new FileReader()
           reader.onload = () => {
             dataUrl = reader.result as string
-            const image = this.$refs.tileImage as HTMLImageElement
+            const image = this.$refs.image as HTMLImageElement
             image.src = dataUrl
             image.onload = () => {
-              this.draw(image)
+              this.draw()
               resolve(image)
             }
           }
@@ -74,10 +74,11 @@ export default {
         return Promise.resolve(null)
       }
     },
-    draw(image: HTMLImageElement | null) {
+    draw() {
+      const image = this.modelValue
       if (!image) return
 
-      const canvas = this.$refs.tileCanvas as HTMLCanvasElement
+      const canvas = this.$refs.canvas as HTMLCanvasElement
       const scale = Math.ceil(this.scaleTo / image.naturalHeight)
       canvas.width = image.naturalWidth * scale
       canvas.height = image.naturalHeight * scale
