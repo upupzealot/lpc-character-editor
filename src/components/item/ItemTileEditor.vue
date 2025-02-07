@@ -1,15 +1,18 @@
 <template>
   <div class="step">
-    <a-button :type="btnType(tile.imageUrl)" shape="circle">1</a-button
+    <a-button :type="btnType(tile.imageCanvas)" shape="circle">1</a-button
     ><span class="title">{{
       `import existed ${state.opPart} tile image`
     }}</span>
     <div class="content">
-      <PngSelecter ref="tileImageSelecter" v-model="tile.image"></PngSelecter>
+      <PngSelecter
+        ref="tileImageSelecter"
+        v-model="tile.imageCanvas"
+      ></PngSelecter>
       <PngSelecter
         ref="tileDataImageSelecter"
-        v-model="tile.dataImage"
-        :previewImage="tile.image"
+        v-model="tile.dataCanvas"
+        :previewCanvas="tile.imageCanvas"
       ></PngSelecter>
       <div class="row">
         <div class="col">
@@ -22,7 +25,7 @@
         </div>
         <a-button
           type="primary"
-          :disabled="!tile.image"
+          :disabled="!tile.imageCanvas"
           @click="$emit('switchMode')"
         >
           Go to generate layer

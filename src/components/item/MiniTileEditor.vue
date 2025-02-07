@@ -1,13 +1,13 @@
 <template>
   <div class="step">
-    <a-button :type="btnType(miniTileImage)" shape="circle">1</a-button
+    <a-button :type="btnType(miniTileImageCanvas)" shape="circle">1</a-button
     ><span class="title">{{
       `import minimum ${state.opPart} tile image`
     }}</span>
     <div class="content">
       <PngSelecter
         ref="tileImageSelecter"
-        v-model="miniTileImage"
+        v-model="miniTileImageCanvas"
       ></PngSelecter>
       <a-button @click="$refs.tileImageSelecter!.openSelecter()">
         import
@@ -25,17 +25,17 @@
   <a-divider></a-divider>
 
   <div class="step">
-    <a-button :type="btnType(miniTileDataImage)" shape="circle">2</a-button
+    <a-button :type="btnType(miniTileDataCanvas)" shape="circle">2</a-button
     ><span class="title">{{
       `import minimum ${state.opPart} tile data image`
     }}</span>
     <div class="content">
       <PngSelecter
-        ref="miniTileDataImageSelecter"
-        v-model="miniTileDataImage"
-        :previewImage="miniTileImage"
+        ref="miniTileDataSelecter"
+        v-model="miniTileDataCanvas"
+        :previewCanvas="miniTileImageCanvas"
       ></PngSelecter>
-      <a-button @click="$refs.miniTileDataImageSelecter!.openSelecter()">
+      <a-button @click="$refs.miniTileDataSelecter!.openSelecter()">
         import
       </a-button>
       <a-button disabled> create </a-button>
@@ -45,21 +45,21 @@
   <a-divider></a-divider>
 
   <div class="step">
-    <a-button :type="btnType(tile.image)" shape="circle">3</a-button
+    <a-button :type="btnType(tile.imageCanvas)" shape="circle">3</a-button
     ><span class="title">Generate {{ state.opPart }} tile</span>
     <div class="content">
       <div
         ref="previewTileImage"
         class="preview-img"
         :style="{
-          display: tile.image ? 'block' : 'none',
+          display: tile.imageCanvas ? 'block' : 'none',
         }"
       ></div>
       <div
         ref="previewTileDataImage"
         class="preview-img"
         :style="{
-          display: tile.dataImage ? 'block' : 'none',
+          display: tile.dataCanvas ? 'block' : 'none',
         }"
       ></div>
       <div class="row">
@@ -67,16 +67,16 @@
           <a-button :disabled="!generateReady" @click="generateTile">
             generate
           </a-button>
-          <a-button :disabled="!tile.image" @click="downloadTileImage">
+          <a-button :disabled="!tile.imageCanvas" @click="downloadTileImage">
             export tile image
           </a-button>
-          <a-button :disabled="!tile.dataImage" @click="downloadTileDataImage">
+          <a-button :disabled="!tile.dataCanvas" @click="downloadTileDataImage">
             export data image
           </a-button>
         </div>
         <a-button
           type="primary"
-          :disabled="!tile.image || !tile.dataImage"
+          :disabled="!tile.imageCanvas || !tile.dataCanvas"
           @click="$emit('switchMode')"
         >
           Go to generate layer
@@ -104,12 +104,12 @@ export default {
   components: { PngSelecter, AsepriteSelecter },
   data() {
     return {
-      miniTileImage: null,
-      miniTileDataImage: null,
+      miniTileImageCanvas: null,
+      miniTileDataCanvas: null,
       miniTileAse: null,
     } as {
-      miniTileImage: HTMLImageElement | null
-      miniTileDataImage: HTMLImageElement | null
+      miniTileImageCanvas: HTMLCanvasElement | null
+      miniTileDataCanvas: HTMLCanvasElement | null
       miniTileAse: IAse | null
     }
   },
@@ -117,25 +117,25 @@ export default {
     ...mapState(useItemEditerStore, ['state']),
     ...mapWritableState(useItemEditerStore, ['tile']),
     generateReady() {
-      return !!this.miniTileImage && !!this.miniTileDataImage
+      return !!this.miniTileImageCanvas && !!this.miniTileDataCanvas
     },
   },
   methods: {
     async generateTile() {
-      if (!this.miniTileImage || !this.miniTileDataImage) return
+      if (!this.miniTileImageCanvas || !this.miniTileDataCanvas) return
 
       // 不同朝向的瓦片和数据
       const itemTile = await makeItemTile(
         32,
-        this.miniTileImage,
-        this.miniTileDataImage,
+        this.miniTileImageCanvas,
+        this.miniTileDataCanvas,
       )
       this.tile = itemTile
       ;(this.$refs.previewTileImage as HTMLElement).replaceChildren(
-        itemTile.image,
+        itemTile.imageCanvas,
       )
       ;(this.$refs.previewTileDataImage as HTMLElement).replaceChildren(
-        itemTile.dataImage,
+        itemTile.dataCanvas,
       )
     },
     downloadTileImage() {

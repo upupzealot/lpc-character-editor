@@ -3,8 +3,8 @@ import { parsePoints, parseRect } from '@/components/item/maker/Util'
 
 export async function makeItemTile(
   size: number,
-  miniImage: HTMLImageElement | HTMLCanvasElement,
-  miniDataImage: HTMLImageElement,
+  miniImageCanvas: HTMLCanvasElement,
+  miniDataCanvas: HTMLCanvasElement,
 ): Promise<ItemTile> {
   const canvas = document.createElement('canvas') as HTMLCanvasElement
   canvas.style.imageRendering = 'pixelated'
@@ -26,7 +26,7 @@ export async function makeItemTile(
     g2d.scale(scaleX, 1)
     g2d.rotate((Math.PI / 4) * rotate)
     g2d.drawImage(
-      miniImage,
+      miniImageCanvas,
       s * size,
       0,
       size,
@@ -43,7 +43,7 @@ export async function makeItemTile(
     dataG2d.scale(scaleX, 1)
     dataG2d.rotate((Math.PI / 4) * rotate)
     dataG2d.drawImage(
-      miniDataImage,
+      miniDataCanvas,
       s * size,
       0,
       size,
@@ -74,35 +74,22 @@ export async function makeItemTile(
   draw(1, 14, 1, 6)
   draw(1, 15, -1, -4)
 
-  const image = new Image(canvas.width, canvas.height)
-  image.src = canvas.toDataURL('image/png')
-  image.style.imageRendering = 'pixelated'
-
-  const dataImage = new Image(dataCanvas.width, dataCanvas.height)
-  await new Promise((resolve) => {
-    dataImage.onload = resolve
-    dataImage.src = dataCanvas.toDataURL('image/png')
-  })
-  dataImage.style.imageRendering = 'pixelated'
-
-  const data = getTileData(size, image, dataImage)
+  const data = getTileData(size, canvas, dataCanvas)
 
   return {
-    image,
-    imageUrl: canvas.toDataURL(),
-    dataImage,
-    dataImageUrl: dataCanvas.toDataURL(),
+    imageCanvas: canvas,
+    dataCanvas,
     data,
   }
 }
 
 export function getTileData(
   size: number,
-  image: HTMLImageElement,
-  dataImage: HTMLImageElement,
+  imageCanvas: HTMLCanvasElement,
+  dataCanvas: HTMLCanvasElement,
 ): TileData {
-  const framePoints = parsePoints(size, dataImage)
-  const frameRects = parseRect(size, image)
+  const frameRects = parseRect(size, imageCanvas)
+  const framePoints = parsePoints(size, dataCanvas)
   const data = framePoints.map((point, i) => {
     return {
       point,

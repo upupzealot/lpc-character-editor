@@ -1,19 +1,22 @@
 <template>
   <div class="step">
-    <a-button :type="btnType(tile.image)" shape="circle">1</a-button
+    <a-button :type="btnType(tile.imageCanvas)" shape="circle">1</a-button
     ><span class="title">{{ `current ${state.opPart} tile` }}</span>
     <div class="content">
-      <PngSelecter ref="tileImageSelecter" v-model="tile.image"></PngSelecter>
       <PngSelecter
-        ref="tileImageDataSelecter"
-        v-model="tile.dataImage"
+        ref="tileImageSelecter"
+        v-model="tile.imageCanvas"
+      ></PngSelecter>
+      <PngSelecter
+        ref="tileDataSelecter"
+        v-model="tile.dataCanvas"
       ></PngSelecter>
       <div class="row">
         <div class="col">
           <a-button @click="$refs.tileImageSelecter!.openSelecter()">
             import tile image
           </a-button>
-          <a-button @click="$refs.tileImageDataSelecter!.openSelecter()">
+          <a-button @click="$refs.tileDataSelecter!.openSelecter()">
             import data image
           </a-button>
         </div>
@@ -40,20 +43,20 @@
   <a-divider></a-divider>
 
   <div class="step">
-    <a-button :type="btnType(layer.image)" shape="circle">3</a-button
+    <a-button :type="btnType(layer.canvas)" shape="circle">3</a-button
     ><span class="title">Generate {{ state.opPart }} layer</span>
     <div class="content">
       <img
         ref="previewLayer"
         class="preview-img"
         :style="{
-          display: layer.image ? 'block' : 'none',
+          display: layer.canvas ? 'block' : 'none',
         }"
       />
       <div
         class="preview-json"
         :style="{
-          display: layer.image ? 'block' : 'none',
+          display: layer.canvas ? 'block' : 'none',
         }"
       >
         <ItemLayerDataForm ref="layerDataForm"></ItemLayerDataForm>
@@ -62,10 +65,10 @@
         <a-button :disabled="!generateReady" @click="generateLayer"
           >generate</a-button
         >
-        <a-button :disabled="!layer.image" @click="downloadLayerImage">
+        <a-button :disabled="!layer.canvas" @click="downloadLayerImage">
           export image
         </a-button>
-        <a-button :disabled="!layer.image" @click="downloadLayerDataJson">
+        <a-button :disabled="!layer.canvas" @click="downloadLayerDataJson">
           export data
         </a-button>
       </div>
@@ -83,7 +86,7 @@
 <script lang="ts">
 import { mapState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
-import { decodeColor, loadImage } from '@/util/GraphicUtil'
+import { decodeColor, loadCanvas } from '@/util/GraphicUtil'
 import { makeItemLayer } from '@/components/item/maker/LayerMaker'
 import EditorCommon from '@/components/item/EditorCommon.vue'
 import PngSelecter from '@/components/item/PngSelecter.vue'
@@ -95,31 +98,30 @@ export default {
   computed: {
     ...mapState(useItemEditerStore, ['tile', 'layer', 'state', 'itemMapGroup']),
     generateReady() {
-      return !!this.tile.image && !!this.layer.body
+      return !!this.tile.imageCanvas && !!this.layer.body
     },
   },
   methods: {
     async generateLayer() {
       const bodyItem = this.itemMapGroup['body'][this.layer.body]
-      const data = this.tile.dataImage || this.tile.data
-      if (!(this.tile.image && data && bodyItem)) return
+      const data = this.tile.dataCanvas || this.tile.data
+      if (!(this.tile.imageCanvas && data && bodyItem)) return
 
       const handDataImageUrl = `images/body/${bodyItem.image}`.replace(
         '.png',
         '.handdata.png',
       )
-      const handDataImage = await loadImage(handDataImageUrl)
+      const handDataCanvas = await loadCanvas(handDataImageUrl)
 
-      const { imageUrl, frameSize } = await makeItemLayer(
+      const { canvas, frameSize } = await makeItemLayer(
         32,
-        handDataImage,
-        this.tile.image,
+        handDataCanvas,
+        this.tile.imageCanvas,
         data,
       )
-      this.layer.imageUrl = imageUrl
       const layerImage = this.$refs.previewLayer as HTMLImageElement
-      layerImage.src = imageUrl
-      this.layer.image = layerImage
+      layerImage.src = canvas.toDataURL()
+      this.layer.canvas = canvas
       this.layer.data.size = frameSize
     },
     async downloadLayerImage() {

@@ -2,7 +2,7 @@
 import { mapState, mapWritableState } from 'pinia'
 import { useGraphicsStore } from '@/stores/graphics'
 import { useCharacterEditerStore } from '@/stores/characterEditor'
-import { loadImage, replaceColor } from '@/util/GraphicUtil'
+import { loadImage, loadCanvas, replaceColor } from '@/util/GraphicUtil'
 import { renderOrder } from '@/components/character/ImageComposite'
 import CharactorActions from '@/components/character/CharacterActionsData.json'
 
@@ -43,49 +43,46 @@ export default {
       const bodyItem = this.selectedItems['body']
       const bodySize = (bodyItem && bodyItem.size) || 32
       let maxSize = bodySize
-      const imgMap = {} as { [k: string]: null | HTMLImageElement }
-      let lastImg = null as null | HTMLImageElement
+      const canvasMap = {} as { [k: string]: null | HTMLCanvasElement }
+      let lastCanvas = null as null | HTMLCanvasElement
 
       await Promise.all(
         partKeys.map(async (partKey) => {
-          let img = null as null | HTMLImageElement
+          let canvas = null as null | HTMLCanvasElement
           const partItem = this.selectedItems[partKey]
           if (partItem.size) {
             maxSize = Math.max(maxSize, partItem.size)
           }
           if (partItem.image) {
-            img = await loadImage(`images/${partKey}/${partItem.image}`)
+            canvas = await loadCanvas(`images/${partKey}/${partItem.image}`)
           }
-          imgMap[partKey] = img
-          lastImg = lastImg || img
+          canvasMap[partKey] = canvas
+          lastCanvas = lastCanvas || canvas
         }),
       )
-      const bodyImg = imgMap['body'] as HTMLImageElement
-      lastImg = bodyImg || lastImg
-      if (lastImg) {
-        this.composite.canvas().width =
-          (bodyImg.naturalWidth / bodySize) * maxSize
+      const bodyCanvas = canvasMap['body'] as HTMLCanvasElement
+      lastCanvas = bodyCanvas || lastCanvas
+      if (lastCanvas) {
+        this.composite.canvas().width = (bodyCanvas.width / bodySize) * maxSize
         this.composite.canvas().height =
-          (bodyImg.naturalHeight / bodySize) * maxSize
+          (bodyCanvas.height / bodySize) * maxSize
       }
 
-      const canvasMap = {} as { [k: string]: OffscreenCanvas }
       for (let i = 0; i < partKeys.length; i++) {
         const partKey = partKeys[i]
-        const img = imgMap[partKey]
-        if (img) {
+        const canvas = canvasMap[partKey]
+        if (canvas) {
           const srcPaletteColors = this.selectedItems[partKey].palettes.map(
             (palette) => palette.colors,
           )
           const dstPalatteColors = this.selections[partKey].palettes.map(
             (palette) => palette.colors,
           )
-          canvasMap[partKey] = await replaceColor(
-            img,
+          canvasMap[partKey] = (await replaceColor(
             srcPaletteColors,
             dstPalatteColors,
-          )
-          // this.composite.g2d().drawImage(bodyCanvas, 0, 0)
+            canvas,
+          )) as HTMLCanvasElement
         }
       }
 
@@ -98,11 +95,11 @@ export default {
           if (partKey.includes('.')) {
             const [part, mask] = partKey.split('.')
             partKey = part
-            const partCanvas = canvasMap[part]
-            canvas = new OffscreenCanvas(partCanvas.width, partCanvas.height)
-            const g2d = canvas.getContext(
-              '2d',
-            ) as OffscreenCanvasRenderingContext2D
+            const partCanvas = canvasMap[part] as HTMLCanvasElement
+            canvas = document.createElement('canvas')
+            canvas.width = partCanvas.width
+            canvas.height = partCanvas.height
+            const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
             g2d.imageSmoothingEnabled = false
             g2d.drawImage(partCanvas, 0, 0)
             g2d.globalCompositeOperation = 'destination-in'

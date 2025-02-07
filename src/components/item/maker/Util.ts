@@ -22,18 +22,16 @@ export type FrameData = {
 export type TileData = FrameData[]
 
 export type ItemTile = {
-  image: HTMLImageElement
-  imageUrl: string
-  dataImage: HTMLImageElement
-  dataImageUrl: string
+  imageCanvas: HTMLCanvasElement
+  dataCanvas: HTMLCanvasElement
   data: TileData
 }
 
 export function parsePoints(
   size: number,
-  image: HTMLImageElement,
+  canvas: HTMLCanvasElement,
 ): (DataPoint | null)[] {
-  const framesData = getFrames(size, image)
+  const framesData = getFrames(size, canvas)
 
   const framePoints = framesData.map((imageData) => {
     const data = imageData.data
@@ -59,8 +57,8 @@ export function parsePoints(
   return framePoints
 }
 
-export function parseRect(size: number, image: HTMLImageElement) {
-  const framesData = getFrames(size, image)
+export function parseRect(size: number, canvas: HTMLCanvasElement) {
+  const framesData = getFrames(size, canvas)
 
   const frameRects = framesData.map((imageData) => {
     const { data } = imageData
@@ -82,20 +80,17 @@ export function parseRect(size: number, image: HTMLImageElement) {
   return frameRects
 }
 
-export function getFrames(size: number, image: HTMLImageElement): ImageData[] {
-  const frameWidth = Math.floor(image.naturalWidth / size)
-  const frameHeight = Math.floor(image.naturalHeight / size)
+export function getFrames(
+  size: number,
+  canvas: HTMLCanvasElement,
+): ImageData[] {
+  const frameWidth = Math.floor(canvas.width / size)
+  const frameHeight = Math.floor(canvas.height / size)
   const frameCount = frameWidth * frameHeight
 
-  const canvas = document.createElement('canvas') as HTMLCanvasElement
-  canvas.style.imageRendering = 'pixelated'
-  canvas.width = image.width
-  canvas.height = image.height
   const g2d = canvas.getContext('2d', {
     willReadFrequently: true,
   }) as CanvasRenderingContext2D
-  g2d.drawImage(image, 0, 0)
-
   const frames = [] as ImageData[]
   for (let i = 0; i < frameCount; i++) {
     const x = i % frameWidth

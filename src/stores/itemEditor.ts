@@ -1,21 +1,18 @@
 import { defineStore } from 'pinia'
 import { itemListGroup, itemMapGroup } from '@/stores/itemData'
-import type { TileData } from '@/components/item/ItemUtil0'
+import type { TileData } from '@/components/item/maker/Util'
 
 export const useItemEditerStore = defineStore('itemEditor', {
   state: () => {
     return {
       tile: {
-        image: null as HTMLImageElement | null,
-        imageUrl: '' as string,
-        dataImage: null as HTMLImageElement | null,
-        dataImageUrl: '' as string,
+        imageCanvas: null as HTMLCanvasElement | null,
+        dataCanvas: null as HTMLCanvasElement | null,
         data: null as TileData | null,
       },
       layer: {
         body: 'body-1',
-        image: null as HTMLImageElement | null,
-        imageUrl: '' as string,
+        canvas: null as HTMLCanvasElement | null,
         data: {} as {
           name: string
           key: string

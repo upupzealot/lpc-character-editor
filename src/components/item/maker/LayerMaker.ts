@@ -4,25 +4,25 @@ import { getTileData } from '@/components/item/maker/TileMaker'
 
 export async function makeItemLayer(
   size: number,
-  bodyHandPointImage: HTMLImageElement,
-  tileImage: HTMLImageElement,
-  tileData: TileData | HTMLImageElement,
+  bodyHandPointCanvas: HTMLCanvasElement,
+  tileImageCanvas: HTMLCanvasElement,
+  tileData: TileData | HTMLCanvasElement,
 ): Promise<{
   frameSize: number
-  imageUrl: string
+  canvas: HTMLCanvasElement
 }> {
-  const frameHandPoints = parsePoints(size, bodyHandPointImage)
+  const frameHandPoints = parsePoints(size, bodyHandPointCanvas)
   let data
-  if (tileData instanceof HTMLImageElement) {
-    data = getTileData(size, tileImage, tileData)
+  if (tileData instanceof HTMLCanvasElement) {
+    data = getTileData(size, tileImageCanvas, tileData)
   } else {
     data = tileData
   }
   const padding = getOversizePadding(size, frameHandPoints, data)
   const frameSize = size + padding * 2
 
-  const frameWidth = Math.floor(bodyHandPointImage.naturalWidth / size)
-  const frameHeight = Math.floor(bodyHandPointImage.naturalHeight / size)
+  const frameWidth = Math.floor(bodyHandPointCanvas.width / size)
+  const frameHeight = Math.floor(bodyHandPointCanvas.height / size)
   const frameCount = frameWidth * frameHeight
 
   const canvas = document.createElement('canvas') as HTMLCanvasElement
@@ -50,7 +50,7 @@ export async function makeItemLayer(
       padding + handPoint.y - anchorPoint.y,
     )
     g2d.drawImage(
-      tileImage,
+      tileImageCanvas,
       tx * size,
       ty * size,
       size,
@@ -65,7 +65,7 @@ export async function makeItemLayer(
 
   return {
     frameSize,
-    imageUrl: canvas.toDataURL(),
+    canvas,
   }
 }
 

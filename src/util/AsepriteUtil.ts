@@ -46,7 +46,7 @@ type Cel = {
   zIndex: number
   width: number
   height: number
-  canvas: HTMLCanvasElement | OffscreenCanvas
+  canvas: HTMLCanvasElement
 }
 
 export interface IAse {
@@ -71,7 +71,7 @@ export interface IAse {
 
   parse(): Promise<void>
 
-  render(frameIndex?: number, layerIndex?: number): OffscreenCanvas | null
+  render(frameIndex?: number, layerIndex?: number): HTMLCanvasElement | null
 }
 
 export class Ase implements IAse {
@@ -242,12 +242,8 @@ export class Ase implements IAse {
             }
 
             // const canvas = this.frames[frameIndex].layers[layerIndex].canvas
-            // const canvas = document.createElement('canvas')
-            // const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
-            const canvas = new OffscreenCanvas(celWidth, celHeight)
-            const g2d = canvas.getContext(
-              '2d',
-            ) as OffscreenCanvasRenderingContext2D
+            const canvas = document.createElement('canvas')
+            const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
             const imageData = new ImageData(celWidth, celHeight)
             for (let i = 0; i < pixelData.length; i++) {
               imageData.data[i] = pixelData[i]
@@ -289,7 +285,7 @@ export class Ase implements IAse {
     }
   }
 
-  render(frameIndex?: number, layerIndex?: number): OffscreenCanvas | null {
+  render(frameIndex?: number, layerIndex?: number): HTMLCanvasElement | null {
     this.checkParsed()
 
     if (!this.frameCount) return null
@@ -309,8 +305,10 @@ export class Ase implements IAse {
         }
       })
 
-    const canvas = new OffscreenCanvas(this.width, this.height)
-    const g2d = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D
+    const canvas = document.createElement('canvas')
+    canvas.width = this.width
+    canvas.height = this.height
+    const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
     cels.forEach((cel) => {
       const layer = this.layers[cel.layerIndex]
       let visible = layer.visible

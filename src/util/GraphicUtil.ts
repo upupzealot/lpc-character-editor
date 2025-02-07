@@ -14,18 +14,45 @@ export async function loadImage(src: string): Promise<HTMLImageElement> {
   })
 }
 
-export async function replaceColor(
-  image: HTMLImageElement,
+export async function loadCanvas(src: string): Promise<HTMLCanvasElement> {
+  const image = await loadImage(src)
+  return imageToCanvas(image)
+}
+
+export async function canvasToImage(
+  canvas: HTMLCanvasElement,
+): Promise<HTMLImageElement> {
+  const image = new Image(canvas.width, canvas.height)
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    image.onload = () => {
+      resolve(image)
+    }
+    image.onerror = reject
+    image.src = canvas.toDataURL()
+  })
+}
+
+export function imageToCanvas(image: HTMLImageElement): HTMLCanvasElement {
+  const canvas = document.createElement('canvas')
+  canvas.width = image.naturalWidth
+  canvas.height = image.naturalHeight
+  const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
+  g2d.imageSmoothingEnabled = false
+  g2d.drawImage(image, 0, 0)
+
+  return canvas
+}
+
+export function replaceColor(
   srcPalettes: Color[][],
   dstPalettes: Color[][],
-) {
-  const width = image.naturalWidth
-  const height = image.naturalHeight
-  const canvas = new OffscreenCanvas(width, height)
-  const g2d = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D
-
-  g2d.drawImage(image, 0, 0)
-  const imageData = g2d.getImageData(0, 0, width, height)
+  srcCanvas: HTMLCanvasElement,
+  dstCanvas?: HTMLCanvasElement,
+): HTMLCanvasElement {
+  const srcG2d = srcCanvas.getContext('2d', {
+    willReadFrequently: true,
+  }) as CanvasRenderingContext2D
+  const imageData = srcG2d.getImageData(0, 0, srcCanvas.width, srcCanvas.height)
   const { data } = imageData
 
   const srcColors = srcPalettes.flat()
@@ -50,8 +77,15 @@ export async function replaceColor(
     }
   }
 
-  g2d.putImageData(imageData, 0, 0)
-  return canvas
+  let output = dstCanvas
+  if (!output) {
+    output = document.createElement('canvas')
+    output.width = srcCanvas.width
+    output.height = srcCanvas.height
+  }
+  const dstG2d = output.getContext('2d') as CanvasRenderingContext2D
+  dstG2d.putImageData(imageData, 0, 0)
+  return output
 }
 
 const code = '0123456789abcdef'.split('')
