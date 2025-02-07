@@ -84,7 +84,7 @@
 import { mapState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
 import { decodeColor, loadImage } from '@/util/GraphicUtil'
-import { makeItemLayer } from '@/util/ItemUtil'
+import { makeItemLayer } from '@/components/item/maker/LayerMaker'
 import EditorCommon from '@/components/item/EditorCommon.vue'
 import PngSelecter from '@/components/item/PngSelecter.vue'
 import ItemLayerDataForm from '@/components/item/ItemLayerDataForm.vue'

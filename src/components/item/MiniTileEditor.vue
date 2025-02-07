@@ -96,7 +96,7 @@ import { useItemEditerStore } from '@/stores/itemEditor'
 import EditorCommon from '@/components/item/EditorCommon.vue'
 import PngSelecter from '@/components/item/PngSelecter.vue'
 import AsepriteSelecter from '@/components/item/AsepriteSelecter.vue'
-import { makeItemTile } from '@/util/ItemUtil'
+import { makeItemTile } from '@/components/item/maker/TileMaker'
 import type { IAse } from '@/util/AsepriteUtil'
 
 export default {

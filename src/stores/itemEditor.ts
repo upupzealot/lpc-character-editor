@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { itemListGroup, itemMapGroup } from '@/stores/itemData'
-import type { TileData } from '@/util/ItemUtil'
+import type { TileData } from '@/components/item/ItemUtil0'
 
 export const useItemEditerStore = defineStore('itemEditor', {
   state: () => {
