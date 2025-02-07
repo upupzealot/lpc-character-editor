@@ -13,12 +13,13 @@
 </template>
 
 <script lang="ts">
+import type { IAse } from '@/util/AsepriteUtil'
 import { Ase } from '@/util/AsepriteUtil'
 
 export default {
   props: {
     modelValue: {
-      type: [Ase, null],
+      type: [Object as () => IAse, null],
       required: true,
     },
     scaleTo: {
@@ -41,7 +42,7 @@ export default {
       const ase = await this.select()
       this.$emit('update:modelValue', ase)
     },
-    async select(): Promise<Ase | null> {
+    async select(): Promise<IAse | null> {
       const $input = this.$refs.input as HTMLInputElement
       const file = $input.files?.length && $input.files[0]
 

@@ -97,7 +97,7 @@ import EditorCommon from '@/components/item/EditorCommon.vue'
 import PngSelecter from '@/components/item/PngSelecter.vue'
 import AsepriteSelecter from '@/components/item/AsepriteSelecter.vue'
 import { makeItemTile } from '@/util/ItemUtil'
-import type { Ase } from '@/util/AsepriteUtil'
+import type { IAse } from '@/util/AsepriteUtil'
 
 export default {
   extends: EditorCommon,
@@ -110,7 +110,7 @@ export default {
     } as {
       miniTileImage: HTMLImageElement | null
       miniTileDataImage: HTMLImageElement | null
-      miniTileAse: Ase | null
+      miniTileAse: IAse | null
     }
   },
   computed: {

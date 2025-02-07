@@ -49,26 +49,41 @@ type Cel = {
   canvas: HTMLCanvasElement | OffscreenCanvas
 }
 
-export class Ase {
+export interface IAse {
   file: File
   /** 文件大小 */
-  fileSize: number = 0
+  fileSize: number
   /** 帧数 */
-  frameCount: number = 0
+  frameCount: number
   /** 画布宽度 */
-  width: number = 0
+  width: number
   /** 画布高度 */
-  height: number = 0
+  height: number
   /** 颜色深度 */
-  colorDepth: number = 0
+  colorDepth: number
 
   /** 帧数据 */
-  frames: Array<Frame> = []
+  frames: Array<Frame>
   /** 图层数据 */
-  layers: Array<Layer> = []
+  layers: Array<Layer>
   /** 细胞数据 */
-  cels: Array<Array<Cel>> = []
+  cels: Array<Array<Cel>>
+  /** 预览画布 */
+  canvas: OffscreenCanvas | null
 
+  parse(): Promise<void>
+}
+
+export class Ase implements IAse {
+  file: File
+  fileSize: number = 0
+  frameCount: number = 0
+  width: number = 0
+  height: number = 0
+  colorDepth: number = 0
+  frames: Array<Frame> = []
+  layers: Array<Layer> = []
+  cels: Array<Array<Cel>> = []
   canvas: OffscreenCanvas | null = null
 
   private _parsed: boolean = false
@@ -77,7 +92,7 @@ export class Ase {
     this.file = file
   }
 
-  reset() {
+  private reset() {
     this.fileSize = 0
     this.frameCount = 0
     this.width = 0
