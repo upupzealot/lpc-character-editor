@@ -15,7 +15,7 @@ export type DataRect = {
 }
 
 export type FrameData = {
-  points: DataPoint[]
+  point: DataPoint | null
   rect: DataRect
 }
 
@@ -29,11 +29,15 @@ export type ItemTile = {
   data: TileData
 }
 
-export function parsePoints(size: number, image: HTMLImageElement) {
+export function parsePoints(
+  size: number,
+  image: HTMLImageElement,
+): (DataPoint | null)[] {
   const framesData = getFrames(size, image)
 
-  const framePoints = framesData.map((data) => {
-    const points = [] as { x: number; y: number; color: Color }[]
+  const framePoints = framesData.map((imageData) => {
+    const data = imageData.data
+    let point: DataPoint
     for (let p = 0; p < data.length / 4; p++) {
       const a = data[p * 4 + 3]
       if (a) {
@@ -42,22 +46,43 @@ export function parsePoints(size: number, image: HTMLImageElement) {
         const r = data[p * 4]
         const g = data[p * 4 + 1]
         const b = data[p * 4 + 2]
-        points.push({
+        point = {
           x,
           y,
           color: [r, g, b, a],
-        })
+        }
+        return point
       }
     }
-    return points
+    return null
   })
   return framePoints
 }
 
-export function getFrames(
-  size: number,
-  image: HTMLImageElement,
-): Uint8ClampedArray<ArrayBufferLike>[] {
+export function parseRect(size: number, image: HTMLImageElement) {
+  const framesData = getFrames(size, image)
+
+  const frameRects = framesData.map((imageData) => {
+    const { data } = imageData
+    let [count, left, right, top, bottom] = [0, -1, -1, -1, -1]
+    for (let p = 0; p < data.length / 4; p++) {
+      const a = data[p * 4 + 3]
+      if (a) {
+        count++
+        const x = p % size
+        const y = Math.floor(p / size)
+        left = left >= 0 ? Math.min(left, x) : x
+        right = right >= 0 ? Math.max(right, x) : x
+        top = top >= 0 ? Math.min(top, y) : y
+        bottom = bottom >= 0 ? Math.max(bottom, y) : y
+      }
+    }
+    return { count, left, right, top, bottom }
+  })
+  return frameRects
+}
+
+export function getFrames(size: number, image: HTMLImageElement): ImageData[] {
   const frameWidth = Math.floor(image.naturalWidth / size)
   const frameHeight = Math.floor(image.naturalHeight / size)
   const frameCount = frameWidth * frameHeight
@@ -71,12 +96,12 @@ export function getFrames(
   }) as CanvasRenderingContext2D
   g2d.drawImage(image, 0, 0)
 
-  const frames = [] as Uint8ClampedArray<ArrayBufferLike>[]
+  const frames = [] as ImageData[]
   for (let i = 0; i < frameCount; i++) {
     const x = i % frameWidth
     const y = Math.floor(i / frameWidth)
 
-    const { data } = g2d.getImageData(x * size, y * size, size, size)
+    const data = g2d.getImageData(x * size, y * size, size, size)
     frames[i] = data
   }
   return frames

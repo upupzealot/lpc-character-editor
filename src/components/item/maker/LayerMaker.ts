@@ -1,5 +1,6 @@
 import type { TileData, DataPoint } from '@/components/item/maker/Util'
-import { getFrames, parsePoints } from '@/components/item/maker/Util'
+import { parsePoints } from '@/components/item/maker/Util'
+import { getTileData } from '@/components/item/maker/TileMaker'
 
 export async function makeItemLayer(
   size: number,
@@ -10,7 +11,7 @@ export async function makeItemLayer(
   frameSize: number
   imageUrl: string
 }> {
-  const frameHandPoints: DataPoint[][] = parsePoints(size, bodyHandPointImage)
+  const frameHandPoints = parsePoints(size, bodyHandPointImage)
   let data
   if (tileData instanceof HTMLImageElement) {
     data = getTileData(size, tileImage, tileData)
@@ -36,12 +37,10 @@ export async function makeItemLayer(
     const x = i % frameWidth
     const y = Math.floor(i / frameWidth)
 
-    const handPoint = frameHandPoints[i].length ? frameHandPoints[i][0] : null
+    const handPoint = frameHandPoints[i]
     if (!handPoint) continue
     const tileIndex = (handPoint.color[0] - 127) / 8 - 1
-    const anchorPoint = data[tileIndex].points.length
-      ? data[tileIndex].points[0]
-      : null
+    const anchorPoint = data[tileIndex].point
     if (!anchorPoint) continue
     const tx = tileIndex % 4
     const ty = Math.floor(tileIndex / 4)
@@ -70,34 +69,16 @@ export async function makeItemLayer(
   }
 }
 
-export function getTileData(
-  size: number,
-  image: HTMLImageElement,
-  dataImage: HTMLImageElement,
-): TileData {
-  const framePoints = parsePoints(size, dataImage)
-  const frameRects = parseBoundingBox(size, image)
-  const data = framePoints.map((points, i) => {
-    return {
-      points,
-      rect: frameRects[i],
-    }
-  })
-  return data
-}
-
 function getOversizePadding(
   size: number,
-  handPoints: DataPoint[][],
+  handPoints: (DataPoint | null)[],
   tileData: TileData,
 ): number {
-  const boundingBoxes = handPoints.map((handPoints) => {
-    const handPoint = handPoints.length ? handPoints[0] : null
+  const boundingBoxes = handPoints.map((handPoint) => {
     if (!handPoint) return null
 
     const tileIndex = (handPoint.color[0] - 127) / 8 - 1
-    const anchorPoints = tileData[tileIndex].points
-    const anchorPoint = anchorPoints.length ? anchorPoints[0] : null
+    const anchorPoint = tileData[tileIndex].point
     if (!anchorPoint) return null
     const boundingRect = tileData[tileIndex].rect
     if (!boundingRect.count) return null
@@ -127,26 +108,4 @@ function getOversizePadding(
   let padding = Math.max(paddingLeft, paddingRight, paddingTop, paddingBottom)
   padding = Math.ceil(padding / 8) * 8
   return padding
-}
-
-export function parseBoundingBox(size: number, image: HTMLImageElement) {
-  const framesData = getFrames(size, image)
-
-  const frameRects = framesData.map((data) => {
-    let [count, left, right, top, bottom] = [0, -1, -1, -1, -1]
-    for (let p = 0; p < data.length / 4; p++) {
-      const a = data[p * 4 + 3]
-      if (a) {
-        count++
-        const x = p % size
-        const y = Math.floor(p / size)
-        left = left >= 0 ? Math.min(left, x) : x
-        right = right >= 0 ? Math.max(right, x) : x
-        top = top >= 0 ? Math.min(top, y) : y
-        bottom = bottom >= 0 ? Math.max(bottom, y) : y
-      }
-    }
-    return { count, left, right, top, bottom }
-  })
-  return frameRects
 }
