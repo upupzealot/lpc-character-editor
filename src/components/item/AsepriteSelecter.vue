@@ -73,7 +73,8 @@ export default {
       g2d.imageSmoothingEnabled = false
 
       g2d.scale(scale, scale)
-      g2d.drawImage(ase.canvas!, 0, 0)
+      const layerCanvas = ase.render()
+      g2d.drawImage(layerCanvas!, 0, 0)
     },
   },
 }

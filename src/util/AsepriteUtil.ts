@@ -68,10 +68,10 @@ export interface IAse {
   layers: Array<Layer>
   /** 细胞数据 */
   cels: Array<Array<Cel>>
-  /** 预览画布 */
-  canvas: OffscreenCanvas | null
 
   parse(): Promise<void>
+
+  render(frameIndex?: number, layerIndex?: number): OffscreenCanvas | null
 }
 
 export class Ase implements IAse {
@@ -84,7 +84,6 @@ export class Ase implements IAse {
   frames: Array<Frame> = []
   layers: Array<Layer> = []
   cels: Array<Array<Cel>> = []
-  canvas: OffscreenCanvas | null = null
 
   private _parsed: boolean = false
 
@@ -99,7 +98,6 @@ export class Ase implements IAse {
     this.height = 0
     this.colorDepth = 0
     this.frames = []
-    this.canvas = null
   }
 
   async parse() {
@@ -117,7 +115,6 @@ export class Ase implements IAse {
     this.frameCount = view.getUint16(6, true)
     this.width = view.getUint16(8, true)
     this.height = view.getUint16(10, true)
-    this.canvas = new OffscreenCanvas(this.width, this.height)
     this.colorDepth = view.getUint16(12, true)
     let offset = 128 // 文件头固定长度为 128 字节
 
@@ -284,7 +281,6 @@ export class Ase implements IAse {
     }
 
     this._parsed = true
-    this.render(0)
   }
 
   private checkParsed() {
@@ -293,11 +289,11 @@ export class Ase implements IAse {
     }
   }
 
-  render(frameIndex: number, layerIndex?: number) {
+  render(frameIndex?: number, layerIndex?: number): OffscreenCanvas | null {
     this.checkParsed()
 
-    if (!this.frameCount) return
-    const cels = this.cels[frameIndex]
+    if (!this.frameCount) return null
+    const cels = this.cels[frameIndex || 0]
       .filter((frameCel) => {
         return typeof layerIndex === 'number'
           ? frameCel.layerIndex === layerIndex
@@ -313,9 +309,8 @@ export class Ase implements IAse {
         }
       })
 
-    const g2d = this.canvas?.getContext(
-      '2d',
-    ) as OffscreenCanvasRenderingContext2D
+    const canvas = new OffscreenCanvas(this.width, this.height)
+    const g2d = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D
     cels.forEach((cel) => {
       const layer = this.layers[cel.layerIndex]
       let visible = layer.visible
@@ -333,5 +328,6 @@ export class Ase implements IAse {
         g2d.restore()
       }
     })
+    return canvas
   }
 }
