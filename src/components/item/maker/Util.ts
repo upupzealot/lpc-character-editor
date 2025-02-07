@@ -19,12 +19,12 @@ export type FrameData = {
   rect: DataRect
 }
 
-export type TileData = FrameData[]
+export type TilesetData = FrameData[]
 
 export type ItemTile = {
   imageCanvas: HTMLCanvasElement
   dataCanvas: HTMLCanvasElement
-  data: TileData
+  data: TilesetData
 }
 
 export function parsePoints(

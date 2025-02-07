@@ -113,7 +113,7 @@ export default {
       )
       const handDataCanvas = await loadCanvas(handDataImageUrl)
 
-      const { canvas, frameSize } = await makeItemLayer(
+      const { canvas, tileSize } = await makeItemLayer(
         32,
         handDataCanvas,
         this.tile.imageCanvas,
@@ -122,7 +122,7 @@ export default {
       const layerImage = this.$refs.previewLayer as HTMLImageElement
       layerImage.src = canvas.toDataURL()
       this.layer.canvas = canvas
-      this.layer.data.size = frameSize
+      this.layer.data.size = tileSize
     },
     async downloadLayerImage() {
       if (!this.$refs.previewLayer) return

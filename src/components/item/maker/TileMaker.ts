@@ -1,4 +1,4 @@
-import type { TileData, ItemTile } from '@/components/item/maker/Util'
+import type { TilesetData, ItemTile } from '@/components/item/maker/Util'
 import { parsePoints, parseRect } from '@/components/item/maker/Util'
 
 export async function makeItemTile(
@@ -6,11 +6,11 @@ export async function makeItemTile(
   miniImageCanvas: HTMLCanvasElement,
   miniDataCanvas: HTMLCanvasElement,
 ): Promise<ItemTile> {
-  const canvas = document.createElement('canvas') as HTMLCanvasElement
-  canvas.style.imageRendering = 'pixelated'
-  canvas.width = size * 4
-  canvas.height = size * 4
-  const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
+  const imageCanvas = document.createElement('canvas') as HTMLCanvasElement
+  imageCanvas.style.imageRendering = 'pixelated'
+  imageCanvas.width = size * 4
+  imageCanvas.height = size * 4
+  const imageG2d = imageCanvas.getContext('2d') as CanvasRenderingContext2D
 
   const dataCanvas = document.createElement('canvas') as HTMLCanvasElement
   dataCanvas.style.imageRendering = 'pixelated'
@@ -21,11 +21,11 @@ export async function makeItemTile(
   function draw(s: number, d: number, scaleX: number, rotate: number) {
     const x = d % 4
     const y = Math.floor(d / 4)
-    g2d.save()
-    g2d.translate(size * (x + 0.5), size * (y + 0.5))
-    g2d.scale(scaleX, 1)
-    g2d.rotate((Math.PI / 4) * rotate)
-    g2d.drawImage(
+    imageG2d.save()
+    imageG2d.translate(size * (x + 0.5), size * (y + 0.5))
+    imageG2d.scale(scaleX, 1)
+    imageG2d.rotate((Math.PI / 4) * rotate)
+    imageG2d.drawImage(
       miniImageCanvas,
       s * size,
       0,
@@ -36,7 +36,7 @@ export async function makeItemTile(
       size,
       size,
     )
-    g2d.restore()
+    imageG2d.restore()
 
     dataG2d.save()
     dataG2d.translate(size * (x + 0.5), size * (y + 0.5))
@@ -74,26 +74,26 @@ export async function makeItemTile(
   draw(1, 14, 1, 6)
   draw(1, 15, -1, -4)
 
-  const data = getTileData(size, canvas, dataCanvas)
+  const data = getTilesetData(size, imageCanvas, dataCanvas)
 
   return {
-    imageCanvas: canvas,
+    imageCanvas,
     dataCanvas,
     data,
   }
 }
 
-export function getTileData(
+export function getTilesetData(
   size: number,
   imageCanvas: HTMLCanvasElement,
   dataCanvas: HTMLCanvasElement,
-): TileData {
-  const frameRects = parseRect(size, imageCanvas)
-  const framePoints = parsePoints(size, dataCanvas)
-  const data = framePoints.map((point, i) => {
+): TilesetData {
+  const tileRects = parseRect(size, imageCanvas)
+  const pivotPoints = parsePoints(size, dataCanvas)
+  const data = pivotPoints.map((point, i) => {
     return {
       point,
-      rect: frameRects[i],
+      rect: tileRects[i],
     }
   })
   return data

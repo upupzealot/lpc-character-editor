@@ -1,43 +1,43 @@
-import type { TileData, DataPoint } from '@/components/item/maker/Util'
+import type { TilesetData, DataPoint } from '@/components/item/maker/Util'
 import { parsePoints } from '@/components/item/maker/Util'
-import { getTileData } from '@/components/item/maker/TileMaker'
+import { getTilesetData } from '@/components/item/maker/TileMaker'
 
 export async function makeItemLayer(
   size: number,
   bodyHandPointCanvas: HTMLCanvasElement,
-  tileImageCanvas: HTMLCanvasElement,
-  tileData: TileData | HTMLCanvasElement,
+  tilesetImageCanvas: HTMLCanvasElement,
+  tilesetData: TilesetData | HTMLCanvasElement,
 ): Promise<{
-  frameSize: number
+  tileSize: number
   canvas: HTMLCanvasElement
 }> {
-  const frameHandPoints = parsePoints(size, bodyHandPointCanvas)
-  let data
-  if (tileData instanceof HTMLCanvasElement) {
-    data = getTileData(size, tileImageCanvas, tileData)
+  const anchorPoints = parsePoints(size, bodyHandPointCanvas)
+  let data: TilesetData
+  if (tilesetData instanceof HTMLCanvasElement) {
+    data = getTilesetData(size, tilesetImageCanvas, tilesetData)
   } else {
-    data = tileData
+    data = tilesetData
   }
-  const padding = getOversizePadding(size, frameHandPoints, data)
-  const frameSize = size + padding * 2
+  const padding = getOversizePadding(size, anchorPoints, data)
+  const tileSize = size + padding * 2
 
-  const frameWidth = Math.floor(bodyHandPointCanvas.width / size)
-  const frameHeight = Math.floor(bodyHandPointCanvas.height / size)
-  const frameCount = frameWidth * frameHeight
+  const tileWidth = Math.floor(bodyHandPointCanvas.width / size)
+  const tileHeight = Math.floor(bodyHandPointCanvas.height / size)
+  const tileCount = tileWidth * tileHeight
 
   const canvas = document.createElement('canvas') as HTMLCanvasElement
-  canvas.width = frameWidth * frameSize
-  canvas.height = frameHeight * frameSize
+  canvas.width = tileWidth * tileSize
+  canvas.height = tileHeight * tileSize
   // document.body.prepend(canvas)
   canvas.style.imageRendering = 'pixelated'
   canvas.style.transformOrigin = 'top left'
   canvas.style.transform = 'scale(2,2)'
   const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
-  for (let i = 0; i < frameCount; i++) {
-    const x = i % frameWidth
-    const y = Math.floor(i / frameWidth)
+  for (let i = 0; i < tileCount; i++) {
+    const x = i % tileWidth
+    const y = Math.floor(i / tileWidth)
 
-    const handPoint = frameHandPoints[i]
+    const handPoint = anchorPoints[i]
     if (!handPoint) continue
     const tileIndex = (handPoint.color[0] - 127) / 8 - 1
     const anchorPoint = data[tileIndex].point
@@ -50,13 +50,13 @@ export async function makeItemLayer(
       padding + handPoint.y - anchorPoint.y,
     )
     g2d.drawImage(
-      tileImageCanvas,
+      tilesetImageCanvas,
       tx * size,
       ty * size,
       size,
       size,
-      x * frameSize,
-      y * frameSize,
+      x * tileSize,
+      y * tileSize,
       size,
       size,
     )
@@ -64,23 +64,23 @@ export async function makeItemLayer(
   }
 
   return {
-    frameSize,
+    tileSize,
     canvas,
   }
 }
 
 function getOversizePadding(
   size: number,
-  handPoints: (DataPoint | null)[],
-  tileData: TileData,
+  anchorPoints: (DataPoint | null)[],
+  tilesetData: TilesetData,
 ): number {
-  const boundingBoxes = handPoints.map((handPoint) => {
+  const boundingBoxes = anchorPoints.map((handPoint) => {
     if (!handPoint) return null
 
     const tileIndex = (handPoint.color[0] - 127) / 8 - 1
-    const anchorPoint = tileData[tileIndex].point
+    const anchorPoint = tilesetData[tileIndex].point
     if (!anchorPoint) return null
-    const boundingRect = tileData[tileIndex].rect
+    const boundingRect = tilesetData[tileIndex].rect
     if (!boundingRect.count) return null
 
     const left = handPoint.x - (anchorPoint.x - boundingRect.left)
