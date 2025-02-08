@@ -1,23 +1,23 @@
 <template>
   <div class="step">
-    <a-button :type="btnType(tile.imageCanvas)" shape="circle">1</a-button
-    ><span class="title">{{ `current ${state.opPart} tile` }}</span>
+    <a-button :type="btnType(tileset.imageCanvas)" shape="circle">1</a-button
+    ><span class="title">{{ `current ${state.opPart} tileset` }}</span>
     <div class="content">
       <PngSelecter
-        ref="tileImageSelecter"
-        v-model="tile.imageCanvas"
+        ref="imageSelecter"
+        v-model="tileset.imageCanvas"
       ></PngSelecter>
       <PngSelecter
-        ref="tileDataSelecter"
-        v-model="tile.dataCanvas"
+        ref="dataImageSelecter"
+        v-model="tileset.dataCanvas"
       ></PngSelecter>
       <div class="row">
         <div class="col">
-          <a-button @click="$refs.tileImageSelecter!.openSelecter()">
-            import tile image
+          <a-button @click="$refs.imageSelecter!.openSelecter()">
+            import tileset image
           </a-button>
-          <a-button @click="$refs.tileDataSelecter!.openSelecter()">
-            import data image
+          <a-button @click="$refs.dataImageSelecter!.openSelecter()">
+            import tileset data image
           </a-button>
         </div>
         <a-button type="primary" @click="$emit('switchMode')">
@@ -96,16 +96,21 @@ export default {
   extends: EditorCommon,
   components: { PngSelecter, ItemLayerDataForm },
   computed: {
-    ...mapState(useItemEditerStore, ['tile', 'layer', 'state', 'itemMapGroup']),
+    ...mapState(useItemEditerStore, [
+      'tileset',
+      'layer',
+      'state',
+      'itemMapGroup',
+    ]),
     generateReady() {
-      return !!this.tile.imageCanvas && !!this.layer.body
+      return !!this.tileset.imageCanvas && !!this.layer.body
     },
   },
   methods: {
     async generateLayer() {
       const bodyItem = this.itemMapGroup['body'][this.layer.body]
-      const data = this.tile.dataCanvas || this.tile.data
-      if (!(this.tile.imageCanvas && data && bodyItem)) return
+      const data = this.tileset.dataCanvas || this.tileset.data
+      if (!(this.tileset.imageCanvas && data && bodyItem)) return
 
       const handDataImageUrl = `images/body/${bodyItem.image}`.replace(
         '.png',
@@ -116,7 +121,7 @@ export default {
       const { canvas, tileSize } = await makeItemLayer(
         32,
         handDataCanvas,
-        this.tile.imageCanvas,
+        this.tileset.imageCanvas,
         data,
       )
       const layerImage = this.$refs.previewLayer as HTMLImageElement

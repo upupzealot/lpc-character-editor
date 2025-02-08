@@ -1,22 +1,14 @@
 <template>
   <div class="step">
-    <a-button :type="btnType(miniTileImageCanvas)" shape="circle">1</a-button
+    <a-button :type="btnType(miniImageCanvas)" shape="circle">1</a-button
     ><span class="title">{{
-      `import minimum ${state.opPart} tile image`
+      `import minimum ${state.opPart} tileset image`
     }}</span>
     <div class="content">
-      <PngSelecter
-        ref="tileImageSelecter"
-        v-model="miniTileImageCanvas"
-      ></PngSelecter>
-      <a-button @click="$refs.tileImageSelecter!.openSelecter()">
-        import
-      </a-button>
-      <AsepriteSelecter
-        ref="tileAseSelecter"
-        v-model="miniTileAse"
-      ></AsepriteSelecter>
-      <a-button @click="$refs.tileAseSelecter!.openSelecter()">
+      <PngSelecter ref="imageSelecter" v-model="miniImageCanvas"></PngSelecter>
+      <a-button @click="$refs.imageSelecter!.openSelecter()"> import </a-button>
+      <AsepriteSelecter ref="aseSelecter" v-model="miniAse"></AsepriteSelecter>
+      <a-button @click="$refs.aseSelecter!.openSelecter()">
         import ase (test)
       </a-button>
     </div>
@@ -25,17 +17,17 @@
   <a-divider></a-divider>
 
   <div class="step">
-    <a-button :type="btnType(miniTileDataCanvas)" shape="circle">2</a-button
+    <a-button :type="btnType(miniDataCanvas)" shape="circle">2</a-button
     ><span class="title">{{
-      `import minimum ${state.opPart} tile data image`
+      `import minimum ${state.opPart} tileset data image`
     }}</span>
     <div class="content">
       <PngSelecter
-        ref="miniTileDataSelecter"
-        v-model="miniTileDataCanvas"
-        :previewCanvas="miniTileImageCanvas"
+        ref="dataImageSelecter"
+        v-model="miniDataCanvas"
+        :previewCanvas="miniImageCanvas"
       ></PngSelecter>
-      <a-button @click="$refs.miniTileDataSelecter!.openSelecter()">
+      <a-button @click="$refs.dataImageSelecter!.openSelecter()">
         import
       </a-button>
       <a-button disabled> create </a-button>
@@ -45,21 +37,21 @@
   <a-divider></a-divider>
 
   <div class="step">
-    <a-button :type="btnType(tile.imageCanvas)" shape="circle">3</a-button
-    ><span class="title">Generate {{ state.opPart }} tile</span>
+    <a-button :type="btnType(tileset.imageCanvas)" shape="circle">3</a-button
+    ><span class="title">Generate {{ state.opPart }} tileset</span>
     <div class="content">
       <div
-        ref="previewTileImage"
+        ref="previewImage"
         class="preview-img"
         :style="{
-          display: tile.imageCanvas ? 'block' : 'none',
+          display: tileset.imageCanvas ? 'block' : 'none',
         }"
       ></div>
       <div
-        ref="previewTileDataImage"
+        ref="previewDataImage"
         class="preview-img"
         :style="{
-          display: tile.dataCanvas ? 'block' : 'none',
+          display: tileset.dataCanvas ? 'block' : 'none',
         }"
       ></div>
       <div class="row">
@@ -67,16 +59,19 @@
           <a-button :disabled="!generateReady" @click="generateTile">
             generate
           </a-button>
-          <a-button :disabled="!tile.imageCanvas" @click="downloadTileImage">
-            export tile image
+          <a-button :disabled="!tileset.imageCanvas" @click="downloadTileImage">
+            export tileset image
           </a-button>
-          <a-button :disabled="!tile.dataCanvas" @click="downloadTileDataImage">
-            export data image
+          <a-button
+            :disabled="!tileset.dataCanvas"
+            @click="downloadTileDataImage"
+          >
+            export tileset data image
           </a-button>
         </div>
         <a-button
           type="primary"
-          :disabled="!tile.imageCanvas || !tile.dataCanvas"
+          :disabled="!tileset.imageCanvas || !tileset.dataCanvas"
           @click="$emit('switchMode')"
         >
           Go to generate layer
@@ -104,55 +99,53 @@ export default {
   components: { PngSelecter, AsepriteSelecter },
   data() {
     return {
-      miniTileImageCanvas: null,
-      miniTileDataCanvas: null,
-      miniTileAse: null,
+      miniImageCanvas: null,
+      miniDataCanvas: null,
+      miniAse: null,
     } as {
-      miniTileImageCanvas: HTMLCanvasElement | null
-      miniTileDataCanvas: HTMLCanvasElement | null
-      miniTileAse: IAse | null
+      miniImageCanvas: HTMLCanvasElement | null
+      miniDataCanvas: HTMLCanvasElement | null
+      miniAse: IAse | null
     }
   },
   computed: {
     ...mapState(useItemEditerStore, ['state']),
-    ...mapWritableState(useItemEditerStore, ['tile']),
+    ...mapWritableState(useItemEditerStore, ['tileset']),
     generateReady() {
-      return !!this.miniTileImageCanvas && !!this.miniTileDataCanvas
+      return !!this.miniImageCanvas && !!this.miniDataCanvas
     },
   },
   methods: {
     async generateTile() {
-      if (!this.miniTileImageCanvas || !this.miniTileDataCanvas) return
+      if (!this.miniImageCanvas || !this.miniDataCanvas) return
 
       // 不同朝向的瓦片和数据
       const itemTile = await makeItemTile(
         32,
-        this.miniTileImageCanvas,
-        this.miniTileDataCanvas,
+        this.miniImageCanvas,
+        this.miniDataCanvas,
       )
-      this.tile = itemTile
-      ;(this.$refs.previewTileImage as HTMLElement).replaceChildren(
+      this.tileset = itemTile
+      ;(this.$refs.previewImage as HTMLElement).replaceChildren(
         itemTile.imageCanvas,
       )
-      ;(this.$refs.previewTileDataImage as HTMLElement).replaceChildren(
+      ;(this.$refs.previewDataImage as HTMLElement).replaceChildren(
         itemTile.dataCanvas,
       )
     },
     downloadTileImage() {
-      if (!this.$refs.previewTileImage) return
-      const img = (this.$refs.previewTileImage as HTMLElement).querySelector(
-        'img',
-      )
+      if (!this.$refs.previewImage) return
+      const img = (this.$refs.previewImage as HTMLElement).querySelector('img')
       this.downloadImage(
         img as HTMLImageElement,
         `${this.state.opPart}.tile.png`,
       )
     },
     downloadTileDataImage() {
-      if (!this.$refs.previewTileDataImage) return
-      const img = (
-        this.$refs.previewTileDataImage as HTMLElement
-      ).querySelector('img')
+      if (!this.$refs.previewDataImage) return
+      const img = (this.$refs.previewDataImage as HTMLElement).querySelector(
+        'img',
+      )
       this.downloadImage(
         img as HTMLImageElement,
         `${this.state.opPart}.tiledata.png`,

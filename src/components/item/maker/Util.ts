@@ -14,14 +14,14 @@ export type DataRect = {
   bottom: number
 }
 
-export type FrameData = {
+export type TileData = {
   point: DataPoint | null
   rect: DataRect
 }
 
-export type TilesetData = FrameData[]
+export type TilesetData = TileData[]
 
-export type ItemTile = {
+export type ItemTileset = {
   imageCanvas: HTMLCanvasElement
   dataCanvas: HTMLCanvasElement
   data: TilesetData

@@ -21,7 +21,7 @@
     <div class="content">
       <DetailRadio :options="options" v-model="mode"></DetailRadio>
 
-      <div v-show="mode === 'tile'">
+      <div v-show="mode === 'tileset'">
         <a-divider style="margin-top: 10px"></a-divider>
         <a-tabs v-model:activeKey="tileMode" type="card">
           <a-tab-pane key="create" tab="Create" force-render>
@@ -39,7 +39,7 @@
 
       <div v-show="mode === 'layer'">
         <a-divider style="margin-top: 10px"></a-divider>
-        <ItemLayerEditor @switch-mode="mode = 'tile'"></ItemLayerEditor>
+        <ItemLayerEditor @switch-mode="mode = 'tileset'"></ItemLayerEditor>
       </div>
     </div>
   </div>
@@ -57,10 +57,10 @@ export default {
   components: { DetailRadio, MiniTileEditor, ItemTileEditor, ItemLayerEditor },
   data() {
     return {
-      mode: 'tile',
+      mode: 'tileset',
       options: [
         {
-          value: 'tile',
+          value: 'tileset',
           label: 'Item Maker',
           desc: 'create item from minimum or edit existed ones',
         },

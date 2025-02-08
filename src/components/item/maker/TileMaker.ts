@@ -1,11 +1,11 @@
-import type { TilesetData, ItemTile } from '@/components/item/maker/Util'
+import type { TilesetData, ItemTileset } from '@/components/item/maker/Util'
 import { parsePoints, parseRect } from '@/components/item/maker/Util'
 
 export async function makeItemTile(
   size: number,
   miniImageCanvas: HTMLCanvasElement,
   miniDataCanvas: HTMLCanvasElement,
-): Promise<ItemTile> {
+): Promise<ItemTileset> {
   const imageCanvas = document.createElement('canvas') as HTMLCanvasElement
   imageCanvas.style.imageRendering = 'pixelated'
   imageCanvas.width = size * 4
