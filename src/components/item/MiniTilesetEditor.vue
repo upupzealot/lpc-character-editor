@@ -121,6 +121,7 @@ export default {
 
       // 不同朝向的瓦片和数据
       const itemTile = await makeItemTile(
+        this.state.opPart,
         32,
         this.miniImageCanvas,
         this.miniDataCanvas,
