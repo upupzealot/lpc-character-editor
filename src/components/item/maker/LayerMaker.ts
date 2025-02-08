@@ -25,7 +25,7 @@ export async function makeItemLayer(
   } else {
     data = tilesetData
   }
-  const padding = getOversizePadding(size, anchorPoints, data)
+  const padding = getOversizePadding(partKey, size, anchorPoints, data)
   const tileSize = size + padding * 2
 
   const tileWidth = Math.floor(anchorDataCanvas.width / size)
@@ -78,6 +78,7 @@ export async function makeItemLayer(
 }
 
 function getOversizePadding(
+  partKey: string,
   size: number,
   anchorPoints: (DataPoint | null)[],
   tilesetData: TilesetData,
@@ -85,7 +86,9 @@ function getOversizePadding(
   const boundingBoxes = anchorPoints.map((anchorPoint) => {
     if (!anchorPoint) return null
 
-    const tileIndex = (anchorPoint.color[0] - 127) / 8 - 1
+    const transformData = getTransformData(partKey)
+    const tileIndex =
+      (anchorPoint.color[0] - 127) / (128 / transformData.transform.length) - 1
     const pivotPoint = tilesetData[tileIndex].point
     if (!pivotPoint) return null
     const boundingRect = tilesetData[tileIndex].rect
