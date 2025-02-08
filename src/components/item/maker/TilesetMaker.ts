@@ -1,18 +1,6 @@
 import type { TilesetData, ItemTileset } from '@/components/item/maker/Util'
 import { parsePoints, parseRect } from '@/components/item/maker/Util'
-
-import weaponTransform from '@/components/item/maker/tileset-transform/Weapon.json'
-import hairTransform from '@/components/item/maker/tileset-transform/Hair.json'
-
-type TransformData = {
-  tileWidth: number
-  transform: [number, number, number, number][]
-}
-
-const ItemTransformDataMap = {
-  weapon: weaponTransform as TransformData,
-  hair: hairTransform as TransformData,
-} as { [k: string]: TransformData }
+import { getTransformData } from '@/components/item/maker/tileset-transform'
 
 export async function makeItemTile(
   partKey: string,
@@ -20,10 +8,7 @@ export async function makeItemTile(
   miniImageCanvas: HTMLCanvasElement,
   miniDataCanvas: HTMLCanvasElement,
 ): Promise<ItemTileset> {
-  const transformData = ItemTransformDataMap[partKey]
-  if (!transformData) {
-    throw new Error(`Unsuppoted part: ${partKey}`)
-  }
+  const transformData = getTransformData(partKey)
   const { transform, tileWidth } = transformData
   const tileCount = transform.length
   const tWidth = tileWidth || tileCount

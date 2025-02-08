@@ -1,17 +1,24 @@
+import { loadCanvas } from '@/util/GraphicUtil'
 import type { TilesetData, DataPoint } from '@/components/item/maker/Util'
 import { parsePoints } from '@/components/item/maker/Util'
 import { getTilesetData } from '@/components/item/maker/TilesetMaker'
+import { getTransformData } from '@/components/item/maker/tileset-transform'
 
 export async function makeItemLayer(
+  bodyItemKey: string,
+  partKey: string,
   size: number,
-  bodyHandPointCanvas: HTMLCanvasElement,
   tilesetImageCanvas: HTMLCanvasElement,
   tilesetData: TilesetData | HTMLCanvasElement,
 ): Promise<{
   tileSize: number
   canvas: HTMLCanvasElement
 }> {
-  const anchorPoints = parsePoints(size, bodyHandPointCanvas)
+  const transformData = getTransformData(partKey)
+
+  const anchorDataImageUrl = `images/body/${bodyItemKey}.${partKey}data.png`
+  const anchorDataCanvas = await loadCanvas(anchorDataImageUrl)
+  const anchorPoints = parsePoints(size, anchorDataCanvas)
   let data: TilesetData
   if (tilesetData instanceof HTMLCanvasElement) {
     data = getTilesetData(size, tilesetImageCanvas, tilesetData)
@@ -21,8 +28,8 @@ export async function makeItemLayer(
   const padding = getOversizePadding(size, anchorPoints, data)
   const tileSize = size + padding * 2
 
-  const tileWidth = Math.floor(bodyHandPointCanvas.width / size)
-  const tileHeight = Math.floor(bodyHandPointCanvas.height / size)
+  const tileWidth = Math.floor(anchorDataCanvas.width / size)
+  const tileHeight = Math.floor(anchorDataCanvas.height / size)
   const tileCount = tileWidth * tileHeight
 
   const canvas = document.createElement('canvas') as HTMLCanvasElement
@@ -37,17 +44,18 @@ export async function makeItemLayer(
     const x = i % tileWidth
     const y = Math.floor(i / tileWidth)
 
-    const handPoint = anchorPoints[i]
-    if (!handPoint) continue
-    const tileIndex = (handPoint.color[0] - 127) / 8 - 1
-    const anchorPoint = data[tileIndex].point
+    const anchorPoint = anchorPoints[i]
     if (!anchorPoint) continue
-    const tx = tileIndex % 4
-    const ty = Math.floor(tileIndex / 4)
+    const tileIndex =
+      (anchorPoint.color[0] - 127) / (128 / transformData.transform.length) - 1
+    const pivotPoint = data[tileIndex].point
+    if (!pivotPoint) continue
+    const tx = tileIndex % transformData.tileWidth
+    const ty = Math.floor(tileIndex / transformData.tileWidth)
     g2d.save()
     g2d.translate(
-      padding + handPoint.x - anchorPoint.x,
-      padding + handPoint.y - anchorPoint.y,
+      padding + anchorPoint.x - pivotPoint.x,
+      padding + anchorPoint.y - pivotPoint.y,
     )
     g2d.drawImage(
       tilesetImageCanvas,
@@ -74,19 +82,19 @@ function getOversizePadding(
   anchorPoints: (DataPoint | null)[],
   tilesetData: TilesetData,
 ): number {
-  const boundingBoxes = anchorPoints.map((handPoint) => {
-    if (!handPoint) return null
-
-    const tileIndex = (handPoint.color[0] - 127) / 8 - 1
-    const anchorPoint = tilesetData[tileIndex].point
+  const boundingBoxes = anchorPoints.map((anchorPoint) => {
     if (!anchorPoint) return null
+
+    const tileIndex = (anchorPoint.color[0] - 127) / 8 - 1
+    const pivotPoint = tilesetData[tileIndex].point
+    if (!pivotPoint) return null
     const boundingRect = tilesetData[tileIndex].rect
     if (!boundingRect.count) return null
 
-    const left = handPoint.x - (anchorPoint.x - boundingRect.left)
-    const right = handPoint.x + (boundingRect.right - anchorPoint.x)
-    const top = handPoint.y - (anchorPoint.y - boundingRect.top)
-    const bottom = handPoint.y + (boundingRect.bottom - anchorPoint.y)
+    const left = anchorPoint.x - (pivotPoint.x - boundingRect.left)
+    const right = anchorPoint.x + (boundingRect.right - pivotPoint.x)
+    const top = anchorPoint.y - (pivotPoint.y - boundingRect.top)
+    const bottom = anchorPoint.y + (boundingRect.bottom - pivotPoint.y)
     return { left, right, top, bottom }
   })
   let minLeft = NaN

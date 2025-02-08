@@ -105,7 +105,6 @@ export default {
   methods: {
     onMenuSelect({ key }: { key: string }) {
       this.state.opPart = key
-      console.log(this.state, key)
     },
     uploadTile(type: 'mini' | 'full') {
       const $input =

@@ -86,7 +86,7 @@
 <script lang="ts">
 import { mapState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
-import { decodeColor, loadCanvas } from '@/util/GraphicUtil'
+import { decodeColor } from '@/util/GraphicUtil'
 import { makeItemLayer } from '@/components/item/maker/LayerMaker'
 import EditorCommon from '@/components/item/EditorCommon.vue'
 import PngSelecter from '@/components/item/PngSelecter.vue'
@@ -112,15 +112,10 @@ export default {
       const data = this.tileset.dataCanvas || this.tileset.data
       if (!(this.tileset.imageCanvas && data && bodyItem)) return
 
-      const handDataImageUrl = `images/body/${bodyItem.image}`.replace(
-        '.png',
-        '.handdata.png',
-      )
-      const handDataCanvas = await loadCanvas(handDataImageUrl)
-
       const { canvas, tileSize } = await makeItemLayer(
+        bodyItem.key,
+        this.state.opPart,
         32,
-        handDataCanvas,
         this.tileset.imageCanvas,
         data,
       )
