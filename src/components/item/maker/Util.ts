@@ -1,4 +1,5 @@
 import type { Color } from '@/components/character/types'
+import { copyReadFrequently } from '@/util/GraphicUtil'
 
 export type DataPoint = {
   x: number
@@ -88,9 +89,7 @@ export function getFrames(
   const frameHeight = Math.floor(canvas.height / size)
   const frameCount = frameWidth * frameHeight
 
-  const g2d = canvas.getContext('2d', {
-    willReadFrequently: true,
-  }) as CanvasRenderingContext2D
+  const { g2d } = copyReadFrequently(canvas)
   const frames = [] as ImageData[]
   for (let i = 0; i < frameCount; i++) {
     const x = i % frameWidth

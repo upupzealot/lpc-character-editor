@@ -2,7 +2,7 @@
 import { mapState, mapWritableState } from 'pinia'
 import { useGraphicsStore } from '@/stores/graphics'
 import { useCharacterEditerStore } from '@/stores/characterEditor'
-import { loadImage, loadCanvas, replaceColor } from '@/util/GraphicUtil'
+import { loadImage, loadCanvas, replaceCanvasColor } from '@/util/GraphicUtil'
 import { renderOrder } from '@/components/character/ImageComposite'
 import CharactorActions from '@/components/character/CharacterActionsData.json'
 
@@ -78,7 +78,7 @@ export default {
           const dstPalatteColors = this.selections[partKey].palettes.map(
             (palette) => palette.colors,
           )
-          canvasMap[partKey] = (await replaceColor(
+          canvasMap[partKey] = (await replaceCanvasColor(
             srcPaletteColors,
             dstPalatteColors,
             canvas,

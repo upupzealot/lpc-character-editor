@@ -61,7 +61,7 @@
 import { mapState } from 'pinia'
 import { useCharacterEditerStore } from '@/stores/characterEditor'
 import type { Palette } from '@/components/character/types'
-import { loadCanvas, replaceColor } from '@/util/GraphicUtil'
+import { loadCanvas, replaceCanvasColor } from '@/util/GraphicUtil'
 import { getIconCanvas, ICON_SIZE, iconUrl } from '@/stores/paletteData'
 
 export default {
@@ -204,19 +204,26 @@ export default {
       // 待预览的色板列表
       const dstPalettes = this.palettes as Palette[]
       const itemCanvas = await loadCanvas(this.itemImageUrl)
+      const itemG2d = itemCanvas.getContext('2d') as CanvasRenderingContext2D
+      const itemImageData = itemG2d.getImageData(
+        0,
+        0,
+        itemCanvas.width,
+        itemCanvas.height,
+      )
       for (let i = 0; i < dstPalettes.length; i++) {
         const previewPalettes = selectedPalettes.map((palette, index) => {
           return index === this.selectedPaletteIndex ? dstPalettes[i] : palette
         })
 
         const previewColors = previewPalettes.map((p) => p.colors)
-        const imageCanvas = await replaceColor(
+        const replacedItemCanvas = await replaceCanvasColor(
           srcColors,
           previewColors,
-          itemCanvas,
+          itemImageData,
         )
         g2d.drawImage(
-          imageCanvas,
+          replacedItemCanvas,
           0,
           0,
           this.size,

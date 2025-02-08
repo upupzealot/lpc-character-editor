@@ -3,7 +3,7 @@ import type { Color, Palette } from '@/components/character/types'
 // PaletteData comes from:
 // https://github.com/vitruvianstudio/vitruvian-web/blob/main/src/data/colors.json
 import PaletteData from '@/stores/PaletteData.json'
-import { encodeColor, loadCanvas, replaceColor } from '@/util/GraphicUtil'
+import { encodeColor, loadCanvas, replaceCanvasColor } from '@/util/GraphicUtil'
 export const paletteList = (PaletteData as Palette[]).map((palette) => {
   const key = palette.colors.map((color) => encodeColor(color)).join(';')
   return {
@@ -40,11 +40,18 @@ export async function getIconCanvas(palettes: Palette[]) {
   // 待预览的色板列表
   const dstColors = palettes.map((p) => p.colors)
   const marbleCanvas = await loadCanvas(marbleImageUrl)
+  const marbleG2d = marbleCanvas.getContext('2d') as CanvasRenderingContext2D
+  const marbleImageData = marbleG2d.getImageData(
+    0,
+    0,
+    marbleCanvas.width,
+    marbleCanvas.height,
+  )
   for (let i = 0; i < dstColors.length; i++) {
-    const imageCanvas = await replaceColor(
+    const imageCanvas = await replaceCanvasColor(
       [srcColors],
       [dstColors[i]],
-      marbleCanvas,
+      marbleImageData,
     )
     g2d.drawImage(
       imageCanvas,

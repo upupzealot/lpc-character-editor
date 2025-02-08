@@ -39,43 +39,40 @@ export function imageToCanvas(image: HTMLImageElement): HTMLCanvasElement {
   const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
   g2d.imageSmoothingEnabled = false
   g2d.drawImage(image, 0, 0)
-
   return canvas
 }
 
-export function replaceColor(
-  srcPalettes: Color[][],
-  dstPalettes: Color[][],
-  srcCanvas: HTMLCanvasElement,
-  dstCanvas?: HTMLCanvasElement,
-): HTMLCanvasElement {
-  const srcG2d = srcCanvas.getContext('2d', {
+export function copyReadFrequently(canvas: HTMLCanvasElement): {
+  canvas: HTMLCanvasElement
+  g2d: CanvasRenderingContext2D
+} {
+  const newCanvas = document.createElement('canvas')
+  newCanvas.width = canvas.width
+  newCanvas.height = canvas.height
+  const g2d = newCanvas.getContext('2d', {
     willReadFrequently: true,
   }) as CanvasRenderingContext2D
-  const imageData = srcG2d.getImageData(0, 0, srcCanvas.width, srcCanvas.height)
-  const { data } = imageData
+  g2d.imageSmoothingEnabled = false
+  g2d.drawImage(canvas, 0, 0)
 
-  const srcColors = srcPalettes.flat()
-  const dstColors = dstPalettes.flat()
-  for (let x = 0; x < data.length; x += 4) {
-    if (!data[x + 3]) continue
-    for (let n = 0; n < srcColors.length; n++) {
-      if (n >= dstColors.length) continue
-      const srcColor = srcColors[n]
-      const dstColor = dstColors[n]
-      if (
-        data[x] === srcColor[0] &&
-        data[x + 1] === srcColor[1] &&
-        data[x + 2] === srcColor[2]
-      ) {
-        data[x] = dstColor[0]
-        data[x + 1] = dstColor[1]
-        data[x + 2] = dstColor[2]
-        data[x + 3] = dstColor[3]
-        break
-      }
-    }
+  return { canvas: newCanvas, g2d }
+}
+
+export function replaceCanvasColor(
+  srcPalettes: Color[][],
+  dstPalettes: Color[][],
+  srcCanvas: HTMLCanvasElement | ImageData,
+  dstCanvas?: HTMLCanvasElement,
+): HTMLCanvasElement {
+  let imageData: ImageData
+  if (srcCanvas instanceof HTMLCanvasElement) {
+    const srcG2d = srcCanvas.getContext('2d') as CanvasRenderingContext2D
+    imageData = srcG2d.getImageData(0, 0, srcCanvas.width, srcCanvas.height)
+  } else {
+    imageData = srcCanvas
   }
+
+  const replacedImageData = replaceColor(srcPalettes, dstPalettes, imageData)
 
   let output = dstCanvas
   if (!output) {
@@ -84,8 +81,49 @@ export function replaceColor(
     output.height = srcCanvas.height
   }
   const dstG2d = output.getContext('2d') as CanvasRenderingContext2D
-  dstG2d.putImageData(imageData, 0, 0)
+  dstG2d.putImageData(replacedImageData, 0, 0)
   return output
+}
+
+export function replaceColor(
+  srcPalettes: Color[][],
+  dstPalettes: Color[][],
+  imageData: ImageData,
+): ImageData {
+  const { data } = imageData
+  const newImageData = new ImageData(imageData.width, imageData.height)
+  const { data: newData } = newImageData
+
+  const srcColors = srcPalettes.flat()
+  const dstColors = dstPalettes.flat()
+  for (let x = 0; x < data.length; x += 4) {
+    if (!data[x + 3]) continue
+    let replaced = false
+    for (let n = 0; n < srcColors.length && n < dstColors.length; n++) {
+      const srcColor = srcColors[n]
+      const dstColor = dstColors[n]
+      if (
+        data[x] === srcColor[0] &&
+        data[x + 1] === srcColor[1] &&
+        data[x + 2] === srcColor[2]
+      ) {
+        newData[x] = dstColor[0]
+        newData[x + 1] = dstColor[1]
+        newData[x + 2] = dstColor[2]
+        newData[x + 3] = dstColor[3]
+        replaced = true
+        break
+      }
+    }
+    if (!replaced) {
+      newData[x] = data[x]
+      newData[x + 1] = data[x + 1]
+      newData[x + 2] = data[x + 2]
+      newData[x + 3] = data[x + 3]
+    }
+  }
+
+  return newImageData
 }
 
 const code = '0123456789abcdef'.split('')
