@@ -8,7 +8,7 @@
         @select="onMenuSelect"
       >
         <a-divider>Body Parts</a-divider>
-        <a-menu-item key="hair" :disabled="true"> hair </a-menu-item>
+        <a-menu-item key="hair"> hair </a-menu-item>
         <a-menu-item key="eye" :disabled="true"> eye </a-menu-item>
         <a-menu-item key="ear" :disabled="true"> ear </a-menu-item>
         <a-divider>Equipments</a-divider>

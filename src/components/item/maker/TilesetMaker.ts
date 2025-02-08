@@ -2,6 +2,7 @@ import type { TilesetData, ItemTileset } from '@/components/item/maker/Util'
 import { parsePoints, parseRect } from '@/components/item/maker/Util'
 
 import weaponTransform from '@/components/item/maker/tileset-transform/Weapon.json'
+import hairTransform from '@/components/item/maker/tileset-transform/Hair.json'
 
 type TransformData = {
   tileWidth: number
@@ -10,6 +11,7 @@ type TransformData = {
 
 const ItemTransformDataMap = {
   weapon: weaponTransform as TransformData,
+  hair: hairTransform as TransformData,
 } as { [k: string]: TransformData }
 
 export async function makeItemTile(
