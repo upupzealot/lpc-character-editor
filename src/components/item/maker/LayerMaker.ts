@@ -1,6 +1,6 @@
 import type { TilesetData, DataPoint } from '@/components/item/maker/Util'
 import { parsePoints } from '@/components/item/maker/Util'
-import { getTilesetData } from '@/components/item/maker/TileMaker'
+import { getTilesetData } from '@/components/item/maker/TilesetMaker'
 
 export async function makeItemLayer(
   size: number,

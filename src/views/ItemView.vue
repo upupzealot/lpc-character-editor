@@ -26,12 +26,16 @@
         <a-tabs v-model:activeKey="tileMode" type="card">
           <a-tab-pane key="create" tab="Create" force-render>
             <div class="panel" v-show="tileMode === 'create'">
-              <MiniTileEditor @switch-mode="mode = 'layer'"></MiniTileEditor>
+              <MiniTilesetEditor
+                @switch-mode="mode = 'layer'"
+              ></MiniTilesetEditor>
             </div>
           </a-tab-pane>
           <a-tab-pane key="edit" tab="Edit" force-render>
             <div class="panel" v-show="tileMode === 'edit'">
-              <ItemTileEditor @switch-mode="mode = 'layer'"></ItemTileEditor>
+              <ItemTilesetEditor
+                @switch-mode="mode = 'layer'"
+              ></ItemTilesetEditor>
             </div>
           </a-tab-pane>
         </a-tabs>
@@ -49,12 +53,17 @@
 import { mapState } from 'pinia'
 import { useItemEditerStore } from '@/stores/itemEditor'
 import DetailRadio from '@/components/item/DetailRadio.vue'
-import MiniTileEditor from '@/components/item/MiniTileEditor.vue'
-import ItemTileEditor from '@/components/item/ItemTileEditor.vue'
+import MiniTilesetEditor from '@/components/item/MiniTilesetEditor.vue'
+import ItemTilesetEditor from '@/components/item/ItemTilesetEditor.vue'
 import ItemLayerEditor from '@/components/item/ItemLayerEditor.vue'
 
 export default {
-  components: { DetailRadio, MiniTileEditor, ItemTileEditor, ItemLayerEditor },
+  components: {
+    DetailRadio,
+    MiniTilesetEditor,
+    ItemTilesetEditor,
+    ItemLayerEditor,
+  },
   data() {
     return {
       mode: 'tileset',
