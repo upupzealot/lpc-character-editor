@@ -9,7 +9,7 @@
       >
         <a-divider>Body Parts</a-divider>
         <a-menu-item key="hair"> hair </a-menu-item>
-        <a-menu-item key="eye" :disabled="true"> eye </a-menu-item>
+        <a-menu-item key="eye"> eye </a-menu-item>
         <a-menu-item key="ear" :disabled="true"> ear </a-menu-item>
         <a-divider>Equipments</a-divider>
         <a-menu-item key="upper" :disabled="true"> upper </a-menu-item>

@@ -1,5 +1,6 @@
 import weaponTransform from '@/components/item/maker/tileset-transform/Weapon.json'
 import hairTransform from '@/components/item/maker/tileset-transform/Hair.json'
+import eyeTransform from '@/components/item/maker/tileset-transform/Eye.json'
 
 type TransformData = {
   tileWidth: number
@@ -9,6 +10,7 @@ type TransformData = {
 const ItemTransformDataMap = {
   weapon: weaponTransform as TransformData,
   hair: hairTransform as TransformData,
+  eye: eyeTransform as TransformData,
 } as { [k: string]: TransformData }
 
 export function getTransformData(partKey: string) {
