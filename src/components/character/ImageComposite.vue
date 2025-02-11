@@ -30,11 +30,12 @@ export default {
       const canvas = this.composite.canvas()
       this.composite.g2d().clearRect(0, 0, canvas.width, canvas.height)
 
-      const partKeys = [
+      const partLayerKeys = [
         'body',
         'lower',
         'upper',
         'hair',
+        'hair.back',
         'ear',
         'eye',
         'weapon',
@@ -47,16 +48,24 @@ export default {
       let lastCanvas = null as null | HTMLCanvasElement
 
       await Promise.all(
-        partKeys.map(async (partKey) => {
+        partLayerKeys.map(async (partLayerKey) => {
           let canvas = null as null | HTMLCanvasElement
+          const [partKey, layerKey] = partLayerKey.split('.')
           const partItem = this.selectedItems[partKey]
           if (partItem.size) {
             maxSize = Math.max(maxSize, partItem.size)
           }
-          if (partItem.image) {
-            canvas = await loadCanvas(`images/${partKey}/${partItem.image}`)
+          let imageJsonKey = 'image'
+          if (layerKey) {
+            imageJsonKey = `image.${layerKey}`
           }
-          canvasMap[partKey] = canvas
+          const imageUrl = (partItem as unknown as { [k: string]: string })[
+            imageJsonKey
+          ] as string | undefined
+          if (imageUrl) {
+            canvas = await loadCanvas(`images/${partKey}/${imageUrl}`)
+          }
+          canvasMap[partLayerKey] = canvas
           lastCanvas = lastCanvas || canvas
         }),
       )
@@ -68,9 +77,10 @@ export default {
           (bodyCanvas.height / bodySize) * maxSize
       }
 
-      for (let i = 0; i < partKeys.length; i++) {
-        const partKey = partKeys[i]
-        const canvas = canvasMap[partKey]
+      for (let i = 0; i < partLayerKeys.length; i++) {
+        const partLayerKey = partLayerKeys[i]
+        const [partKey] = partLayerKey.split('.')
+        const canvas = canvasMap[partLayerKey]
         if (canvas) {
           const srcPaletteColors = this.selectedItems[partKey].palettes.map(
             (palette) => palette.colors,
@@ -78,7 +88,7 @@ export default {
           const dstPalatteColors = this.selections[partKey].palettes.map(
             (palette) => palette.colors,
           )
-          canvasMap[partKey] = (await replaceCanvasColor(
+          canvasMap[partLayerKey] = (await replaceCanvasColor(
             srcPaletteColors,
             dstPalatteColors,
             canvas,
@@ -87,13 +97,14 @@ export default {
       }
 
       for (const action of CharactorActions) {
-        const partKeysInOrder = renderOrder(action.direction)
-        for (let i = 0; i < partKeysInOrder.length; i++) {
-          let partKey = partKeysInOrder[i]
+        const partLayerKeysInOrder = renderOrder(action.direction)
+        for (let i = 0; i < partLayerKeysInOrder.length; i++) {
+          const partLayerKey = partLayerKeysInOrder[i]
+          let [partKey] = partLayerKey.split('.')
 
           let canvas
-          if (partKey.includes('.')) {
-            const [part, mask] = partKey.split('.')
+          if (partKey.includes('@')) {
+            const [part, mask] = partKey.split('@')
             partKey = part
             const partCanvas = canvasMap[part] as HTMLCanvasElement
             canvas = document.createElement('canvas')
@@ -109,7 +120,7 @@ export default {
             )
             g2d.drawImage(maskImg, 0, 0)
           } else {
-            canvas = canvasMap[partKey]
+            canvas = canvasMap[partLayerKey]
           }
 
           const item = this.selectedItems[partKey]

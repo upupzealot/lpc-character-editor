@@ -2,7 +2,7 @@
   "key": "hair-6",
   "name": "Long",
   "image": "hair-6.png",
-  "image-back": "hair-6.back.png",
+  "image.back": "hair-6.back.png",
   "palettes": [
     {
       "colors": [
