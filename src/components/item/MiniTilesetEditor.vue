@@ -115,6 +115,26 @@ export default {
       return !!this.miniImageCanvas && !!this.miniDataCanvas
     },
   },
+  watch: {
+    async miniAse() {
+      if (this.miniAse) {
+        const imageLayer = this.miniAse.layers.find(
+          (layer) => layer.visible && layer.name.startsWith('@'),
+        )
+        if (imageLayer) {
+          console.log('imageLayer', imageLayer.name)
+          this.miniImageCanvas = this.miniAse.render(0, imageLayer.name)
+        }
+
+        const dataLayer = this.miniAse.layers.find((layer) =>
+          layer.name.startsWith('#'),
+        )
+        if (dataLayer) {
+          this.miniDataCanvas = this.miniAse.render(0, dataLayer.name)
+        }
+      }
+    },
+  },
   methods: {
     async generateTile() {
       if (!this.miniImageCanvas || !this.miniDataCanvas) return

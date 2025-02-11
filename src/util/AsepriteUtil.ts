@@ -71,7 +71,7 @@ export interface IAse {
 
   parse(): Promise<void>
 
-  render(frameIndex?: number, layerIndex?: number): HTMLCanvasElement | null
+  render(frameIndex?: number, layerName?: string): HTMLCanvasElement | null
 }
 
 export class Ase implements IAse {
@@ -285,15 +285,30 @@ export class Ase implements IAse {
     }
   }
 
-  render(frameIndex?: number, layerIndex?: number): HTMLCanvasElement | null {
+  render(frameIndex?: number, layerName?: string): HTMLCanvasElement | null {
     this.checkParsed()
 
+    const fIndex = typeof frameIndex === 'number' ? frameIndex : 0
+    const lName = typeof frameIndex === 'string' ? frameIndex : layerName
+    const layer = this.layers.find((layer) => layer.name === lName)
+
     if (!this.frameCount) return null
-    const cels = this.cels[frameIndex || 0]
-      .filter((frameCel) => {
-        return typeof layerIndex === 'number'
-          ? frameCel.layerIndex === layerIndex
-          : true
+    const cels = this.cels[fIndex || 0]
+      .filter((cel) => {
+        if (!layer) {
+          // 没有指定图层，返回所有 Cel
+          return true
+        } else {
+          // 指定了图层，返回图层下所有 Cel
+          const celLayer = this.layers[cel.layerIndex]
+          let underLayer = celLayer.index === layer.index
+          let parentLayer = celLayer.parentLayer
+          while (parentLayer) {
+            underLayer = underLayer || parentLayer.index === layer.index
+            parentLayer = parentLayer.parentLayer
+          }
+          return underLayer
+        }
       })
       .sort((c1, c2) => {
         const order1 = c1.layerIndex + c1.zIndex
@@ -310,16 +325,17 @@ export class Ase implements IAse {
     canvas.height = this.height
     const g2d = canvas.getContext('2d') as CanvasRenderingContext2D
     cels.forEach((cel) => {
-      const layer = this.layers[cel.layerIndex]
-      let visible = layer.visible
-      const alpha = layer.opacity / 255
-      let parentLayer = layer.parentLayer
+      const celLayer = this.layers[cel.layerIndex]
+      let visible = celLayer.visible
+      const alpha = celLayer.opacity / 255
+      let parentLayer = celLayer.parentLayer
       while (parentLayer) {
         visible = visible && parentLayer.visible
         parentLayer = parentLayer.parentLayer
       }
 
-      if (visible) {
+      // 指定了图层或图层可见
+      if (layer || visible) {
         g2d.save()
         g2d.globalAlpha = (cel.opacity / 255) * alpha
         g2d.drawImage(cel.canvas, cel.x, cel.y)
