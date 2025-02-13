@@ -334,8 +334,10 @@ export class Ase implements IAse {
         parentLayer = parentLayer.parentLayer
       }
 
-      // 指定了图层或图层可见
-      if (layer || visible) {
+      // #data 图层隐藏也可提取
+      // @image 图层提取整体的可见部分
+      const isData = layer && layer.name.startsWith('#')
+      if (isData || visible) {
         g2d.save()
         g2d.globalAlpha = (cel.opacity / 255) * alpha
         g2d.drawImage(cel.canvas, cel.x, cel.y)

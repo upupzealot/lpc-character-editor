@@ -118,13 +118,7 @@ export default {
   watch: {
     async miniAse() {
       if (this.miniAse) {
-        const imageLayer = this.miniAse.layers.find(
-          (layer) => layer.visible && layer.name.startsWith('@'),
-        )
-        if (imageLayer) {
-          console.log('imageLayer', imageLayer.name)
-          this.miniImageCanvas = this.miniAse.render(0, imageLayer.name)
-        }
+        this.miniImageCanvas = this.miniAse.render()
 
         const dataLayer = this.miniAse.layers.find((layer) =>
           layer.name.startsWith('#'),
