@@ -14,5 +14,9 @@
   {
     "name": "stub",
     "direction": "4"
+  },
+  {
+    "name": "archery",
+    "direction": "4"
   }
 ]

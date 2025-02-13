@@ -126,5 +126,37 @@
     "x": 4,
     "y": 7,
     "frameCount": 4
+  },
+  {
+    "name": "archery(down)",
+    "action": "archery",
+    "direction": "down",
+    "x": 0,
+    "y": 8,
+    "frameCount": 4
+  },
+  {
+    "name": "archery(left)",
+    "action": "archery",
+    "direction": "left",
+    "x": 0,
+    "y": 9,
+    "frameCount": 4
+  },
+  {
+    "name": "archery(right)",
+    "action": "archery",
+    "direction": "right",
+    "x": 0,
+    "y": 10,
+    "frameCount": 4
+  },
+  {
+    "name": "archery(up)",
+    "action": "archery",
+    "direction": "up",
+    "x": 0,
+    "y": 11,
+    "frameCount": 4
   }
 ]
