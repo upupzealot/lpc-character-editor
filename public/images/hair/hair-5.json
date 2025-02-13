@@ -2,6 +2,7 @@
   "key": "hair-5",
   "name": "Pony tail",
   "image": "hair-5.png",
+  "image.back": "hair-5.back.png",
   "palettes": [
     {
       "colors": [
