@@ -18,5 +18,9 @@
   {
     "name": "archery",
     "direction": "4"
+  },
+  {
+    "name": "fire",
+    "direction": "4"
   }
 ]

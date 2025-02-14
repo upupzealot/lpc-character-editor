@@ -158,5 +158,37 @@
     "x": 0,
     "y": 11,
     "frameCount": 4
+  },
+  {
+    "name": "fire(down)",
+    "action": "fire",
+    "direction": "down",
+    "x": 4,
+    "y": 8,
+    "frameCount": 4
+  },
+  {
+    "name": "fire(left)",
+    "action": "fire",
+    "direction": "left",
+    "x": 4,
+    "y": 9,
+    "frameCount": 4
+  },
+  {
+    "name": "fire(right)",
+    "action": "fire",
+    "direction": "right",
+    "x": 4,
+    "y": 10,
+    "frameCount": 4
+  },
+  {
+    "name": "fire(up)",
+    "action": "fire",
+    "direction": "up",
+    "x": 4,
+    "y": 11,
+    "frameCount": 4
   }
 ]
