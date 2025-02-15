@@ -22,5 +22,9 @@
   {
     "name": "fire",
     "direction": "4"
+  },
+  {
+    "name": "dead",
+    "direction": "4"
   }
 ]

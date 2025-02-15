@@ -190,5 +190,37 @@
     "x": 4,
     "y": 11,
     "frameCount": 4
+  },
+  {
+    "name": "dead(down)",
+    "action": "dead",
+    "direction": "down",
+    "x": 8,
+    "y": 0,
+    "frameCount": 4
+  },
+  {
+    "name": "dead(left)",
+    "action": "dead",
+    "direction": "left",
+    "x": 8,
+    "y": 1,
+    "frameCount": 4
+  },
+  {
+    "name": "dead(right)",
+    "action": "dead",
+    "direction": "right",
+    "x": 8,
+    "y": 2,
+    "frameCount": 4
+  },
+  {
+    "name": "dead(up)",
+    "action": "dead",
+    "direction": "up",
+    "x": 8,
+    "y": 3,
+    "frameCount": 4
   }
 ]
